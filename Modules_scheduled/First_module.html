@@ -1,561 +1,1833 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MedMind · Lab Reports Explainer — Execution Roadmap</title>
-    <!-- Font & Icons -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        body {
-            font-family: 'Inter', -apple-system, system-ui, sans-serif;
-            background: #f9fafc;
-            color: #1a1e2b;
-            line-height: 1.5;
-            padding: 2rem 1rem;
-        }
-        .roadmap-container {
-            max-width: 1300px;
-            margin: 0 auto;
-            background: white;
-            border-radius: 32px;
-            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.15);
-            overflow: hidden;
-            border: 1px solid #edf2f7;
-        }
-        .header-gradient {
-            background: linear-gradient(145deg, #0b1e33 0%, #1a3b5c 100%);
-            padding: 2.5rem 3rem;
-            color: white;
-        }
-        .header-gradient h1 {
-            font-weight: 700;
-            font-size: 2.5rem;
-            letter-spacing: -0.02em;
-            margin-bottom: 0.25rem;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-        .header-gradient h1 i {
-            color: #64b5f6;
-            font-size: 2.2rem;
-        }
-        .header-gradient .subhead {
-            font-size: 1.15rem;
-            color: #b2d9ff;
-            margin-top: 0.5rem;
-            max-width: 700px;
-        }
-        .badge-module {
-            background: rgba(255,255,255,0.15);
-            -webkit-backdrop-filter: blur(4pxpx);
-            backdrop-filter: blur(4px);
-            padding: 0.4rem 1.2rem;
-            border-radius: 40px;
-            display: inline-block;
-            font-size: 0.9rem;
-            font-weight: 500;
-            border: 1px solid rgba(255,255,255,0.2);
-            margin-top: 1rem;
-        }
-        .content {
-            padding: 2.5rem 3rem;
-        }
-        /* section styling */
-.section-card {
-            background: rgba(255, 255, 255, 0.85);
-            -webkit-backdrop-filter: blur(20px);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(233, 237, 244, 0.5);
-            border-radius: 24px;
-            padding: 1.8rem 2rem;
-            margin-bottom: 2.2rem;
-            box-shadow: 0 20px 40px rgba(0,20,40,0.08), 0 0 0 1px rgba(255,255,255,0.2);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            position: relative;
-            overflow: hidden;
-        }
-        .section-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: linear-gradient(90deg, #64b5f6, #1e4a7a);
-            opacity: 0;
-            transition: opacity 0.3s;
-        }
-        .section-card:hover::before {
-            opacity: 1;
-        }
-        .section-card:hover {
-            box-shadow: 0 12px 24px -12px rgba(20,60,120,0.18);
-        }
-        .section-title {
-            font-size: 1.8rem;
-            font-weight: 650;
-            letter-spacing: -0.02em;
-            margin-bottom: 1.5rem;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            border-bottom: 2px solid #eef2f6;
-            padding-bottom: 0.65rem;
-        }
-        .section-title i {
-            color: #1e4a7a;
-            font-size: 1.8rem;
-        }
-        .grid-2col {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 1.8rem;
-        }
-        .grid-3col {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 1.5rem;
-        }
-        .badge {
-            display: inline-block;
-            background: #e7edf8;
-            color: #1e3f6e;
-            font-size: 0.8rem;
-            font-weight: 600;
-            padding: 0.25rem 0.8rem;
-            border-radius: 30px;
-            border: 1px solid #cfdceb;
-        }
-.status-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            padding: 0.4rem 1.1rem;
-            border-radius: 30px;
-            font-weight: 600;
-            font-size: 0.85rem;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-        .status-badge::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
-            transition: left 0.5s;
-        }
-        .status-badge:hover::before {
-            left: 100%;
-        }
-        .status-badge.critical {
-            background: #ffeae9;
-            color: #b83e3e;
-        }
-        .status-badge.high {
-            background: #fff2db;
-            color: #aa5b00;
-        }
-.code-block {
-            background: linear-gradient(145deg, #1a2634 0%, #1f2d3d 100%);
-            color: #e8eaf6;
-            padding: 1.5rem;
-            border-radius: 20px;
-            font-family: 'JetBrains Mono', 'Fira Code', monospace;
-            font-size: 0.9rem;
-            overflow-x: auto;
-            white-space: pre-wrap;
-            word-break: break-word;
-            margin: 1.2rem 0;
-            border: 1px solid #3a4a5a;
-            position: relative;
-            box-shadow: inset 0 1px 0 rgba(255,255,255,0.05);
-        }
-        .code-block::before {
-            content: '⟨ code ⟩';
-            position: absolute;
-            top: -8px;
-            left: 16px;
-            background: #1a2634;
-            padding: 0 8px;
-            font-size: 0.7rem;
-            color: #64b5f6;
-            font-weight: 600;
-        }
-        /* Static syntax highlighting approximation */
-        .code-block span { color: #ffcb6b; } /* Placeholder for future spans */
-        .inline-code {
-            background: #ecf1f7;
-            padding: 0.2rem 0.5rem;
-            border-radius: 8px;
-            font-family: monospace;
-            font-size: 0.9rem;
-            color: #1f3c68;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 1.2rem 0;
-            border-radius: 16px;
-            overflow: hidden;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.02);
-        }
-        th {
-            background: #eef3f9;
-            font-weight: 600;
-            text-align: left;
-            padding: 0.9rem 1rem;
-        }
-        td {
-            padding: 0.9rem 1rem;
-            border-bottom: 1px solid #e9edf2;
-        }
-.week-row:nth-child(even) {
-            background: rgba(245, 250, 255, 0.7);
-        }
-        .week-row {
-            background: rgba(255, 255, 255, 0.9);
-            transition: all 0.2s ease;
-            border-radius: 12px;
-            margin: 4px 0;
-        }
-        .week-row:hover {
-            background: linear-gradient(135deg, #f0f7ff, #e3f2fd);
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(20, 60, 120, 0.15);
-        }
-        .icon-list {
-            list-style: none;
-        }
-        .icon-list li {
-            margin-bottom: 0.7rem;
-            display: flex;
-            align-items: flex-start;
-            gap: 10px;
-        }
-        .icon-list li i {
-            color: #1e4a7a;
-            width: 22px;
-            margin-top: 3px;
-        }
-.flow-steps {
-            display: flex;
-            flex-wrap: wrap;
-            background: linear-gradient(145deg, rgba(244, 248, 254, 0.8), rgba(229, 242, 253, 0.8));
-           -webkit-backdrop-filter: blur(10px);
-            backdrop-filter: blur(10px);
-            
-            border-radius: 40px;
-            padding: 0.8rem;
-            justify-content: center;
-            border: 1px solid rgba(100, 181, 246, 0.2);
-            animation: flowPulse 2s ease-in-out infinite;
-        }
-        @keyframes flowPulse {
-            0%, 100% { box-shadow: 0 0 20px rgba(100, 181, 246, 0.1); }
-            50% { box-shadow: 0 0 30px rgba(100, 181, 246, 0.25); }
-        }
-        .flow-step {
-            padding: 0.5rem 1.2rem;
-            background: white;
-            border-radius: 40px;
-            font-weight: 500;
-            margin: 0.25rem;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.02);
-            border: 1px solid #dde5ef;
-        }
-        .arrow {
-            color: #7c8ca0;
-            font-size: 1.2rem;
-            margin: 0 0.1rem;
-        }
-        hr {
-            border: none;
-            border-top: 2px dotted #cdd9e9;
-            margin: 1.8rem 0;
-        }
-        .folder-structure {
-            background: #f1f5f9;
-            border-radius: 20px;
-            padding: 1.5rem;
-            font-family: 'JetBrains Mono', monospace;
-            line-height: 2;
-        }
-        /* Fade-in animations */
-        .section-card {
-            opacity: 0;
-            transform: translateY(30px);
-            animation: fadeInUp 0.8s ease forwards;
-        }
-        .section-card:nth-child(1) { animation-delay: 0.1s; }
-        .section-card:nth-child(2) { animation-delay: 0.2s; }
-        .section-card:nth-child(3) { animation-delay: 0.3s; }
-        @keyframes fadeInUp {
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MedMind — Lab Reports Explainer · Engineering Roadmap</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:          #07090f;
+    --surface:     #0e1219;
+    --surface2:    #141b26;
+    --border:      #1e2d40;
+    --border2:     #243347;
+    --accent:      #00c2a8;
+    --accent2:     #0072f5;
+    --accent3:     #7b61ff;
+    --gold:        #f5c542;
+    --red:         #ff4d6d;
+    --green:       #2dd4bf;
+    --text:        #e8edf5;
+    --muted:       #6b7fa3;
+    --muted2:      #8fa3bf;
+    --code-bg:     #0a1120;
+    --tag-low:     rgba(0,194,168,.15);
+    --tag-low-t:   #2dd4bf;
+    --tag-high:    rgba(245,197,66,.13);
+    --tag-high-t:  #f5c542;
+    --tag-crit:    rgba(255,77,109,.15);
+    --tag-crit-t:  #ff4d6d;
+    --tag-norm:    rgba(45,212,191,.12);
+    --tag-norm-t:  #2dd4bf;
+    --r:           12px;
+    --r2:          8px;
+  }
 
-        @media (max-width: 800px) {
-            .content { padding: 1.5rem; }
-            .header-gradient { padding: 1.8rem; }
-            .grid-2col, .grid-3col { grid-template-columns: 1fr; }
-            .section-card { margin-bottom: 1.5rem; padding: 1.5rem 1.2rem; }
-        }
-    </style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Outfit', sans-serif;
+    font-size: 15px;
+    line-height: 1.75;
+    min-height: 100vh;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(7,9,15,.85);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 32px;
+    display: flex;
+    align-items: center;
+    gap: 32px;
+    height: 56px;
+  }
+  .nav-logo {
+    font-family: 'DM Serif Display', serif;
+    font-size: 20px;
+    color: var(--accent);
+    letter-spacing: -.3px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .nav-logo span { color: var(--text); }
+  .nav-links {
+    display: flex;
+    gap: 4px;
+    flex-wrap: wrap;
+    flex: 1;
+    overflow: hidden;
+  }
+  .nav-links a {
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 12.5px;
+    font-weight: 500;
+    padding: 4px 10px;
+    border-radius: 6px;
+    transition: all .18s;
+    white-space: nowrap;
+  }
+  .nav-links a:hover { color: var(--text); background: var(--surface2); }
+  .nav-badge {
+    background: var(--tag-low);
+    color: var(--accent);
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 20px;
+    border: 1px solid rgba(0,194,168,.25);
+    margin-left: auto;
+    flex-shrink: 0;
+  }
+
+  /* ── LAYOUT ── */
+  .container {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 0 32px;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    padding: 80px 32px 60px;
+    max-width: 1080px;
+    margin: 0 auto;
+    position: relative;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 50%; transform: translateX(-50%);
+    width: 700px; height: 300px;
+    background: radial-gradient(ellipse, rgba(0,194,168,.08) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--tag-low);
+    border: 1px solid rgba(0,194,168,.2);
+    color: var(--accent);
+    font-size: 12px;
+    font-weight: 600;
+    padding: 5px 14px;
+    border-radius: 20px;
+    letter-spacing: .5px;
+    text-transform: uppercase;
+    margin-bottom: 24px;
+  }
+  .hero-tag::before { content: '⬡'; font-size: 10px; }
+  .hero h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(36px, 5vw, 58px);
+    line-height: 1.1;
+    letter-spacing: -.5px;
+    margin-bottom: 18px;
+  }
+  .hero h1 em {
+    font-style: italic;
+    color: var(--accent);
+  }
+  .hero-sub {
+    font-size: 17px;
+    color: var(--muted2);
+    max-width: 580px;
+    line-height: 1.65;
+    margin-bottom: 36px;
+    font-weight: 300;
+  }
+  .hero-meta {
+    display: flex;
+    gap: 32px;
+    flex-wrap: wrap;
+  }
+  .hero-meta-item { display: flex; flex-direction: column; gap: 2px; }
+  .hero-meta-label { font-size: 11px; text-transform: uppercase; letter-spacing: .8px; color: var(--muted); font-weight: 600; }
+  .hero-meta-value { font-size: 14px; color: var(--text); font-weight: 500; }
+
+  /* ── SECTION ── */
+  section { padding: 64px 0; border-top: 1px solid var(--border); }
+  .section-header {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    margin-bottom: 36px;
+  }
+  .section-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    padding: 2px 8px;
+    border-radius: 4px;
+    flex-shrink: 0;
+  }
+  h2 {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(22px, 3vw, 30px);
+    color: var(--text);
+    letter-spacing: -.3px;
+  }
+  h3 {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 10px;
+  }
+  h4 {
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .7px;
+    color: var(--muted);
+    margin-bottom: 8px;
+  }
+  p { color: var(--muted2); margin-bottom: 14px; }
+  p:last-child { margin-bottom: 0; }
+
+  /* ── CARDS ── */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    padding: 24px;
+  }
+  .card-grid {
+    display: grid;
+    gap: 16px;
+  }
+  .card-grid-2 { grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
+  .card-grid-3 { grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+  .card-grid-4 { grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
+
+  .card-icon {
+    width: 40px; height: 40px;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+    margin-bottom: 12px;
+  }
+  .icon-teal  { background: rgba(0,194,168,.12); }
+  .icon-blue  { background: rgba(0,114,245,.12); }
+  .icon-purple{ background: rgba(123,97,255,.12); }
+  .icon-gold  { background: rgba(245,197,66,.12); }
+  .icon-red   { background: rgba(255,77,109,.12); }
+
+  .card h3 { margin-bottom: 6px; }
+  .card p  { font-size: 13.5px; }
+
+  /* ── BADGES / TAGS ── */
+  .badge {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 20px;
+    letter-spacing: .2px;
+  }
+  .badge-normal   { background: var(--tag-norm);  color: var(--tag-norm-t);  border: 1px solid rgba(45,212,191,.2); }
+  .badge-low      { background: var(--tag-low);   color: var(--tag-low-t);   border: 1px solid rgba(0,194,168,.2); }
+  .badge-high     { background: var(--tag-high);  color: var(--tag-high-t);  border: 1px solid rgba(245,197,66,.2); }
+  .badge-critical { background: var(--tag-crit);  color: var(--tag-crit-t);  border: 1px solid rgba(255,77,109,.2); }
+  .badge-blue     { background: rgba(0,114,245,.12); color: #60a5fa; border: 1px solid rgba(0,114,245,.2); }
+  .badge-purple   { background: rgba(123,97,255,.12); color: #a78bfa; border: 1px solid rgba(123,97,255,.2); }
+
+  /* ── CODE BLOCKS ── */
+  pre {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: var(--r2);
+    padding: 20px 24px;
+    overflow-x: auto;
+    font-family: 'DM Mono', monospace;
+    font-size: 12.5px;
+    line-height: 1.7;
+    color: #c9d8ef;
+  }
+  .code-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10.5px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: .8px;
+    padding: 6px 12px;
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-bottom: none;
+    border-radius: var(--r2) var(--r2) 0 0;
+    display: inline-block;
+  }
+  .code-label + pre { border-radius: 0 var(--r2) var(--r2) var(--r2); }
+  .kw  { color: #7b61ff; }
+  .str { color: #2dd4bf; }
+  .cm  { color: #4a5f80; font-style: italic; }
+  .fn  { color: #60a5fa; }
+  .num { color: #f5c542; }
+  .key { color: #c9d8ef; }
+  .val { color: #2dd4bf; }
+
+  /* ── TABLES ── */
+  .table-wrap { overflow-x: auto; border-radius: var(--r); border: 1px solid var(--border); }
+  table { width: 100%; border-collapse: collapse; }
+  thead tr { background: var(--surface2); }
+  th {
+    text-align: left;
+    padding: 12px 16px;
+    font-size: 11.5px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .6px;
+    color: var(--muted);
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+  }
+  td {
+    padding: 13px 16px;
+    font-size: 13.5px;
+    color: var(--muted2);
+    border-bottom: 1px solid var(--border);
+  }
+  tr:last-child td { border-bottom: none; }
+  tbody tr { transition: background .15s; }
+  tbody tr:hover { background: var(--surface2); }
+  td code, th code {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    background: var(--surface2);
+    border: 1px solid var(--border2);
+    padding: 2px 6px;
+    border-radius: 4px;
+    color: var(--accent);
+  }
+
+  /* ── LISTS ── */
+  ul.styled, ol.styled {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 0;
+  }
+  ul.styled li, ol.styled li {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    font-size: 13.5px;
+    color: var(--muted2);
+    line-height: 1.65;
+  }
+  ul.styled li::before {
+    content: '›';
+    color: var(--accent);
+    font-size: 16px;
+    line-height: 1.5;
+    flex-shrink: 0;
+  }
+  ol.styled { counter-reset: li; }
+  ol.styled li::before {
+    counter-increment: li;
+    content: counter(li);
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--accent);
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    font-weight: 600;
+    width: 22px; height: 22px;
+    border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  /* ── PIPELINE ── */
+  .pipeline {
+    display: flex;
+    align-items: stretch;
+    gap: 0;
+    flex-wrap: wrap;
+  }
+  .pipeline-step {
+    flex: 1;
+    min-width: 130px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 0;
+    padding: 18px 16px;
+    position: relative;
+    text-align: center;
+  }
+  .pipeline-step:first-child { border-radius: var(--r) 0 0 var(--r); }
+  .pipeline-step:last-child  { border-radius: 0 var(--r) var(--r) 0; }
+  .pipeline-step + .pipeline-step { border-left: none; }
+  .pipeline-step::after {
+    content: '→';
+    position: absolute;
+    right: -12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--accent);
+    font-size: 16px;
+    z-index: 1;
+    background: var(--bg);
+    padding: 0 2px;
+  }
+  .pipeline-step:last-child::after { display: none; }
+  .step-icon { font-size: 22px; margin-bottom: 6px; }
+  .step-label { font-size: 12px; font-weight: 600; color: var(--text); line-height: 1.3; }
+  .step-sub   { font-size: 10.5px; color: var(--muted); margin-top: 4px; }
+
+  /* ── WEEK CARDS ── */
+  .week-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 16px;
+  }
+  .week-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    padding: 22px;
+    position: relative;
+    overflow: hidden;
+  }
+  .week-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: var(--accent);
+    opacity: .5;
+  }
+  .week-card:nth-child(2)::before  { background: var(--accent2); }
+  .week-card:nth-child(3)::before  { background: var(--accent3); }
+  .week-card:nth-child(4)::before  { background: var(--gold); }
+  .week-card:nth-child(5)::before  { background: var(--accent); }
+  .week-card:nth-child(6)::before  { background: var(--accent2); }
+  .week-card:nth-child(7)::before  { background: var(--accent3); }
+  .week-card:nth-child(8)::before  { background: var(--green); }
+  .week-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: .7px;
+    margin-bottom: 6px;
+  }
+  .week-title { font-size: 15px; font-weight: 700; color: var(--text); margin-bottom: 14px; }
+  .week-tasks {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+  }
+  .week-tasks li {
+    font-size: 13px;
+    color: var(--muted2);
+    padding-left: 18px;
+    position: relative;
+    line-height: 1.5;
+  }
+  .week-tasks li::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 8px;
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+    opacity: .6;
+  }
+  .week-card:nth-child(2) .week-tasks li::before { background: var(--accent2); }
+  .week-card:nth-child(3) .week-tasks li::before { background: var(--accent3); }
+  .week-card:nth-child(4) .week-tasks li::before { background: var(--gold); }
+  .week-card:nth-child(5) .week-tasks li::before { background: var(--accent); }
+  .week-card:nth-child(6) .week-tasks li::before { background: var(--accent2); }
+  .week-card:nth-child(7) .week-tasks li::before { background: var(--accent3); }
+  .week-card:nth-child(8) .week-tasks li::before { background: var(--green); }
+
+  /* ── ARCH LAYERS ── */
+  .arch-layer {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    padding: 20px 24px;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+  }
+  .arch-layer-label {
+    width: 100px;
+    flex-shrink: 0;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .8px;
+    padding: 4px 10px;
+    border-radius: 6px;
+    text-align: center;
+    margin-top: 2px;
+  }
+  .arch-layer-label.fe  { background: rgba(0,114,245,.15); color: #60a5fa; }
+  .arch-layer-label.be  { background: rgba(0,194,168,.12); color: var(--accent); }
+  .arch-layer-label.ai  { background: rgba(123,97,255,.12); color: #a78bfa; }
+  .arch-layer-label.db  { background: rgba(245,197,66,.12); color: var(--gold); }
+  .arch-layer-content { flex: 1; }
+  .tech-pills { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+  .pill {
+    font-size: 12px;
+    font-weight: 500;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-family: 'DM Mono', monospace;
+  }
+  .pill-teal   { background: rgba(0,194,168,.1);  color: var(--accent);  border: 1px solid rgba(0,194,168,.2); }
+  .pill-blue   { background: rgba(0,114,245,.1);  color: #60a5fa;        border: 1px solid rgba(0,114,245,.2); }
+  .pill-purple { background: rgba(123,97,255,.1); color: #a78bfa;        border: 1px solid rgba(123,97,255,.2); }
+  .pill-gold   { background: rgba(245,197,66,.1); color: var(--gold);    border: 1px solid rgba(245,197,66,.2); }
+  .pill-red    { background: rgba(255,77,109,.1); color: #ff4d6d;        border: 1px solid rgba(255,77,109,.2); }
+  .pill-grey   { background: var(--surface2);     color: var(--muted2);  border: 1px solid var(--border); }
+
+  /* ── SCREEN CARDS ── */
+  .screen-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    overflow: hidden;
+  }
+  .screen-header {
+    background: var(--surface2);
+    padding: 14px 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border-bottom: 1px solid var(--border);
+  }
+  .screen-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    color: var(--accent);
+    padding: 2px 8px;
+    border-radius: 4px;
+    flex-shrink: 0;
+  }
+  .screen-name { font-size: 14px; font-weight: 600; color: var(--text); }
+  .screen-body { padding: 18px 20px; }
+  .screen-body p { font-size: 13px; }
+  .component-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 10px;
+  }
+
+  /* ── DATA FLOW ── */
+  .flow {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+  .flow-row {
+    display: flex;
+    align-items: stretch;
+    gap: 0;
+  }
+  .flow-node {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r2);
+    padding: 14px 20px;
+    flex: 1;
+    min-width: 0;
+  }
+  .flow-node-title { font-size: 13px; font-weight: 600; color: var(--text); }
+  .flow-node-sub   { font-size: 11.5px; color: var(--muted); margin-top: 3px; }
+  .flow-arrow {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 0 8px;
+    color: var(--accent);
+    font-size: 18px;
+    opacity: .6;
+  }
+  .flow-line {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px 0;
+    color: var(--accent);
+    opacity: .4;
+    font-size: 14px;
+  }
+
+  /* ── CHALLENGE CARDS ── */
+  .challenge-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--red);
+    border-radius: var(--r);
+    padding: 20px 24px;
+    margin-bottom: 12px;
+  }
+  .challenge-card.warn { border-left-color: var(--gold); }
+  .challenge-card.info { border-left-color: var(--accent2); }
+  .challenge-card h3 { font-size: 14.5px; margin-bottom: 6px; }
+  .challenge-card p  { font-size: 13.5px; }
+
+  /* ── FOLDER TREE ── */
+  .folder-tree {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    padding: 24px;
+    font-family: 'DM Mono', monospace;
+    font-size: 12.5px;
+    line-height: 2;
+  }
+  .t-dir  { color: #60a5fa; }
+  .t-file { color: var(--muted2); }
+  .t-comment { color: #4a5f80; font-style: italic; }
+  .t-indent1 { padding-left: 20px; }
+  .t-indent2 { padding-left: 40px; }
+  .t-indent3 { padding-left: 60px; }
+
+  /* ── JSON PREVIEW ── */
+  .json-preview {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    padding: 24px;
+    font-family: 'DM Mono', monospace;
+    font-size: 12.5px;
+    line-height: 1.8;
+  }
+
+  /* ── DIVIDER ── */
+  .divider {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 32px 0;
+  }
+
+  /* ── INLINE CODE ── */
+  code {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    background: var(--surface2);
+    border: 1px solid var(--border2);
+    padding: 1px 6px;
+    border-radius: 4px;
+    color: var(--accent);
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 32px;
+    text-align: center;
+    color: var(--muted);
+    font-size: 12.5px;
+  }
+  footer strong { color: var(--muted2); }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .hero { animation: fadeUp .6s ease both; }
+  section { animation: fadeUp .5s ease both; }
+  section:nth-child(2)  { animation-delay: .05s; }
+  section:nth-child(3)  { animation-delay: .10s; }
+  section:nth-child(4)  { animation-delay: .15s; }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 640px) {
+    nav { padding: 0 16px; }
+    .container { padding: 0 16px; }
+    .hero { padding: 48px 16px 40px; }
+    .pipeline { flex-direction: column; }
+    .pipeline-step { border-radius: var(--r) !important; border-left: 1px solid var(--border) !important; }
+    .pipeline-step::after { content: '↓'; right: auto; left: 50%; bottom: -14px; top: auto; transform: translateX(-50%); }
+    .pipeline-step:last-child::after { display: none; }
+    .arch-layer { flex-direction: column; }
+    .arch-layer-label { width: auto; }
+  }
+</style>
 </head>
 <body>
-<div class="roadmap-container">
-    <div class="header-gradient">
-        <h1>
-            <i class="fas fa-microscope"></i> 
-            MedMind · Lab Reports Explainer
-        </h1>
-        <div class="subhead">Production-grade execution roadmap for Core Module 1 — from messy PDFs to clinical-grade explanations.</div>
-        <div class="badge-module"><i class="fas fa-calendar-alt"></i> 8-week sprint · FAANG-level engineering · v1.0</div>
+
+<!-- ░░ NAV ░░ -->
+<nav>
+  <div class="nav-logo">Med<span>Mind</span></div>
+  <div class="nav-links">
+    <a href="#overview">Overview</a>
+    <a href="#architecture">Architecture</a>
+    <a href="#pipeline">Pipeline</a>
+    <a href="#api">API</a>
+    <a href="#database">Database</a>
+    <a href="#screens">Screens</a>
+    <a href="#roadmap">Roadmap</a>
+    <a href="#structure">Structure</a>
+    <a href="#challenges">Challenges</a>
+    <a href="#testing">Testing</a>
+  </div>
+  <div class="nav-badge">Core Module 1</div>
+</nav>
+
+<!-- ░░ HERO ░░ -->
+<div class="hero">
+  <div class="hero-tag">Engineering Execution Roadmap</div>
+  <h1>Lab Reports <em>Explainer</em></h1>
+  <p class="hero-sub">A complete technical blueprint for building the AI-powered lab report analysis module of MedMind — from document parsing through NER extraction to plain-English explanations.</p>
+  <div class="hero-meta">
+    <div class="hero-meta-item">
+      <span class="hero-meta-label">Platform</span>
+      <span class="hero-meta-value">MedMind · Health Intelligence</span>
     </div>
+    <div class="hero-meta-item">
+      <span class="hero-meta-label">Duration</span>
+      <span class="hero-meta-value">Month 1 – 2 (8 Weeks)</span>
+    </div>
+    <div class="hero-meta-item">
+      <span class="hero-meta-label">Stack</span>
+      <span class="hero-meta-value">FastAPI · scispaCy · BioGPT · React</span>
+    </div>
+    <div class="hero-meta-item">
+      <span class="hero-meta-label">Module</span>
+      <span class="hero-meta-value">Lab Reports Explainer</span>
+    </div>
+  </div>
+</div>
 
-    <div class="content">
-        <!-- High-Level Overview & Architecture -->
-        <div class="section-card">
-            <div class="section-title"><i class="fas fa-cubes"></i> 1. High-level module overview</div>
-            <p style="font-size: 1.1rem; margin-bottom: 1.2rem;">Users upload lab reports (PDF/DOCX/TXT) → receive structured JSON with plain‑English explanations, status (normal/low/high/critical), and possible causes. Fully transparent AI pipeline with BioGPT/Mistral.</p>
-            <div class="grid-2col">
-                <div>
-                    <h3 style="margin-bottom: 1rem;"><i class="fas fa-bullseye" style="color:#1e4a7a;"></i> Goals</h3>
-                    <ul class="icon-list">
-                        <li><i class="fas fa-check-circle" style="color:#2e7d32;"></i> 99% extraction accuracy for structured lab names</li>
-                        <li><i class="fas fa-check-circle" style="color:#2e7d32;"></i> < 3 sec latency for explanation generation (CPU)</li>
-                        <li><i class="fas fa-check-circle" style="color:#2e7d32;"></i> Support 200+ lab tests using LOINC & medical DB</li>
-                        <li><i class="fas fa-check-circle" style="color:#2e7d32;"></i> Actionable causes via biomedical literature fine-tuning</li>
-                    </ul>
-                </div>
-                <div>
-                    <h3 style="margin-bottom: 1rem;"><i class="fas fa-chart-line"></i> Key metrics</h3>
-                    <ul class="icon-list">
-                        <li><i class="fas fa-chart-pie"></i> 98% precision on test extraction</li>
-                        <li><i class="fas fa-chart-pie"></i> 95% user satisfaction on explanation clarity</li>
-                        <li><i class="fas fa-chart-pie"></i> < 0.5% critical misclassification</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
+<!-- ░░░░░░░░░░░░░░░░░░░░░░░░ MAIN ░░░░░░░░░░░░░░░░░░░░░░░░ -->
+<main class="container">
 
-        <!-- System Architecture -->
-        <div class="section-card">
-            <div class="section-title"><i class="fas fa-sitemap"></i> 2. System architecture</div>
-            <div class="grid-2col" style="margin-bottom: 1rem;">
-                <div>
-                    <span class="badge">frontend</span> React + Tailwind · <span class="badge">backend</span> FastAPI (Python)<br>
-                    <span class="badge">AI</span> BioGPT (ONNX) / Ollama (Mistral) · <span class="badge">db</span> SQLite + LOINC dataset
-                </div>
-                <div style="text-align: right;"><i class="fas fa-arrow-right"></i> fully containerized with Docker</div>
-            </div>
-            <div class="code-block">
-                ┌────────────┐     ┌────────────┐     ┌────────────────┐     ┌────────────┐<br>
-                │   Browser  │ ──> │  FastAPI   │ ──> │   AI Pipeline  │ ──> │  SQLite    │<br>
-                │ (React SPA)│ <─> │ (uvicorn)  │ <─> │(NER / BioGPT) │ <─> │ranges+reports│<br>
-                └────────────┘     └────────────┘     └────────────────┘     └────────────┘
-            </div>
-        </div>
+<!-- ═══ 1. OVERVIEW ═══ -->
+<section id="overview">
+  <div class="section-header">
+    <span class="section-num">01</span>
+    <h2>Module Overview</h2>
+  </div>
+  <p>The Lab Reports Explainer is the flagship feature of MedMind. It transforms unstructured medical documents into structured, human-readable health insights — removing the barrier between raw diagnostic data and patient understanding.</p>
 
-        <!-- Processing Pipeline & Workflows -->
-        <div class="section-card">
-            <div class="section-title"><i class="fas fa-robot"></i> 3. AI processing pipeline</div>
-            <div class="flow-steps" style="margin-bottom: 2rem;">
-                <span class="flow-step"><i class="fas fa-file-pdf"></i> Upload</span>
-                <span class="arrow"><i class="fas fa-chevron-right"></i></span>
-                <span class="flow-step"><i class="fas fa-parse"></i> Parsing</span>
-                <span class="arrow"><i class="fas fa-chevron-right"></i></span>
-                <span class="flow-step"><i class="fas fa-dna"></i> NER + regex</span>
-                <span class="arrow"><i class="fas fa-chevron-right"></i></span>
-                <span class="flow-step"><i class="fas fa-balance-scale"></i> Range compare</span>
-                <span class="arrow"><i class="fas fa-chevron-right"></i></span>
-                <span class="flow-step"><i class="fas fa-comment-medical"></i> BioGPT explain</span>
-                <span class="arrow"><i class="fas fa-chevron-right"></i></span>
-                <span class="flow-step"><i class="fas fa-clipboard-list"></i> JSON output</span>
-            </div>
-            <div class="grid-3col">
-                <div><h4>📄 Document parsing</h4>PyMuPDF (images), pdfplumber (tables), python-docx, fallback text extraction.</div>
-                <div><h4>🧪 Test extraction</h4>scispaCy (en_ner_bc5cdr_md) + LOINC mapped regex patterns.</div>
-                <div><h4>🧠 Explanation + causes</h4>BioGPT (microsoft/BioGPT) or Mistral-7B via Ollama prompt: <span class="inline-code">"explain {test} = {value} {unit}, status {status}"</span></div>
-            </div>
-        </div>
+  <div class="card-grid card-grid-3" style="margin-top: 24px;">
+    <div class="card">
+      <div class="card-icon icon-teal">📄</div>
+      <h3>Document Ingestion</h3>
+      <p>Accepts PDF, DOCX, and TXT lab reports via drag-and-drop or paste. Parses and normalizes raw text using PyMuPDF, pdfplumber, and python-docx.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon icon-blue">🔬</div>
+      <h3>Test Extraction</h3>
+      <p>Uses scispaCy NER + regex to locate and extract test names, numeric values, and units from heterogeneous lab report layouts.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon icon-purple">📊</div>
+      <h3>Range Classification</h3>
+      <p>Compares each test against a LOINC-mapped SQLite reference database. Classifies results as Normal, Low, High, or Critical.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon icon-gold">🧠</div>
+      <h3>AI Explanation</h3>
+      <p>BioGPT or Mistral 7B via Ollama generates plain-English explanations and suggests possible causes for every abnormal result.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon icon-teal">⚡</div>
+      <h3>Structured Output</h3>
+      <p>Returns a clean JSON payload: test list, statuses, explanations, causes, a summary string, and a total risk count.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon icon-red">🔒</div>
+      <h3>Secure & Private</h3>
+      <p>Reports stored per-user in SQLite with JWT auth. No PHI leaves the server. Files processed in-memory and discarded.</p>
+    </div>
+  </div>
 
-        <!-- Detailed Workflow Cards (4,5,6,7,8) compressed into clear blocks -->
-        <div class="grid-2col">
-            <div class="section-card">
-                <h3 style="display: flex; gap:8px;"><i class="fas fa-file-import"></i> 4. Document parsing workflow</h3>
-                <ul class="icon-list">
-                    <li><i class="fas fa-cog"></i> <strong>PDF</strong>: try PyMuPDF for text; if low density → pdfplumber table extraction + OCR fallback (Tesseract).</li>
-                    <li><i class="fas fa-cog"></i> <strong>DOCX</strong>: python-docx extract paragraphs & tables.</li>
-                    <li><i class="fas fa-cog"></i> <strong>TXT</strong>: raw text cleaning (remove extra spaces).</li>
-                </ul>
-            </div>
-            <div class="section-card">
-                <h3 style="display: flex; gap:8px;"><i class="fas fa-search"></i> 5. Test extraction workflow</h3>
-                <ul class="icon-list">
-                    <li><i class="fas fa-cog"></i> <strong>NER</strong>: scispaCy identifies medical entities (test names).</li>
-                    <li><i class="fas fa-cog"></i> <strong>Regex</strong>: patterns like <span class="inline-code">(Hemoglobin|Hb)\s*:?\s*([\d.]+)</span></li>
-                    <li><i class="fas fa-cog"></i> <strong>LOINC mapping</strong>: link synonyms to standard LOINC codes.</li>
-                </ul>
-            </div>
-            <div class="section-card">
-                <h3><i class="fas fa-arrows-alt-h"></i> 6. Normal range comparison</h3>
-                <p>SQLite table <span class="inline-code">lab_ranges</span> (test_name_clean, age_low, age_high, sex, low, high, unit, critical_low, critical_high). Compare value → status: critical/low/normal/high/critical.</p>
-            </div>
-            <div class="section-card">
-                <h3><i class="fas fa-comment-dots"></i> 7. Explanation generation</h3>
-                <p>Prompt BioGPT: <span class="inline-code">"Hemoglobin 10.2 g/dL is low. Write one sentence explaining what low hemoglobin means."</span> Cached for common tests.</p>
-            </div>
-        </div>
-        <div class="section-card">
-            <h3><i class="fas fa-exclamation-triangle"></i> 8. Possible cause detection</h3>
-            <p>Two-tier: rule-based (if low hemoglobin → ["iron deficiency","chronic disease","blood loss"]) + BioGPT/Mistral refinement. Causes stored in <span class="inline-code">causes_db</span> keyed by test & direction.</p>
-        </div>
+  <!-- Example JSON Output -->
+  <div style="margin-top: 32px;">
+    <div class="code-label">Example Output — POST /api/lab/analyze/{'{doc_id}'}</div>
+    <pre><span class="kw">{</span>
+  <span class="key">"tests"</span><span class="kw">:</span> <span class="kw">[</span>
+    <span class="kw">{</span>
+      <span class="key">"name"</span><span class="kw">:</span>        <span class="str">"Hemoglobin"</span><span class="kw">,</span>
+      <span class="key">"value"</span><span class="kw">:</span>       <span class="num">10.2</span><span class="kw">,</span>
+      <span class="key">"unit"</span><span class="kw">:</span>        <span class="str">"g/dL"</span><span class="kw">,</span>
+      <span class="key">"status"</span><span class="kw">:</span>      <span class="str">"Low"</span><span class="kw">,</span>
+      <span class="key">"normal_range"</span><span class="kw">:</span> <span class="str">"12.0–17.5 g/dL"</span><span class="kw">,</span>
+      <span class="key">"explanation"</span><span class="kw">:</span> <span class="str">"Hemoglobin carries oxygen in red blood cells..."</span><span class="kw">,</span>
+      <span class="key">"causes"</span><span class="kw">:</span>      <span class="kw">[</span><span class="str">"Iron deficiency"</span><span class="kw">,</span> <span class="str">"Chronic disease"</span><span class="kw">,</span> <span class="str">"B12 deficiency"</span><span class="kw">]</span>
+    <span class="kw">},</span>
+    <span class="kw">{</span>
+      <span class="key">"name"</span><span class="kw">:</span>        <span class="str">"Glucose (Fasting)"</span><span class="kw">,</span>
+      <span class="key">"value"</span><span class="kw">:</span>       <span class="num">112</span><span class="kw">,</span>
+      <span class="key">"unit"</span><span class="kw">:</span>        <span class="str">"mg/dL"</span><span class="kw">,</span>
+      <span class="key">"status"</span><span class="kw">:</span>      <span class="str">"Normal"</span><span class="kw">,</span>
+      <span class="key">"normal_range"</span><span class="kw">:</span> <span class="str">"70–125 mg/dL"</span><span class="kw">,</span>
+      <span class="key">"explanation"</span><span class="kw">:</span> <span class="str">"Blood glucose is within normal fasting range..."</span><span class="kw">,</span>
+      <span class="key">"causes"</span><span class="kw">:</span>      <span class="kw">[]</span>
+    <span class="kw">}</span>
+  <span class="kw">],</span>
+  <span class="key">"summary"</span><span class="kw">:</span>    <span class="str">"1 abnormal result detected — Low Hemoglobin requires attention."</span><span class="kw">,</span>
+  <span class="key">"risk_count"</span><span class="kw">:</span> <span class="num">1</span>
+<span class="kw">}</span></pre>
+  </div>
+</section>
 
-        <!-- API Design + Database Schema -->
-        <div class="grid-2col">
-            <div class="section-card">
-                <div class="section-title" style="font-size:1.5rem; border:none;"><i class="fas fa-plug"></i> 9. API design</div>
-                <div class="code-block" style="font-size:0.85rem;">
-POST /api/lab/upload   (multipart/form-data) → {doc_id, filename}<br>
-POST /api/lab/analyze/{doc_id} → {<br>
-  "tests": [{"name":"Hemoglobin","value":10.2,"unit":"g/dL","status":"Low",<br> "explanation":"...", "causes":["..."]}],<br>
-  "summary":"2 abnormal", "risk_count":2<br>
-}
-                </div>
-            </div>
-            <div class="section-card">
-                <div class="section-title" style="font-size:1.5rem; border:none;"><i class="fas fa-database"></i> 10. Database schema</div>
-                <div class="code-block" style="font-size:0.8rem;">
--- lab_ranges<br>
-id, loinc_code, test_name, gender, age_min, age_max,<br>
-range_low, range_high, unit, critical_low, critical_high<br>
--- reports<br>
-id, filename, user_id, upload_time, json_result<br>
--- explanations_cache (test_name+value+unit → explanation)
-                </div>
-            </div>
-        </div>
 
-        <!-- UI Screens -->
-        <div class="section-card">
-            <div class="section-title"><i class="fas fa-mobile-alt"></i> 11. UI screen implementation plan</div>
-            <div style="display:flex; flex-wrap: wrap; gap: 1rem; margin-bottom: 1rem;">
-                <span class="badge">Landing</span> <span class="badge">Auth (signup/login/forgot)</span> <span class="badge">Dashboard</span> <span class="badge">Upload (drag-drop)</span> <span class="badge">Processing animation</span> <span class="badge">Overview table</span> <span class="badge">Detailed explanation</span> <span class="badge">History</span>
-            </div>
-            <div class="grid-3col">
-                <div><i class="fas fa-check-circle" style="color:#2e7d32;"></i> <strong>Screens 1-4</strong> (Landing, Signup, Login, Forgot) – React + Tailwind, form validation, JWT tokens.</div>
-                <div><i class="fas fa-check-circle" style="color:#2e7d32;"></i> <strong>Screens 5-7</strong> (Dashboard, Upload, Processing) – file dropzone, animated progress steps (parsing → extracting → comparing → explaining).</div>
-                <div><i class="fas fa-check-circle" style="color:#2e7d32;"></i> <strong>Screens 8-10</strong> (Analysis overview, detailed test, history) – color‑coded table, expandable panels, previous reports list.</div>
-            </div>
-        </div>
+<!-- ═══ 2. SYSTEM ARCHITECTURE ═══ -->
+<section id="architecture">
+  <div class="section-header">
+    <span class="section-num">02</span>
+    <h2>System Architecture</h2>
+  </div>
+  <p>A four-layer stack: React frontend communicates with a FastAPI backend. The backend orchestrates an AI processing pipeline. Results are persisted in SQLite.</p>
 
-        <!-- Development Roadmap - 8 weeks -->
-        <div class="section-card">
-            <div class="section-title"><i class="fas fa-tasks"></i> 12. Step-by-step development schedule</div>
-            <table>
-                <tr><th>Week</th><th>Engineering tasks (specific, deliverables)</th></tr>
-                <tr class="week-row"><td>📆 Week 1</td><td>⚙️ FastAPI project structure + SQLite schema (lab_ranges, reports). ⚙️ Integrate PyMuPDF, pdfplumber, python-docx. ⚙️ Basic /upload endpoint saving file.</td></tr>
-                <tr class="week-row"><td>📆 Week 2</td><td>🔍 Build test extraction pipeline: scispaCy NER model wrapper + regex fallback. 🔍 Load LOINC CSV into lab_ranges.</td></tr>
-                <tr class="week-row"><td>📆 Week 3</td><td>📊 Range comparison logic (age/gender aware). Unit tests for 50+ lab tests. 📊 Implement status classification (normal/low/high/critical).</td></tr>
-                <tr class="week-row"><td>📆 Week 4</td><td>🧠 Integrate BioGPT (via transformers) for explanation generation; prompt design; caching layer. 🧠 possible cause rule engine (fallback).</td></tr>
-                <tr class="week-row"><td>📆 Week 5</td><td>🌐 Frontend: Landing, Signup, Login, Forgot (JWT auth, local storage). Connect to mock API.</td></tr>
-                <tr class="week-row"><td>📆 Week 6</td><td>🖥️ Dashboard, Upload (dropzone), Processing animation (SSE or polling). Report overview table (colored badges).</td></tr>
-                <tr class="week-row"><td>📆 Week 7</td><td>📋 Detailed test view (expandable), Report History page. Polish UI responsiveness.</td></tr>
-                <tr class="week-row"><td>📆 Week 8</td><td>🚀 Full integration, stress test with 100+ lab reports, performance tuning (BioGPT on CPU), deploy staging.</td></tr>
-            </table>
-        </div>
+  <div class="arch-layer">
+    <div class="arch-layer-label fe">Frontend</div>
+    <div class="arch-layer-content">
+      <h3>React + Tailwind CSS SPA</h3>
+      <p>Handles file upload, streaming progress, and interactive result rendering. Communicates with backend via REST + optional WebSocket for processing status updates.</p>
+      <div class="tech-pills">
+        <span class="pill pill-blue">React 18</span>
+        <span class="pill pill-blue">Tailwind CSS</span>
+        <span class="pill pill-blue">React Query</span>
+        <span class="pill pill-blue">Axios</span>
+        <span class="pill pill-blue">Framer Motion</span>
+        <span class="pill pill-grey">React Dropzone</span>
+      </div>
+    </div>
+  </div>
 
-        <!-- Folder Structure -->
-        <div class="grid-2col">
-            <div class="section-card">
-                <div class="section-title" style="font-size:1.5rem;"><i class="fas fa-folder-open"></i> 13. Folder structure</div>
-                <div class="folder-structure">
-                    medmind-lab-explainer/<br>
-                    ├── backend/<br>
-                    │   ├── api/ (routes, deps)<br>
-                    │   ├── services/<br>
-                    │   │   ├── parser/ (pdf, docx, txt)<br>
-                    │   │   ├── extractor/ (ner, regex)<br>
-                    │   │   ├── comparator/ (ranges)<br>
-                    │   │   └── explainer/ (biogpt, causes)<br>
-                    │   ├── models/ (sqlite)<br>
-                    │   └── main.py<br>
-                    ├── frontend/<br>
-                    │   ├── src/components/<br>
-                    │   ├── pages/<br>
-                    │   └── ...<br>
-                    ├── data/<br>
-                    │   ├── loinc.csv<br>
-                    │   └── lab_ranges.db<br>
-                    └── docker-compose.yml
-                </div>
-            </div>
-            <div class="section-card">
-                <div class="section-title" style="font-size:1.5rem;"><i class="fas fa-project-diagram"></i> 14. Data flow diagram</div>
-                <div class="code-block" style="background: #eaf0f8; color:#1e2f41;">
-User upload (PDF/DOCX/TXT) <br>    ↓<br>[Parser] → raw text + tables<br>    ↓<br>[NER + regex] → list of (test, value, unit)<br>    ↓<br>[Range comparator] (SQLite) → status per test<br>    ↓<br>[Explanation generator] + possible causes<br>    ↓<br>JSON response → UI rendering
-                </div>
-            </div>
-        </div>
+  <div class="arch-layer">
+    <div class="arch-layer-label be">Backend</div>
+    <div class="arch-layer-content">
+      <h3>FastAPI Python Application</h3>
+      <p>Handles authentication, file ingestion, dispatches parsing and analysis tasks, and returns structured JSON. Async-first with background task support.</p>
+      <div class="tech-pills">
+        <span class="pill pill-teal">Python 3.11</span>
+        <span class="pill pill-teal">FastAPI</span>
+        <span class="pill pill-teal">Uvicorn</span>
+        <span class="pill pill-teal">python-multipart</span>
+        <span class="pill pill-teal">PyJWT</span>
+        <span class="pill pill-grey">Pydantic v2</span>
+      </div>
+    </div>
+  </div>
 
-        <!-- Engineering Challenges & Testing -->
-        <div class="grid-2col">
-            <div class="section-card">
-                <div class="section-title" style="font-size:1.5rem;"><i class="fas fa-bug"></i> 15. Key engineering challenges</div>
-                <ul class="icon-list">
-                    <li><i class="fas fa-file-pdf" style="color:#c72a2a;"></i> <strong>Messy formats:</strong> scanned PDFs, handwritten tables → OCR with Tesseract + layout analysis.</li>
-                    <li><i class="fas fa-table"></i> <strong>Embedded tables:</strong> pdfplumber + heuristics to extract test-name/value/unit columns.</li>
-                    <li><i class="fas fa-brain"></i> <strong>NER accuracy:</strong> fine-tune scispaCy on 500 annotated lab reports.</li>
-                    <li><i class="fas fa-balance-scale"></i> <strong>Range ambiguity:</strong> different labs use different reference ranges – store multiple ranges per test (age/sex).</li>
-                </ul>
-            </div>
-            <div class="section-card">
-                <div class="section-title" style="font-size:1.5rem;"><i class="fas fa-vial"></i> 16. Testing strategy</div>
-                <ul class="icon-list">
-                    <li><i class="fas fa-check"></i> <strong>Unit:</strong> parser fixtures (PDF, DOCX, TXT samples).</li>
-                    <li><i class="fas fa-check"></i> <strong>Extraction:</strong> compare NER output with annotated ground truth (accuracy > 95%).</li>
-                    <li><i class="fas fa-check"></i> <strong>Classification:</strong> 1000+ synthetic test values, validate status correctness.</li>
-                    <li><i class="fas fa-check"></i> <strong>API integration:</strong> pytest + upload real files, assert JSON structure.</li>
-                    <li><i class="fas fa-check"></i> <strong>Load:</strong> 50 concurrent uploads, measure P95 latency.</li>
-                </ul>
-            </div>
-        </div>
+  <div class="arch-layer">
+    <div class="arch-layer-label ai">AI Pipeline</div>
+    <div class="arch-layer-content">
+      <h3>Document Parsing → NER → Classification → Explanation</h3>
+      <p>A sequential processing pipeline: raw file → parsed text → extracted tests → range-compared results → AI-generated explanations. Each stage is a separate Python service module.</p>
+      <div class="tech-pills">
+        <span class="pill pill-purple">PyMuPDF</span>
+        <span class="pill pill-purple">pdfplumber</span>
+        <span class="pill pill-purple">python-docx</span>
+        <span class="pill pill-purple">scispaCy</span>
+        <span class="pill pill-purple">BioGPT</span>
+        <span class="pill pill-purple">Mistral 7B / Ollama</span>
+      </div>
+    </div>
+  </div>
 
-        <!-- Example output badge -->
-        <hr>
-        <div style="display: flex; justify-content: space-between; align-items: center;">
-            <div>
-                <span class="status-badge"><i class="fas fa-check-circle"></i> Normal</span>
-                <span class="status-badge high"><i class="fas fa-exclamation-triangle"></i> High</span>
-                <span class="status-badge critical"><i class="fas fa-skull-crosswalk"></i> Critical</span>
-            </div>
-            <div style="font-size: 0.95rem;"><i class="fas fa-flask"></i> Example output: <span class="inline-code">{tests:[{name:"Hemoglobin",value:10.2,unit:"g/dL",status:"Low",explanation:"...",causes:["Iron deficiency"]}]}</span></div>
-        </div>
-        <hr>
+  <div class="arch-layer">
+    <div class="arch-layer-label db">Database</div>
+    <div class="arch-layer-content">
+      <h3>SQLite — Two Schemas</h3>
+      <p>Application DB stores users and reports. Reference DB holds LOINC-sourced normal ranges for 300+ common lab tests. Accessed via raw SQL with aiosqlite for async queries.</p>
+      <div class="tech-pills">
+        <span class="pill pill-gold">SQLite</span>
+        <span class="pill pill-gold">LOINC CSV</span>
+        <span class="pill pill-gold">aiosqlite</span>
+        <span class="pill pill-grey">DB Browser for SQLite</span>
+      </div>
+    </div>
+  </div>
+</section>
 
-        <!-- footer note -->
-        <div style="color:#3b5777; font-size:0.9rem; text-align: center; padding-top: 1rem;">
-            <i class="fas fa-rocket"></i> MedMind · Lab Explainer — ready for FAANG-level final year project · built with <i class="fas fa-heart" style="color:#c44545;"></i> for execution clarity
+
+<!-- ═══ 3. AI PROCESSING PIPELINE ═══ -->
+<section id="pipeline">
+  <div class="section-header">
+    <span class="section-num">03</span>
+    <h2>AI Processing Pipeline</h2>
+  </div>
+  <p>Every uploaded file passes through six sequential stages. Each stage is an independent, testable Python module connected by a shared <code>ReportContext</code> data object.</p>
+
+  <div class="pipeline" style="margin: 28px 0 36px;">
+    <div class="pipeline-step">
+      <div class="step-icon">📂</div>
+      <div class="step-label">File Ingestion</div>
+      <div class="step-sub">Validate type & size</div>
+    </div>
+    <div class="pipeline-step">
+      <div class="step-icon">📝</div>
+      <div class="step-label">Text Extraction</div>
+      <div class="step-sub">PDF/DOCX/TXT parser</div>
+    </div>
+    <div class="pipeline-step">
+      <div class="step-icon">🔎</div>
+      <div class="step-label">NER + Regex</div>
+      <div class="step-sub">Test name detection</div>
+    </div>
+    <div class="pipeline-step">
+      <div class="step-icon">📏</div>
+      <div class="step-label">Range Compare</div>
+      <div class="step-sub">LOINC DB lookup</div>
+    </div>
+    <div class="pipeline-step">
+      <div class="step-icon">🧠</div>
+      <div class="step-label">AI Explanation</div>
+      <div class="step-sub">BioGPT / Mistral</div>
+    </div>
+    <div class="pipeline-step">
+      <div class="step-icon">📤</div>
+      <div class="step-label">JSON Response</div>
+      <div class="step-sub">Structured output</div>
+    </div>
+  </div>
+
+  <!-- ── Document Parsing ── -->
+  <h3 style="margin-bottom:12px;">Stage 1–2 · Document Parsing Workflow</h3>
+  <div class="card-grid card-grid-3" style="margin-bottom: 28px;">
+    <div class="card">
+      <span class="badge badge-blue" style="margin-bottom:10px;">PDF</span>
+      <h3>PyMuPDF + pdfplumber</h3>
+      <p>PyMuPDF handles standard PDFs. pdfplumber is used as a fallback for scanned or table-heavy PDFs. Tables are extracted as structured grids.</p>
+    </div>
+    <div class="card">
+      <span class="badge badge-purple" style="margin-bottom:10px;">DOCX</span>
+      <h3>python-docx</h3>
+      <p>Extracts paragraphs, tables, and runs. Handles merged cells and multi-column tables that are common in DOCX lab reports.</p>
+    </div>
+    <div class="card">
+      <span class="badge badge-low" style="margin-bottom:10px;">TXT / Paste</span>
+      <h3>Plain Text</h3>
+      <p>Raw text is accepted directly. Line-by-line parsing applies regex patterns without any document library overhead.</p>
+    </div>
+  </div>
+
+  <!-- ── Test Extraction ── -->
+  <h3 style="margin-bottom:12px;">Stage 3 · Test Extraction Workflow</h3>
+  <div class="code-label">services/extractor.py</div>
+  <pre><span class="cm"># Dual-strategy extraction: NER first, then regex fallback</span>
+
+<span class="kw">import</span> spacy
+<span class="kw">import</span> re
+
+nlp = spacy.<span class="fn">load</span>(<span class="str">"en_core_sci_sm"</span>)   <span class="cm"># scispaCy biomedical NER</span>
+
+<span class="cm"># Regex: captures  "Test Name    Value   Unit   Range"</span>
+TEST_PATTERN = re.<span class="fn">compile</span>(
+    <span class="str">r"(?P&lt;name&gt;[A-Za-z][A-Za-z\s\(\)/]+?)\s+"</span>
+    <span class="str">r"(?P&lt;value&gt;\d+\.?\d*)\s*"</span>
+    <span class="str">r"(?P&lt;unit&gt;[a-zA-Z/%]+(?:/[a-zA-Z]+)?)\s*"</span>
+    <span class="str">r"(?P&lt;range&gt;\d+\.?\d*\s*[-–]\s*\d+\.?\d*)?"</span><span class="kw">,</span>
+    re.MULTILINE
+)
+
+<span class="kw">def</span> <span class="fn">extract_tests</span>(text: <span class="fn">str</span>) -&gt; <span class="fn">list</span><span class="kw">[</span>dict<span class="kw">]</span>:
+    results = []
+    doc = <span class="fn">nlp</span>(text)
+
+    <span class="cm"># Pass 1: NER entities labeled as LAB_VALUE</span>
+    ner_spans = <span class="kw">{</span>ent.text: ent.label_ <span class="kw">for</span> ent <span class="kw">in</span> doc.ents<span class="kw">}</span>
+
+    <span class="cm"># Pass 2: Regex for precise value + unit extraction</span>
+    <span class="kw">for</span> match <span class="kw">in</span> TEST_PATTERN.<span class="fn">finditer</span>(text):
+        results.<span class="fn">append</span>(<span class="kw">{</span>
+            <span class="str">"name"</span><span class="kw">:</span>  match.<span class="fn">group</span>(<span class="str">"name"</span>).<span class="fn">strip</span>()<span class="kw">,</span>
+            <span class="str">"value"</span><span class="kw">:</span> <span class="fn">float</span>(match.<span class="fn">group</span>(<span class="str">"value"</span>))<span class="kw">,</span>
+            <span class="str">"unit"</span><span class="kw">:</span>  match.<span class="fn">group</span>(<span class="str">"unit"</span>)<span class="kw">,</span>
+        <span class="kw">}</span>)
+
+    <span class="kw">return</span> results</pre>
+
+  <!-- ── Range Comparison ── -->
+  <h3 style="margin-bottom:12px; margin-top:28px;">Stage 4 · Normal Range Comparison Logic</h3>
+  <div class="card-grid card-grid-2" style="margin-bottom: 28px;">
+    <div class="card">
+      <h3>Classification Rules</h3>
+      <ul class="styled" style="margin-top:10px;">
+        <li>Query SQLite <code>lab_ranges</code> by test name (fuzzy match with <code>difflib</code>)</li>
+        <li>If <code>value &lt; min_range</code> → status = <strong>Low</strong></li>
+        <li>If <code>value &gt; max_range</code> → status = <strong>High</strong></li>
+        <li>If value &gt; 2× max or &lt; 0.5× min → status = <strong>Critical</strong></li>
+        <li>Otherwise → status = <strong>Normal</strong></li>
+        <li>No match found → status = <strong>Unknown</strong></li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Status Badge Reference</h3>
+      <div style="display:flex; flex-direction:column; gap:10px; margin-top:10px;">
+        <div style="display:flex; align-items:center; gap:12px;">
+          <span class="badge badge-normal">Normal</span>
+          <span style="font-size:13px; color:var(--muted2);">Value within reference interval</span>
         </div>
-    </div> <!-- end content -->
-</div> <!-- end container -->
+        <div style="display:flex; align-items:center; gap:12px;">
+          <span class="badge badge-low">Low</span>
+          <span style="font-size:13px; color:var(--muted2);">Value below minimum threshold</span>
+        </div>
+        <div style="display:flex; align-items:center; gap:12px;">
+          <span class="badge badge-high">High</span>
+          <span style="font-size:13px; color:var(--muted2);">Value above maximum threshold</span>
+        </div>
+        <div style="display:flex; align-items:center; gap:12px;">
+          <span class="badge badge-critical">Critical</span>
+          <span style="font-size:13px; color:var(--muted2);">Value dangerously out of range</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Explanation Generation ── -->
+  <h3 style="margin-bottom:12px;">Stage 5 · Explanation Generation Pipeline</h3>
+  <p>For each extracted test, a structured prompt is built and passed to the AI model. Two model options are supported — BioGPT (CPU-friendly, offline) and Mistral 7B via Ollama (richer output, requires GPU or local server).</p>
+  <div class="code-label">services/explainer.py — Prompt Template</div>
+  <pre>PROMPT_TEMPLATE = <span class="str">"""
+You are a medical assistant AI explaining lab results to a non-medical patient.
+
+Test: {name}
+Value: {value} {unit}
+Status: {status}
+Reference Range: {normal_range}
+
+Explain in 2-3 simple sentences what this test measures and what the result means.
+Then list 3 possible medical causes for this result (if abnormal).
+Respond as JSON: {{"explanation": "...", "causes": ["...", "...", "..."]}}
+"""</span>
+
+<span class="kw">def</span> <span class="fn">generate_explanation</span>(test: dict) -&gt; dict:
+    prompt = PROMPT_TEMPLATE.<span class="fn">format</span>(**test)
+
+    <span class="cm"># Option A: BioGPT (transformers)</span>
+    <span class="cm"># from transformers import pipeline</span>
+    <span class="cm"># pipe = pipeline("text-generation", model="microsoft/BioGPT")</span>
+
+    <span class="cm"># Option B: Mistral via Ollama (local API)</span>
+    response = requests.<span class="fn">post</span>(<span class="str">"http://localhost:11434/api/generate"</span>, json=<span class="kw">{</span>
+        <span class="str">"model"</span><span class="kw">:</span> <span class="str">"mistral"</span><span class="kw">,</span>
+        <span class="str">"prompt"</span><span class="kw">:</span> prompt<span class="kw">,</span>
+        <span class="str">"stream"</span><span class="kw">:</span> <span class="kw">False</span>
+    <span class="kw">}</span>)
+
+    <span class="kw">return</span> json.<span class="fn">loads</span>(response.json()[<span class="str">"response"</span>])</pre>
+
+  <!-- ── Cause Detection ── -->
+  <h3 style="margin-bottom:12px; margin-top:28px;">Stage 5b · Possible Cause Detection Logic</h3>
+  <div class="card-grid card-grid-2">
+    <div class="card">
+      <h3>AI-generated Causes</h3>
+      <p>The AI model produces 3 probable causes for each abnormal result, embedded in the JSON response structure.</p>
+    </div>
+    <div class="card">
+      <h3>Curated Fallback DB</h3>
+      <p>A <code>causes_db</code> SQLite table provides pre-curated causes for the 50 most common lab tests, used as fallback when AI fails or is unavailable.</p>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══ 4. API DESIGN ═══ -->
+<section id="api">
+  <div class="section-header">
+    <span class="section-num">04</span>
+    <h2>API Design</h2>
+  </div>
+  <p>Two primary endpoints handle the upload-analyze flow. Authentication is via Bearer JWT on all protected routes.</p>
+
+  <div class="table-wrap" style="margin-bottom: 28px;">
+    <table>
+      <thead>
+        <tr>
+          <th>Method</th>
+          <th>Endpoint</th>
+          <th>Description</th>
+          <th>Auth</th>
+          <th>Returns</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="badge badge-blue">POST</span></td>
+          <td><code>/api/lab/upload</code></td>
+          <td>Accept multipart file, save to disk, return <code>doc_id</code></td>
+          <td>✅ JWT</td>
+          <td><code>{ doc_id, filename, status }</code></td>
+        </tr>
+        <tr>
+          <td><span class="badge badge-blue">POST</span></td>
+          <td><code>/api/lab/analyze/{'{doc_id}'}</code></td>
+          <td>Trigger full pipeline; returns structured JSON result</td>
+          <td>✅ JWT</td>
+          <td><code>{ tests, summary, risk_count }</code></td>
+        </tr>
+        <tr>
+          <td><span class="badge badge-low">GET</span></td>
+          <td><code>/api/lab/reports</code></td>
+          <td>List all uploaded reports for the current user</td>
+          <td>✅ JWT</td>
+          <td><code>[ { doc_id, date, filename, risk_count } ]</code></td>
+        </tr>
+        <tr>
+          <td><span class="badge badge-low">GET</span></td>
+          <td><code>/api/lab/reports/{'{doc_id}'}</code></td>
+          <td>Retrieve previously analyzed result by ID</td>
+          <td>✅ JWT</td>
+          <td>Full analysis JSON</td>
+        </tr>
+        <tr>
+          <td><span class="badge badge-blue">POST</span></td>
+          <td><code>/api/auth/register</code></td>
+          <td>Create a new user account</td>
+          <td>❌ None</td>
+          <td><code>{ user_id, token }</code></td>
+        </tr>
+        <tr>
+          <td><span class="badge badge-blue">POST</span></td>
+          <td><code>/api/auth/login</code></td>
+          <td>Exchange credentials for JWT</td>
+          <td>❌ None</td>
+          <td><code>{ access_token, token_type }</code></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="code-label">api/routes/lab.py — Core Upload Route</div>
+  <pre><span class="kw">from</span> fastapi <span class="kw">import</span> APIRouter, UploadFile, File, Depends, HTTPException
+<span class="kw">from</span> services.parser <span class="kw">import</span> parse_document
+<span class="kw">from</span> services.extractor <span class="kw">import</span> extract_tests
+<span class="kw">from</span> services.comparator <span class="kw">import</span> compare_ranges
+<span class="kw">from</span> services.explainer <span class="kw">import</span> generate_explanations
+<span class="kw">from</span> db.reports <span class="kw">import</span> save_report
+
+router = <span class="fn">APIRouter</span>(prefix=<span class="str">"/api/lab"</span>)
+
+ALLOWED_TYPES = {<span class="str">"application/pdf"</span><span class="kw">,</span> <span class="str">"application/vnd.openxmlformats..."</span><span class="kw">,</span> <span class="str">"text/plain"</span>}
+
+<span class="kw">@</span>router.<span class="fn">post</span>(<span class="str">"/upload"</span>)
+<span class="kw">async def</span> <span class="fn">upload_report</span>(file: UploadFile = <span class="fn">File</span>(...)<span class="kw">,</span> user=<span class="fn">Depends</span>(get_current_user)):
+    <span class="kw">if</span> file.content_type <span class="kw">not in</span> ALLOWED_TYPES:
+        <span class="kw">raise</span> <span class="fn">HTTPException</span>(<span class="num">400</span><span class="kw">,</span> <span class="str">"Unsupported file type"</span>)
+    doc_id = <span class="kw">await</span> <span class="fn">save_document</span>(file<span class="kw">,</span> user.id)
+    <span class="kw">return</span> <span class="kw">{</span><span class="str">"doc_id"</span><span class="kw">:</span> doc_id<span class="kw">,</span> <span class="str">"status"</span><span class="kw">:</span> <span class="str">"uploaded"</span><span class="kw">}</span>
+
+<span class="kw">@</span>router.<span class="fn">post</span>(<span class="str">"/analyze/{doc_id}"</span>)
+<span class="kw">async def</span> <span class="fn">analyze_report</span>(doc_id: <span class="fn">str</span><span class="kw">,</span> user=<span class="fn">Depends</span>(get_current_user)):
+    raw_text = <span class="kw">await</span> <span class="fn">parse_document</span>(doc_id)
+    tests    = <span class="fn">extract_tests</span>(raw_text)
+    compared = <span class="kw">await</span> <span class="fn">compare_ranges</span>(tests)
+    result   = <span class="kw">await</span> <span class="fn">generate_explanations</span>(compared)
+    <span class="kw">await</span>    <span class="fn">save_report</span>(doc_id<span class="kw">,</span> user.id<span class="kw">,</span> result)
+    <span class="kw">return</span>   result</pre>
+</section>
+
+
+<!-- ═══ 5. DATABASE SCHEMA ═══ -->
+<section id="database">
+  <div class="section-header">
+    <span class="section-num">05</span>
+    <h2>Database Schema</h2>
+  </div>
+  <p>Two SQLite databases. The application DB manages users and reports; the reference DB contains LOINC-mapped lab test ranges.</p>
+
+  <div style="margin-bottom: 28px;">
+    <h3 style="margin-bottom: 14px;">Application Database — <code>medmind.db</code></h3>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>Table</th><th>Column</th><th>Type</th><th>Notes</th></tr>
+        </thead>
+        <tbody>
+          <tr><td rowspan="5" style="border-right:1px solid var(--border); font-weight:600; color:var(--text);">users</td><td><code>id</code></td><td>TEXT PRIMARY KEY</td><td>UUID v4</td></tr>
+          <tr><td><code>email</code></td><td>TEXT UNIQUE</td><td>Validated on insert</td></tr>
+          <tr><td><code>name</code></td><td>TEXT</td><td></td></tr>
+          <tr><td><code>password_hash</code></td><td>TEXT</td><td>bcrypt, cost 12</td></tr>
+          <tr><td><code>created_at</code></td><td>DATETIME</td><td>UTC default</td></tr>
+          <tr><td rowspan="7" style="border-right:1px solid var(--border); border-top:2px solid var(--border2); font-weight:600; color:var(--text);">reports</td><td><code>id</code></td><td>TEXT PRIMARY KEY</td><td>UUID v4</td></tr>
+          <tr><td><code>user_id</code></td><td>TEXT FK → users.id</td><td>Cascade delete</td></tr>
+          <tr><td><code>filename</code></td><td>TEXT</td><td>Original file name</td></tr>
+          <tr><td><code>file_type</code></td><td>TEXT</td><td>pdf / docx / txt</td></tr>
+          <tr><td><code>result_json</code></td><td>TEXT</td><td>Serialized analysis JSON</td></tr>
+          <tr><td><code>risk_count</code></td><td>INTEGER</td><td>Denormalized for fast listing</td></tr>
+          <tr><td><code>created_at</code></td><td>DATETIME</td><td>UTC default</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div>
+    <h3 style="margin-bottom: 14px;">Reference Database — <code>lab_ranges.db</code></h3>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>Table</th><th>Column</th><th>Type</th><th>Notes</th></tr>
+        </thead>
+        <tbody>
+          <tr><td rowspan="7" style="border-right:1px solid var(--border); font-weight:600; color:var(--text);">lab_ranges</td><td><code>id</code></td><td>INTEGER PRIMARY KEY</td><td></td></tr>
+          <tr><td><code>loinc_code</code></td><td>TEXT UNIQUE</td><td>LOINC standard identifier</td></tr>
+          <tr><td><code>test_name</code></td><td>TEXT</td><td>Human-readable, indexed</td></tr>
+          <tr><td><code>aliases</code></td><td>TEXT</td><td>JSON array of synonyms</td></tr>
+          <tr><td><code>min_normal</code></td><td>REAL</td><td>Lower bound</td></tr>
+          <tr><td><code>max_normal</code></td><td>REAL</td><td>Upper bound</td></tr>
+          <tr><td><code>unit</code></td><td>TEXT</td><td>Canonical unit (g/dL, mg/dL…)</td></tr>
+          <tr><td rowspan="4" style="border-right:1px solid var(--border); border-top:2px solid var(--border2); font-weight:600; color:var(--text);">causes_db</td><td><code>test_name</code></td><td>TEXT</td><td>FK to lab_ranges.test_name</td></tr>
+          <tr><td><code>status</code></td><td>TEXT</td><td>Low / High / Critical</td></tr>
+          <tr><td><code>causes</code></td><td>TEXT</td><td>JSON array of causes</td></tr>
+          <tr><td><code>last_updated</code></td><td>DATETIME</td><td></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══ 6. UI SCREENS ═══ -->
+<section id="screens">
+  <div class="section-header">
+    <span class="section-num">06</span>
+    <h2>UI Screen Implementation Plan</h2>
+  </div>
+  <p>Ten screens across three groups: Landing &amp; Auth, Dashboard, and the Lab Reports Module.</p>
+
+  <!-- Group A -->
+  <h3 style="margin-bottom:14px; margin-top:8px;">Group A · Landing &amp; Authentication</h3>
+  <div class="card-grid card-grid-2" style="margin-bottom: 28px;">
+    <div class="screen-card">
+      <div class="screen-header">
+        <span class="screen-num">S01</span>
+        <span class="screen-name">Landing Page</span>
+      </div>
+      <div class="screen-body">
+        <p>Marketing homepage. Converts visitors to signups.</p>
+        <div class="component-list">
+          <span class="pill pill-blue">Hero Section</span>
+          <span class="pill pill-blue">Feature Grid</span>
+          <span class="pill pill-blue">Testimonials</span>
+          <span class="pill pill-blue">CTA Buttons</span>
+          <span class="pill pill-grey">Sticky Navbar</span>
+          <span class="pill pill-grey">Footer</span>
+        </div>
+      </div>
+    </div>
+    <div class="screen-card">
+      <div class="screen-header">
+        <span class="screen-num">S02</span>
+        <span class="screen-name">Sign Up</span>
+      </div>
+      <div class="screen-body">
+        <p>Registration with client-side validation and async API call.</p>
+        <div class="component-list">
+          <span class="pill pill-blue">Name Field</span>
+          <span class="pill pill-blue">Email Field</span>
+          <span class="pill pill-blue">Password + Confirm</span>
+          <span class="pill pill-blue">Strength Indicator</span>
+          <span class="pill pill-grey">OAuth (Optional)</span>
+        </div>
+      </div>
+    </div>
+    <div class="screen-card">
+      <div class="screen-header">
+        <span class="screen-num">S03</span>
+        <span class="screen-name">Login</span>
+      </div>
+      <div class="screen-body">
+        <p>JWT-based login with remember-me and forgot password flow.</p>
+        <div class="component-list">
+          <span class="pill pill-blue">Email Input</span>
+          <span class="pill pill-blue">Password Input</span>
+          <span class="pill pill-blue">Remember Me</span>
+          <span class="pill pill-blue">Forgot Password Link</span>
+        </div>
+      </div>
+    </div>
+    <div class="screen-card">
+      <div class="screen-header">
+        <span class="screen-num">S04</span>
+        <span class="screen-name">Forgot Password</span>
+      </div>
+      <div class="screen-body">
+        <p>Email-based reset flow with token validation and new password form.</p>
+        <div class="component-list">
+          <span class="pill pill-blue">Email Step</span>
+          <span class="pill pill-blue">Token Step</span>
+          <span class="pill pill-blue">New Password Step</span>
+          <span class="pill pill-grey">Expiry Timer</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Group B -->
+  <h3 style="margin-bottom:14px;">Group B · Main Dashboard</h3>
+  <div class="card-grid" style="margin-bottom:28px; grid-template-columns: 1fr;">
+    <div class="screen-card">
+      <div class="screen-header">
+        <span class="screen-num">S05</span>
+        <span class="screen-name">Dashboard Home</span>
+      </div>
+      <div class="screen-body">
+        <p>Overview cards surfacing the user's latest report, recent AI Q&amp;A, lifestyle recommendations, and blog posts — personalized to abnormal findings.</p>
+        <div class="component-list">
+          <span class="pill pill-teal">Latest Report Card</span>
+          <span class="pill pill-teal">Risk Summary Widget</span>
+          <span class="pill pill-teal">Quick Upload CTA</span>
+          <span class="pill pill-teal">Recommendations Strip</span>
+          <span class="pill pill-grey">Blog Teaser Grid</span>
+          <span class="pill pill-grey">Q&amp;A History</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Group C -->
+  <h3 style="margin-bottom:14px;">Group C · Lab Reports Module</h3>
+  <div class="card-grid card-grid-2">
+    <div class="screen-card">
+      <div class="screen-header">
+        <span class="screen-num">S06</span>
+        <span class="screen-name">Upload Report</span>
+      </div>
+      <div class="screen-body">
+        <p>Drag-and-drop zone with file type validation, progress indicator, and paste-text fallback.</p>
+        <div class="component-list">
+          <span class="pill pill-teal">Dropzone</span>
+          <span class="pill pill-teal">File Preview</span>
+          <span class="pill pill-teal">Type Badges</span>
+          <span class="pill pill-grey">Text Paste Tab</span>
+          <span class="pill pill-grey">Upload Button</span>
+        </div>
+      </div>
+    </div>
+    <div class="screen-card">
+      <div class="screen-header">
+        <span class="screen-num">S07</span>
+        <span class="screen-name">Processing Screen</span>
+      </div>
+      <div class="screen-body">
+        <p>Animated pipeline visualization showing active processing stage. Polls <code>/api/lab/status/{'{doc_id}'}</code> every 2s.</p>
+        <div class="component-list">
+          <span class="pill pill-teal">Stage Progress</span>
+          <span class="pill pill-teal">Animated Dots</span>
+          <span class="pill pill-teal">Step Labels</span>
+          <span class="pill pill-grey">Cancel Button</span>
+        </div>
+      </div>
+    </div>
+    <div class="screen-card">
+      <div class="screen-header">
+        <span class="screen-num">S08</span>
+        <span class="screen-name">Report Analysis Overview</span>
+      </div>
+      <div class="screen-body">
+        <p>Color-coded table of all extracted tests with status badges. Summary bar shows risk_count prominently.</p>
+        <div class="component-list">
+          <span class="pill pill-teal">Results Table</span>
+          <span class="pill pill-teal">Status Badges</span>
+          <span class="pill pill-teal">Risk Summary</span>
+          <span class="pill pill-grey">Filter Controls</span>
+          <span class="pill pill-grey">PDF Export</span>
+        </div>
+      </div>
+    </div>
+    <div class="screen-card">
+      <div class="screen-header">
+        <span class="screen-num">S09</span>
+        <span class="screen-name">Detailed Test Explanation</span>
+      </div>
+      <div class="screen-body">
+        <p>Expandable accordion panels for each test. Shows AI explanation, possible causes as chips, and a normal range bar.</p>
+        <div class="component-list">
+          <span class="pill pill-teal">Accordion Panels</span>
+          <span class="pill pill-teal">Range Bar</span>
+          <span class="pill pill-teal">Cause Chips</span>
+          <span class="pill pill-grey">Learn More Links</span>
+        </div>
+      </div>
+    </div>
+    <div class="screen-card" style="grid-column: 1 / -1;">
+      <div class="screen-header">
+        <span class="screen-num">S10</span>
+        <span class="screen-name">Report History</span>
+      </div>
+      <div class="screen-body">
+        <p>Paginated table of all past reports. Shows filename, date, risk count, and a View button that loads S08/S09. Supports delete and download.</p>
+        <div class="component-list">
+          <span class="pill pill-teal">Paginated Table</span>
+          <span class="pill pill-teal">Date Sort</span>
+          <span class="pill pill-teal">Risk Count Column</span>
+          <span class="pill pill-grey">View / Delete Actions</span>
+          <span class="pill pill-grey">Download JSON</span>
+          <span class="pill pill-grey">Search by Filename</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══ 7. DEVELOPMENT ROADMAP ═══ -->
+<section id="roadmap">
+  <div class="section-header">
+    <span class="section-num">07</span>
+    <h2>Development Roadmap — 8 Weeks</h2>
+  </div>
+  <p>Each week has specific, deliverable-oriented engineering tasks. Weeks 1–4 focus on backend and AI pipeline. Weeks 5–8 focus on frontend, integration, and testing.</p>
+
+  <div class="week-grid" style="margin-top: 24px;">
+    <div class="week-card">
+      <div class="week-label">Week 1</div>
+      <div class="week-title">Project Setup &amp; Parsing Foundation</div>
+      <ul class="week-tasks">
+        <li>Initialize FastAPI project with Uvicorn and Poetry</li>
+        <li>Set up folder structure (api, services, db, models)</li>
+        <li>Configure JWT auth middleware</li>
+        <li>Integrate PyMuPDF and pdfplumber for PDF parsing</li>
+        <li>Implement basic text extraction returning raw string</li>
+        <li>Write <code>POST /api/lab/upload</code> endpoint skeleton</li>
+        <li>Validate file type and size constraints</li>
+      </ul>
+    </div>
+    <div class="week-card">
+      <div class="week-label">Week 2</div>
+      <div class="week-title">NER Extraction &amp; Regex Parser</div>
+      <ul class="week-tasks">
+        <li>Install scispaCy and download <code>en_core_sci_sm</code> model</li>
+        <li>Write NER-based entity extraction for lab test names</li>
+        <li>Build regex pattern for value + unit capture</li>
+        <li>Implement dual-pass extractor (NER first, regex fallback)</li>
+        <li>Handle python-docx table extraction</li>
+        <li>Write unit tests for extractor on 10 sample reports</li>
+        <li>Log extraction failures to debug file</li>
+      </ul>
+    </div>
+    <div class="week-card">
+      <div class="week-label">Week 3</div>
+      <div class="week-title">SQLite Schema &amp; Range Comparison</div>
+      <ul class="week-tasks">
+        <li>Create SQLite schema: <code>users</code>, <code>reports</code> tables</li>
+        <li>Import LOINC CSV into <code>lab_ranges.db</code></li>
+        <li>Normalize and clean LOINC data (300+ tests)</li>
+        <li>Build fuzzy-match lookup using <code>difflib</code></li>
+        <li>Implement classification logic (Normal/Low/High/Critical)</li>
+        <li>Write <code>compare_ranges(tests)</code> service function</li>
+        <li>Add test aliases support for synonym matching</li>
+      </ul>
+    </div>
+    <div class="week-card">
+      <div class="week-label">Week 4</div>
+      <div class="week-title">AI Explanation Engine</div>
+      <ul class="week-tasks">
+        <li>Set up Ollama locally and pull Mistral 7B</li>
+        <li>Implement prompt template for explanation generation</li>
+        <li>Build <code>generate_explanations()</code> service</li>
+        <li>Add BioGPT fallback via HuggingFace Transformers</li>
+        <li>Parse AI JSON response with error handling</li>
+        <li>Seed <code>causes_db</code> with 50 common test causes</li>
+        <li>Wire complete pipeline: upload → analyze → store</li>
+        <li>Test end-to-end with 5 real lab report PDFs</li>
+      </ul>
+    </div>
+    <div class="week-card">
+      <div class="week-label">Week 5</div>
+      <div class="week-title">React App Bootstrap &amp; Auth UI</div>
+      <ul class="week-tasks">
+        <li>Initialize React 18 + Vite + Tailwind CSS project</li>
+        <li>Set up React Router v6 with protected routes</li>
+        <li>Build Landing Page (hero, features, CTA)</li>
+        <li>Build Sign Up and Login screens with form validation</li>
+        <li>Implement JWT storage in HttpOnly cookie or localStorage</li>
+        <li>Build Forgot Password flow (email → token → reset)</li>
+        <li>Connect auth screens to FastAPI endpoints</li>
+      </ul>
+    </div>
+    <div class="week-card">
+      <div class="week-label">Week 6</div>
+      <div class="week-title">Upload &amp; Processing UI</div>
+      <ul class="week-tasks">
+        <li>Build Dashboard Home with overview cards</li>
+        <li>Implement drag-and-drop upload with react-dropzone</li>
+        <li>Add file type validation and size preview</li>
+        <li>Build animated Processing Screen (step pipeline)</li>
+        <li>Implement polling with React Query for analysis status</li>
+        <li>Wire upload form to <code>POST /api/lab/upload</code></li>
+        <li>Handle and display upload errors gracefully</li>
+      </ul>
+    </div>
+    <div class="week-card">
+      <div class="week-label">Week 7</div>
+      <div class="week-title">Results UI &amp; Report History</div>
+      <ul class="week-tasks">
+        <li>Build Report Analysis Overview table (S08)</li>
+        <li>Implement color-coded status badge system</li>
+        <li>Build Detailed Explanation accordion panels (S09)</li>
+        <li>Render normal range bar with value indicator</li>
+        <li>Display AI causes as dismissible chips</li>
+        <li>Build Report History table with pagination (S10)</li>
+        <li>Add delete and JSON-download actions</li>
+      </ul>
+    </div>
+    <div class="week-card">
+      <div class="week-label">Week 8</div>
+      <div class="week-title">Integration, QA &amp; Polish</div>
+      <ul class="week-tasks">
+        <li>Full end-to-end integration testing (Playwright)</li>
+        <li>Run API tests with Pytest + HTTPX on all routes</li>
+        <li>Fix extraction failures on edge-case PDFs</li>
+        <li>Add loading skeletons and empty states across all screens</li>
+        <li>Add responsive layout fixes for mobile</li>
+        <li>Write README, API docs with FastAPI's built-in Swagger</li>
+        <li>Record demo video and prepare FYP submission package</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══ 8. DATA FLOW DIAGRAM ═══ -->
+<section>
+  <div class="section-header">
+    <span class="section-num">08</span>
+    <h2>Data Flow Diagram</h2>
+  </div>
+
+  <div class="flow" style="max-width: 520px;">
+    <div class="flow-row">
+      <div class="flow-node" style="border-color: var(--accent2);">
+        <div class="flow-node-title" style="color:#60a5fa;">👤 User Upload</div>
+        <div class="flow-node-sub">PDF / DOCX / TXT via browser</div>
+      </div>
+    </div>
+    <div class="flow-line">↓</div>
+    <div class="flow-row">
+      <div class="flow-node">
+        <div class="flow-node-title">🔐 Auth Middleware</div>
+        <div class="flow-node-sub">JWT validation · User context</div>
+      </div>
+    </div>
+    <div class="flow-line">↓</div>
+    <div class="flow-row">
+      <div class="flow-node">
+        <div class="flow-node-title">📂 File Parser</div>
+        <div class="flow-node-sub">PyMuPDF · pdfplumber · python-docx</div>
+      </div>
+    </div>
+    <div class="flow-line">↓</div>
+    <div class="flow-row">
+      <div class="flow-node">
+        <div class="flow-node-title">🔎 Test Extractor</div>
+        <div class="flow-node-sub">scispaCy NER + regex → structured list</div>
+      </div>
+    </div>
+    <div class="flow-line">↓</div>
+    <div class="flow-row">
+      <div class="flow-node">
+        <div class="flow-node-title">📏 Range Comparator</div>
+        <div class="flow-node-sub">LOINC SQLite lookup → status labels</div>
+      </div>
+    </div>
+    <div class="flow-line">↓</div>
+    <div class="flow-row">
+      <div class="flow-node" style="border-color: var(--accent3);">
+        <div class="flow-node-title" style="color:#a78bfa;">🧠 AI Explainer</div>
+        <div class="flow-node-sub">BioGPT / Mistral 7B → explanations + causes</div>
+      </div>
+    </div>
+    <div class="flow-line">↓</div>
+    <div class="flow-row">
+      <div class="flow-node" style="border-color:var(--gold);">
+        <div class="flow-node-title" style="color:var(--gold);">💾 SQLite Store</div>
+        <div class="flow-node-sub">Persist result_json + risk_count</div>
+      </div>
+    </div>
+    <div class="flow-line">↓</div>
+    <div class="flow-row">
+      <div class="flow-node" style="border-color: var(--accent);">
+        <div class="flow-node-title" style="color: var(--accent);">📤 JSON Response</div>
+        <div class="flow-node-sub">{ tests, summary, risk_count }</div>
+      </div>
+    </div>
+    <div class="flow-line">↓</div>
+    <div class="flow-row">
+      <div class="flow-node" style="border-color: var(--accent2);">
+        <div class="flow-node-title" style="color:#60a5fa;">🖥️ UI Rendering</div>
+        <div class="flow-node-sub">Color-coded table · Accordion panels · History</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══ 9. FOLDER STRUCTURE ═══ -->
+<section id="structure">
+  <div class="section-header">
+    <span class="section-num">09</span>
+    <h2>Project Folder Structure</h2>
+  </div>
+
+  <div class="folder-tree">
+<span class="t-dir">medmind/</span>
+<br>
+<span class="t-dir t-indent1">backend/</span>
+<br>
+<span class="t-dir t-indent2">api/</span>
+<br>
+<span class="t-file t-indent3">__init__.py</span>
+<br>
+<span class="t-file t-indent3">lab.py</span>           <span class="t-comment t-indent3"> # Lab upload + analyze routes</span>
+<br>
+<span class="t-file t-indent3">auth.py</span>          <span class="t-comment t-indent3"> # Register, login, reset routes</span>
+<br>
+<span class="t-dir t-indent2">services/</span>
+<br>
+<span class="t-file t-indent3">parser.py</span>        <span class="t-comment t-indent3"> # PDF/DOCX/TXT extraction</span>
+<br>
+<span class="t-file t-indent3">extractor.py</span>     <span class="t-comment t-indent3"> # NER + regex test extraction</span>
+<br>
+<span class="t-file t-indent3">comparator.py</span>    <span class="t-comment t-indent3"> # Range comparison logic</span>
+<br>
+<span class="t-file t-indent3">explainer.py</span>     <span class="t-comment t-indent3"> # AI explanation generation</span>
+<br>
+<span class="t-file t-indent3">summarizer.py</span>    <span class="t-comment t-indent3"> # Summary + risk count builder</span>
+<br>
+<span class="t-dir t-indent2">db/</span>
+<br>
+<span class="t-file t-indent3">schema.sql</span>       <span class="t-comment t-indent3"> # Application DB schema</span>
+<br>
+<span class="t-file t-indent3">connection.py</span>    <span class="t-comment t-indent3"> # aiosqlite pool</span>
+<br>
+<span class="t-file t-indent3">reports.py</span>       <span class="t-comment t-indent3"> # Report CRUD queries</span>
+<br>
+<span class="t-file t-indent3">users.py</span>         <span class="t-comment t-indent3"> # User CRUD queries</span>
+<br>
+<span class="t-file t-indent3">ranges.py</span>        <span class="t-comment t-indent3"> # Lab ranges lookup queries</span>
+<br>
+<span class="t-dir t-indent2">models/</span>
+<br>
+<span class="t-file t-indent3">lab.py</span>           <span class="t-comment t-indent3"> # Pydantic schemas (TestResult, Report)</span>
+<br>
+<span class="t-file t-indent3">auth.py</span>          <span class="t-comment t-indent3"> # Pydantic schemas (User, Token)</span>
+<br>
+<span class="t-dir t-indent2">data/</span>
+<br>
+<span class="t-file t-indent3">loinc_ranges.csv</span> <span class="t-comment t-indent3"> # Source LOINC data</span>
+<br>
+<span class="t-file t-indent3">seed_causes.json</span> <span class="t-comment t-indent3"> # Curated causes for 50 tests</span>
+<br>
+<span class="t-file t-indent3">medmind.db</span>       <span class="t-comment t-indent3"> # Application SQLite</span>
+<br>
+<span class="t-file t-indent3">lab_ranges.db</span>    <span class="t-comment t-indent3"> # Reference SQLite</span>
+<br>
+<span class="t-dir t-indent2">tests/</span>
+<br>
+<span class="t-file t-indent3">test_parser.py</span>
+<br>
+<span class="t-file t-indent3">test_extractor.py</span>
+<br>
+<span class="t-file t-indent3">test_comparator.py</span>
+<br>
+<span class="t-file t-indent3">test_api.py</span>
+<br>
+<span class="t-dir t-indent2">uploads/</span>          <span class="t-comment t-indent2"> # Temporary file storage</span>
+<br>
+<span class="t-file t-indent2">main.py</span>          <span class="t-comment t-indent2"> # FastAPI app entry point</span>
+<br>
+<span class="t-file t-indent2">config.py</span>        <span class="t-comment t-indent2"> # Env vars, settings</span>
+<br>
+<span class="t-file t-indent2">pyproject.toml</span>
+<br><br>
+<span class="t-dir t-indent1">frontend/</span>
+<br>
+<span class="t-dir t-indent2">src/</span>
+<br>
+<span class="t-dir t-indent3">pages/</span>           <span class="t-comment t-indent3"> # Landing, Login, Dashboard, Upload, Results, History</span>
+<br>
+<span class="t-dir t-indent3">components/</span>      <span class="t-comment t-indent3"> # Shared UI: Table, Badge, Accordion, Dropzone</span>
+<br>
+<span class="t-dir t-indent3">hooks/</span>           <span class="t-comment t-indent3"> # useAuth, useReport, useUpload</span>
+<br>
+<span class="t-dir t-indent3">api/</span>             <span class="t-comment t-indent3"> # Axios instance + endpoint functions</span>
+<br>
+<span class="t-dir t-indent3">store/</span>           <span class="t-comment t-indent3"> # Zustand / Context for auth state</span>
+<br>
+<span class="t-file t-indent3">App.jsx</span>
+<br>
+<span class="t-file t-indent3">main.jsx</span>
+<br>
+<span class="t-file t-indent2">index.html</span>
+<br>
+<span class="t-file t-indent2">vite.config.js</span>
+<br>
+<span class="t-file t-indent2">tailwind.config.js</span>
+<br><br>
+<span class="t-file t-indent1">README.md</span>
+<br>
+<span class="t-file t-indent1">docker-compose.yml</span>  <span class="t-comment t-indent1"> # Optional containerization</span>
+  </div>
+</section>
+
+
+<!-- ═══ 10. ENGINEERING CHALLENGES ═══ -->
+<section id="challenges">
+  <div class="section-header">
+    <span class="section-num">10</span>
+    <h2>Key Engineering Challenges</h2>
+  </div>
+
+  <div class="challenge-card">
+    <h3>🗂️ Messy &amp; Inconsistent Lab Report Formats</h3>
+    <p><strong>Problem:</strong> Labs produce PDFs with wildly different layouts — multi-column tables, merged cells, scanned images, or embedded watermarks. A single regex cannot cover all formats.</p>
+    <p><strong>Solution:</strong> Layer two parsers (PyMuPDF for structure, pdfplumber for table coordinates). Detect if a page is scanned (low text density → flag for manual review). Store the raw extracted text for debugging.</p>
+  </div>
+
+  <div class="challenge-card warn">
+    <h3>📊 Table Extraction Accuracy</h3>
+    <p><strong>Problem:</strong> Lab results are almost always in tables. PDF table extraction frequently mis-aligns columns — the test name and value end up in the wrong cells.</p>
+    <p><strong>Solution:</strong> Use pdfplumber's explicit table-detection with horizontal line anchors. Post-process extracted rows to validate that numeric values follow known test-name strings. Fall back to regex on the raw text if table extraction yields less than 3 structured rows.</p>
+  </div>
+
+  <div class="challenge-card warn">
+    <h3>🔬 Medical NER Accuracy &amp; Coverage</h3>
+    <p><strong>Problem:</strong> scispaCy's en_core_sci_sm model may not recognize all test names (regional labs, non-standard abbreviations, vernacular names).</p>
+    <p><strong>Solution:</strong> Maintain a custom entity ruler (spaCy's EntityRuler) seeded with 300+ test name patterns from the LOINC dataset. Combine this with the ML NER for maximum coverage.</p>
+  </div>
+
+  <div class="challenge-card">
+    <h3>🧠 AI Model Latency on CPU</h3>
+    <p><strong>Problem:</strong> BioGPT on CPU can take 30–90s per explanation. Generating explanations for 20 tests in series would be unacceptably slow.</p>
+    <p><strong>Solution:</strong> Batch all abnormal tests into a single multi-test prompt. Run explanations for normal tests from the <code>causes_db</code> SQLite cache rather than the AI model. Consider async background processing with WebSocket status push.</p>
+  </div>
+
+  <div class="challenge-card info">
+    <h3>🔍 Test Name Matching (Fuzzy Lookup)</h3>
+    <p><strong>Problem:</strong> "Hgb", "Hemoglobin", "Hb", and "Haemoglobin" all refer to the same test but won't match a direct string lookup.</p>
+    <p><strong>Solution:</strong> Store an <code>aliases</code> JSON array in <code>lab_ranges</code>. On lookup, try exact match → alias match → <code>difflib.get_close_matches(cutoff=0.8)</code>. Log unmatched test names for iterative dataset improvement.</p>
+  </div>
+
+  <div class="challenge-card info">
+    <h3>🔐 PHI &amp; Medical Data Privacy</h3>
+    <p><strong>Problem:</strong> Lab reports contain Personally Identifiable Information. Storing or transmitting PHI insecurely is a serious liability.</p>
+    <p><strong>Solution:</strong> Process files entirely in-memory. Delete uploaded files immediately after text extraction. Store only the result JSON (no raw file text). Use HTTPS and JWT expiry of 24h. Add a per-report delete API for data rights compliance.</p>
+  </div>
+</section>
+
+
+<!-- ═══ 11. TESTING STRATEGY ═══ -->
+<section id="testing">
+  <div class="section-header">
+    <span class="section-num">11</span>
+    <h2>Testing Strategy</h2>
+  </div>
+  <p>A four-layer testing pyramid ensures quality at every stage of the pipeline.</p>
+
+  <div class="card-grid card-grid-2" style="margin-top: 24px;">
+    <div class="card">
+      <div class="card-icon icon-teal">🔧</div>
+      <h3>Unit Tests — Services</h3>
+      <p>Test each service module in isolation. Parser tests use pre-collected PDF fixtures. Extractor tests validate NER and regex on labeled sample text. Comparator tests cover all four status branches and edge cases (exactly at boundary).</p>
+      <div class="tech-pills" style="margin-top:10px;">
+        <span class="pill pill-teal">pytest</span>
+        <span class="pill pill-grey">pytest-asyncio</span>
+        <span class="pill pill-grey">mock / monkeypatch</span>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-icon icon-blue">🌐</div>
+      <h3>API Integration Tests</h3>
+      <p>Use FastAPI's <code>TestClient</code> (HTTPX) to call every route. Verify status codes, response schemas (Pydantic), JWT rejection, and unsupported file type errors. Test upload + analyze in sequence with a fixture PDF.</p>
+      <div class="tech-pills" style="margin-top:10px;">
+        <span class="pill pill-blue">pytest</span>
+        <span class="pill pill-blue">httpx</span>
+        <span class="pill pill-blue">TestClient</span>
+        <span class="pill pill-grey">faker</span>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-icon icon-purple">🖥️</div>
+      <h3>End-to-End Tests (E2E)</h3>
+      <p>Playwright scripts automate the full user journey: visit landing → sign up → upload PDF → wait for processing → verify results table contains expected test names and statuses.</p>
+      <div class="tech-pills" style="margin-top:10px;">
+        <span class="pill pill-purple">Playwright</span>
+        <span class="pill pill-purple">pytest-playwright</span>
+        <span class="pill pill-grey">Headless Chromium</span>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-icon icon-gold">📈</div>
+      <h3>Extraction Accuracy Evaluation</h3>
+      <p>Manually labeled a golden set of 20 real lab reports with ground-truth test names, values, and statuses. Run extractor + comparator and measure Precision, Recall, and F1. Target: F1 ≥ 0.85.</p>
+      <div class="tech-pills" style="margin-top:10px;">
+        <span class="pill pill-gold">sklearn.metrics</span>
+        <span class="pill pill-gold">Precision / Recall / F1</span>
+        <span class="pill pill-grey">JSON fixtures</span>
+      </div>
+    </div>
+  </div>
+
+  <div style="margin-top: 24px;">
+    <div class="code-label">tests/test_extractor.py — Sample Test</div>
+    <pre><span class="kw">import</span> pytest
+<span class="kw">from</span> services.extractor <span class="kw">import</span> extract_tests
+
+SAMPLE_TEXT = <span class="str">"""
+Test Name           Result    Unit    Reference Range
+Hemoglobin          10.2      g/dL    12.0 - 17.5
+Glucose             98        mg/dL   70 - 125
+WBC Count           11.4      10^3/μL 4.5 - 11.0
+"""</span>
+
+<span class="kw">def</span> <span class="fn">test_extract_hemoglobin</span>():
+    tests = <span class="fn">extract_tests</span>(SAMPLE_TEXT)
+    hgb = <span class="fn">next</span>(t <span class="kw">for</span> t <span class="kw">in</span> tests <span class="kw">if</span> <span class="str">"hemoglobin"</span> <span class="kw">in</span> t[<span class="str">"name"</span>].<span class="fn">lower</span>())
+    <span class="kw">assert</span> hgb[<span class="str">"value"</span>] == <span class="num">10.2</span>
+    <span class="kw">assert</span> hgb[<span class="str">"unit"</span>]  == <span class="str">"g/dL"</span>
+
+<span class="kw">def</span> <span class="fn">test_extract_all_three</span>():
+    tests = <span class="fn">extract_tests</span>(SAMPLE_TEXT)
+    <span class="kw">assert</span> <span class="fn">len</span>(tests) == <span class="num">3</span>
+
+<span class="kw">def</span> <span class="fn">test_empty_text</span>():
+    tests = <span class="fn">extract_tests</span>(<span class="str">""</span>)
+    <span class="kw">assert</span> tests == []</pre>
+  </div>
+</section>
+
+</main>
+
+<!-- ░░ FOOTER ░░ -->
+<footer>
+  <strong>MedMind</strong> · Lab Reports Explainer · Core Module 1 · Engineering Roadmap
+  <br style="margin-bottom:6px;">
+  Built with FastAPI · scispaCy · BioGPT · React 18 · SQLite
+</footer>
+
 </body>
 </html>
