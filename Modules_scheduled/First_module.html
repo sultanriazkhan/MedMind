@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MedMind · Lab Reports Explainer — Execution Roadmap</title>
+    <!-- Font & Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Inter', -apple-system, system-ui, sans-serif;
+            background: #f9fafc;
+            color: #1a1e2b;
+            line-height: 1.5;
+            padding: 2rem 1rem;
+        }
+        .roadmap-container {
+            max-width: 1300px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 32px;
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.15);
+            overflow: hidden;
+            border: 1px solid #edf2f7;
+        }
+        .header-gradient {
+            background: linear-gradient(145deg, #0b1e33 0%, #1a3b5c 100%);
+            padding: 2.5rem 3rem;
+            color: white;
+        }
+        .header-gradient h1 {
+            font-weight: 700;
+            font-size: 2.5rem;
+            letter-spacing: -0.02em;
+            margin-bottom: 0.25rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .header-gradient h1 i {
+            color: #64b5f6;
+            font-size: 2.2rem;
+        }
+        .header-gradient .subhead {
+            font-size: 1.15rem;
+            color: #b2d9ff;
+            margin-top: 0.5rem;
+            max-width: 700px;
+        }
+        .badge-module {
+            background: rgba(255,255,255,0.15);
+            -webkit-backdrop-filter: blur(4pxpx);
+            backdrop-filter: blur(4px);
+            padding: 0.4rem 1.2rem;
+            border-radius: 40px;
+            display: inline-block;
+            font-size: 0.9rem;
+            font-weight: 500;
+            border: 1px solid rgba(255,255,255,0.2);
+            margin-top: 1rem;
+        }
+        .content {
+            padding: 2.5rem 3rem;
+        }
+        /* section styling */
+.section-card {
+            background: rgba(255, 255, 255, 0.85);
+            -webkit-backdrop-filter: blur(20px);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(233, 237, 244, 0.5);
+            border-radius: 24px;
+            padding: 1.8rem 2rem;
+            margin-bottom: 2.2rem;
+            box-shadow: 0 20px 40px rgba(0,20,40,0.08), 0 0 0 1px rgba(255,255,255,0.2);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+        .section-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #64b5f6, #1e4a7a);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .section-card:hover::before {
+            opacity: 1;
+        }
+        .section-card:hover {
+            box-shadow: 0 12px 24px -12px rgba(20,60,120,0.18);
+        }
+        .section-title {
+            font-size: 1.8rem;
+            font-weight: 650;
+            letter-spacing: -0.02em;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 2px solid #eef2f6;
+            padding-bottom: 0.65rem;
+        }
+        .section-title i {
+            color: #1e4a7a;
+            font-size: 1.8rem;
+        }
+        .grid-2col {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.8rem;
+        }
+        .grid-3col {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+        }
+        .badge {
+            display: inline-block;
+            background: #e7edf8;
+            color: #1e3f6e;
+            font-size: 0.8rem;
+            font-weight: 600;
+            padding: 0.25rem 0.8rem;
+            border-radius: 30px;
+            border: 1px solid #cfdceb;
+        }
+.status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 0.4rem 1.1rem;
+            border-radius: 30px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .status-badge::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            transition: left 0.5s;
+        }
+        .status-badge:hover::before {
+            left: 100%;
+        }
+        .status-badge.critical {
+            background: #ffeae9;
+            color: #b83e3e;
+        }
+        .status-badge.high {
+            background: #fff2db;
+            color: #aa5b00;
+        }
+.code-block {
+            background: linear-gradient(145deg, #1a2634 0%, #1f2d3d 100%);
+            color: #e8eaf6;
+            padding: 1.5rem;
+            border-radius: 20px;
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-size: 0.9rem;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            word-break: break-word;
+            margin: 1.2rem 0;
+            border: 1px solid #3a4a5a;
+            position: relative;
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.05);
+        }
+        .code-block::before {
+            content: '⟨ code ⟩';
+            position: absolute;
+            top: -8px;
+            left: 16px;
+            background: #1a2634;
+            padding: 0 8px;
+            font-size: 0.7rem;
+            color: #64b5f6;
+            font-weight: 600;
+        }
+        /* Static syntax highlighting approximation */
+        .code-block span { color: #ffcb6b; } /* Placeholder for future spans */
+        .inline-code {
+            background: #ecf1f7;
+            padding: 0.2rem 0.5rem;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 0.9rem;
+            color: #1f3c68;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.2rem 0;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+        }
+        th {
+            background: #eef3f9;
+            font-weight: 600;
+            text-align: left;
+            padding: 0.9rem 1rem;
+        }
+        td {
+            padding: 0.9rem 1rem;
+            border-bottom: 1px solid #e9edf2;
+        }
+.week-row:nth-child(even) {
+            background: rgba(245, 250, 255, 0.7);
+        }
+        .week-row {
+            background: rgba(255, 255, 255, 0.9);
+            transition: all 0.2s ease;
+            border-radius: 12px;
+            margin: 4px 0;
+        }
+        .week-row:hover {
+            background: linear-gradient(135deg, #f0f7ff, #e3f2fd);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(20, 60, 120, 0.15);
+        }
+        .icon-list {
+            list-style: none;
+        }
+        .icon-list li {
+            margin-bottom: 0.7rem;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+        .icon-list li i {
+            color: #1e4a7a;
+            width: 22px;
+            margin-top: 3px;
+        }
+.flow-steps {
+            display: flex;
+            flex-wrap: wrap;
+            background: linear-gradient(145deg, rgba(244, 248, 254, 0.8), rgba(229, 242, 253, 0.8));
+           -webkit-backdrop-filter: blur(10px);
+            backdrop-filter: blur(10px);
+            
+            border-radius: 40px;
+            padding: 0.8rem;
+            justify-content: center;
+            border: 1px solid rgba(100, 181, 246, 0.2);
+            animation: flowPulse 2s ease-in-out infinite;
+        }
+        @keyframes flowPulse {
+            0%, 100% { box-shadow: 0 0 20px rgba(100, 181, 246, 0.1); }
+            50% { box-shadow: 0 0 30px rgba(100, 181, 246, 0.25); }
+        }
+        .flow-step {
+            padding: 0.5rem 1.2rem;
+            background: white;
+            border-radius: 40px;
+            font-weight: 500;
+            margin: 0.25rem;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+            border: 1px solid #dde5ef;
+        }
+        .arrow {
+            color: #7c8ca0;
+            font-size: 1.2rem;
+            margin: 0 0.1rem;
+        }
+        hr {
+            border: none;
+            border-top: 2px dotted #cdd9e9;
+            margin: 1.8rem 0;
+        }
+        .folder-structure {
+            background: #f1f5f9;
+            border-radius: 20px;
+            padding: 1.5rem;
+            font-family: 'JetBrains Mono', monospace;
+            line-height: 2;
+        }
+        /* Fade-in animations */
+        .section-card {
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeInUp 0.8s ease forwards;
+        }
+        .section-card:nth-child(1) { animation-delay: 0.1s; }
+        .section-card:nth-child(2) { animation-delay: 0.2s; }
+        .section-card:nth-child(3) { animation-delay: 0.3s; }
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 800px) {
+            .content { padding: 1.5rem; }
+            .header-gradient { padding: 1.8rem; }
+            .grid-2col, .grid-3col { grid-template-columns: 1fr; }
+            .section-card { margin-bottom: 1.5rem; padding: 1.5rem 1.2rem; }
+        }
+    </style>
+</head>
+<body>
+<div class="roadmap-container">
+    <div class="header-gradient">
+        <h1>
+            <i class="fas fa-microscope"></i> 
+            MedMind · Lab Reports Explainer
+        </h1>
+        <div class="subhead">Production-grade execution roadmap for Core Module 1 — from messy PDFs to clinical-grade explanations.</div>
+        <div class="badge-module"><i class="fas fa-calendar-alt"></i> 8-week sprint · FAANG-level engineering · v1.0</div>
+    </div>
+
+    <div class="content">
+        <!-- High-Level Overview & Architecture -->
+        <div class="section-card">
+            <div class="section-title"><i class="fas fa-cubes"></i> 1. High-level module overview</div>
+            <p style="font-size: 1.1rem; margin-bottom: 1.2rem;">Users upload lab reports (PDF/DOCX/TXT) → receive structured JSON with plain‑English explanations, status (normal/low/high/critical), and possible causes. Fully transparent AI pipeline with BioGPT/Mistral.</p>
+            <div class="grid-2col">
+                <div>
+                    <h3 style="margin-bottom: 1rem;"><i class="fas fa-bullseye" style="color:#1e4a7a;"></i> Goals</h3>
+                    <ul class="icon-list">
+                        <li><i class="fas fa-check-circle" style="color:#2e7d32;"></i> 99% extraction accuracy for structured lab names</li>
+                        <li><i class="fas fa-check-circle" style="color:#2e7d32;"></i> < 3 sec latency for explanation generation (CPU)</li>
+                        <li><i class="fas fa-check-circle" style="color:#2e7d32;"></i> Support 200+ lab tests using LOINC & medical DB</li>
+                        <li><i class="fas fa-check-circle" style="color:#2e7d32;"></i> Actionable causes via biomedical literature fine-tuning</li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 style="margin-bottom: 1rem;"><i class="fas fa-chart-line"></i> Key metrics</h3>
+                    <ul class="icon-list">
+                        <li><i class="fas fa-chart-pie"></i> 98% precision on test extraction</li>
+                        <li><i class="fas fa-chart-pie"></i> 95% user satisfaction on explanation clarity</li>
+                        <li><i class="fas fa-chart-pie"></i> < 0.5% critical misclassification</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- System Architecture -->
+        <div class="section-card">
+            <div class="section-title"><i class="fas fa-sitemap"></i> 2. System architecture</div>
+            <div class="grid-2col" style="margin-bottom: 1rem;">
+                <div>
+                    <span class="badge">frontend</span> React + Tailwind · <span class="badge">backend</span> FastAPI (Python)<br>
+                    <span class="badge">AI</span> BioGPT (ONNX) / Ollama (Mistral) · <span class="badge">db</span> SQLite + LOINC dataset
+                </div>
+                <div style="text-align: right;"><i class="fas fa-arrow-right"></i> fully containerized with Docker</div>
+            </div>
+            <div class="code-block">
+                ┌────────────┐     ┌────────────┐     ┌────────────────┐     ┌────────────┐<br>
+                │   Browser  │ ──> │  FastAPI   │ ──> │   AI Pipeline  │ ──> │  SQLite    │<br>
+                │ (React SPA)│ <─> │ (uvicorn)  │ <─> │(NER / BioGPT) │ <─> │ranges+reports│<br>
+                └────────────┘     └────────────┘     └────────────────┘     └────────────┘
+            </div>
+        </div>
+
+        <!-- Processing Pipeline & Workflows -->
+        <div class="section-card">
+            <div class="section-title"><i class="fas fa-robot"></i> 3. AI processing pipeline</div>
+            <div class="flow-steps" style="margin-bottom: 2rem;">
+                <span class="flow-step"><i class="fas fa-file-pdf"></i> Upload</span>
+                <span class="arrow"><i class="fas fa-chevron-right"></i></span>
+                <span class="flow-step"><i class="fas fa-parse"></i> Parsing</span>
+                <span class="arrow"><i class="fas fa-chevron-right"></i></span>
+                <span class="flow-step"><i class="fas fa-dna"></i> NER + regex</span>
+                <span class="arrow"><i class="fas fa-chevron-right"></i></span>
+                <span class="flow-step"><i class="fas fa-balance-scale"></i> Range compare</span>
+                <span class="arrow"><i class="fas fa-chevron-right"></i></span>
+                <span class="flow-step"><i class="fas fa-comment-medical"></i> BioGPT explain</span>
+                <span class="arrow"><i class="fas fa-chevron-right"></i></span>
+                <span class="flow-step"><i class="fas fa-clipboard-list"></i> JSON output</span>
+            </div>
+            <div class="grid-3col">
+                <div><h4>📄 Document parsing</h4>PyMuPDF (images), pdfplumber (tables), python-docx, fallback text extraction.</div>
+                <div><h4>🧪 Test extraction</h4>scispaCy (en_ner_bc5cdr_md) + LOINC mapped regex patterns.</div>
+                <div><h4>🧠 Explanation + causes</h4>BioGPT (microsoft/BioGPT) or Mistral-7B via Ollama prompt: <span class="inline-code">"explain {test} = {value} {unit}, status {status}"</span></div>
+            </div>
+        </div>
+
+        <!-- Detailed Workflow Cards (4,5,6,7,8) compressed into clear blocks -->
+        <div class="grid-2col">
+            <div class="section-card">
+                <h3 style="display: flex; gap:8px;"><i class="fas fa-file-import"></i> 4. Document parsing workflow</h3>
+                <ul class="icon-list">
+                    <li><i class="fas fa-cog"></i> <strong>PDF</strong>: try PyMuPDF for text; if low density → pdfplumber table extraction + OCR fallback (Tesseract).</li>
+                    <li><i class="fas fa-cog"></i> <strong>DOCX</strong>: python-docx extract paragraphs & tables.</li>
+                    <li><i class="fas fa-cog"></i> <strong>TXT</strong>: raw text cleaning (remove extra spaces).</li>
+                </ul>
+            </div>
+            <div class="section-card">
+                <h3 style="display: flex; gap:8px;"><i class="fas fa-search"></i> 5. Test extraction workflow</h3>
+                <ul class="icon-list">
+                    <li><i class="fas fa-cog"></i> <strong>NER</strong>: scispaCy identifies medical entities (test names).</li>
+                    <li><i class="fas fa-cog"></i> <strong>Regex</strong>: patterns like <span class="inline-code">(Hemoglobin|Hb)\s*:?\s*([\d.]+)</span></li>
+                    <li><i class="fas fa-cog"></i> <strong>LOINC mapping</strong>: link synonyms to standard LOINC codes.</li>
+                </ul>
+            </div>
+            <div class="section-card">
+                <h3><i class="fas fa-arrows-alt-h"></i> 6. Normal range comparison</h3>
+                <p>SQLite table <span class="inline-code">lab_ranges</span> (test_name_clean, age_low, age_high, sex, low, high, unit, critical_low, critical_high). Compare value → status: critical/low/normal/high/critical.</p>
+            </div>
+            <div class="section-card">
+                <h3><i class="fas fa-comment-dots"></i> 7. Explanation generation</h3>
+                <p>Prompt BioGPT: <span class="inline-code">"Hemoglobin 10.2 g/dL is low. Write one sentence explaining what low hemoglobin means."</span> Cached for common tests.</p>
+            </div>
+        </div>
+        <div class="section-card">
+            <h3><i class="fas fa-exclamation-triangle"></i> 8. Possible cause detection</h3>
+            <p>Two-tier: rule-based (if low hemoglobin → ["iron deficiency","chronic disease","blood loss"]) + BioGPT/Mistral refinement. Causes stored in <span class="inline-code">causes_db</span> keyed by test & direction.</p>
+        </div>
+
+        <!-- API Design + Database Schema -->
+        <div class="grid-2col">
+            <div class="section-card">
+                <div class="section-title" style="font-size:1.5rem; border:none;"><i class="fas fa-plug"></i> 9. API design</div>
+                <div class="code-block" style="font-size:0.85rem;">
+POST /api/lab/upload   (multipart/form-data) → {doc_id, filename}<br>
+POST /api/lab/analyze/{doc_id} → {<br>
+  "tests": [{"name":"Hemoglobin","value":10.2,"unit":"g/dL","status":"Low",<br> "explanation":"...", "causes":["..."]}],<br>
+  "summary":"2 abnormal", "risk_count":2<br>
+}
+                </div>
+            </div>
+            <div class="section-card">
+                <div class="section-title" style="font-size:1.5rem; border:none;"><i class="fas fa-database"></i> 10. Database schema</div>
+                <div class="code-block" style="font-size:0.8rem;">
+-- lab_ranges<br>
+id, loinc_code, test_name, gender, age_min, age_max,<br>
+range_low, range_high, unit, critical_low, critical_high<br>
+-- reports<br>
+id, filename, user_id, upload_time, json_result<br>
+-- explanations_cache (test_name+value+unit → explanation)
+                </div>
+            </div>
+        </div>
+
+        <!-- UI Screens -->
+        <div class="section-card">
+            <div class="section-title"><i class="fas fa-mobile-alt"></i> 11. UI screen implementation plan</div>
+            <div style="display:flex; flex-wrap: wrap; gap: 1rem; margin-bottom: 1rem;">
+                <span class="badge">Landing</span> <span class="badge">Auth (signup/login/forgot)</span> <span class="badge">Dashboard</span> <span class="badge">Upload (drag-drop)</span> <span class="badge">Processing animation</span> <span class="badge">Overview table</span> <span class="badge">Detailed explanation</span> <span class="badge">History</span>
+            </div>
+            <div class="grid-3col">
+                <div><i class="fas fa-check-circle" style="color:#2e7d32;"></i> <strong>Screens 1-4</strong> (Landing, Signup, Login, Forgot) – React + Tailwind, form validation, JWT tokens.</div>
+                <div><i class="fas fa-check-circle" style="color:#2e7d32;"></i> <strong>Screens 5-7</strong> (Dashboard, Upload, Processing) – file dropzone, animated progress steps (parsing → extracting → comparing → explaining).</div>
+                <div><i class="fas fa-check-circle" style="color:#2e7d32;"></i> <strong>Screens 8-10</strong> (Analysis overview, detailed test, history) – color‑coded table, expandable panels, previous reports list.</div>
+            </div>
+        </div>
+
+        <!-- Development Roadmap - 8 weeks -->
+        <div class="section-card">
+            <div class="section-title"><i class="fas fa-tasks"></i> 12. Step-by-step development schedule</div>
+            <table>
+                <tr><th>Week</th><th>Engineering tasks (specific, deliverables)</th></tr>
+                <tr class="week-row"><td>📆 Week 1</td><td>⚙️ FastAPI project structure + SQLite schema (lab_ranges, reports). ⚙️ Integrate PyMuPDF, pdfplumber, python-docx. ⚙️ Basic /upload endpoint saving file.</td></tr>
+                <tr class="week-row"><td>📆 Week 2</td><td>🔍 Build test extraction pipeline: scispaCy NER model wrapper + regex fallback. 🔍 Load LOINC CSV into lab_ranges.</td></tr>
+                <tr class="week-row"><td>📆 Week 3</td><td>📊 Range comparison logic (age/gender aware). Unit tests for 50+ lab tests. 📊 Implement status classification (normal/low/high/critical).</td></tr>
+                <tr class="week-row"><td>📆 Week 4</td><td>🧠 Integrate BioGPT (via transformers) for explanation generation; prompt design; caching layer. 🧠 possible cause rule engine (fallback).</td></tr>
+                <tr class="week-row"><td>📆 Week 5</td><td>🌐 Frontend: Landing, Signup, Login, Forgot (JWT auth, local storage). Connect to mock API.</td></tr>
+                <tr class="week-row"><td>📆 Week 6</td><td>🖥️ Dashboard, Upload (dropzone), Processing animation (SSE or polling). Report overview table (colored badges).</td></tr>
+                <tr class="week-row"><td>📆 Week 7</td><td>📋 Detailed test view (expandable), Report History page. Polish UI responsiveness.</td></tr>
+                <tr class="week-row"><td>📆 Week 8</td><td>🚀 Full integration, stress test with 100+ lab reports, performance tuning (BioGPT on CPU), deploy staging.</td></tr>
+            </table>
+        </div>
+
+        <!-- Folder Structure -->
+        <div class="grid-2col">
+            <div class="section-card">
+                <div class="section-title" style="font-size:1.5rem;"><i class="fas fa-folder-open"></i> 13. Folder structure</div>
+                <div class="folder-structure">
+                    medmind-lab-explainer/<br>
+                    ├── backend/<br>
+                    │   ├── api/ (routes, deps)<br>
+                    │   ├── services/<br>
+                    │   │   ├── parser/ (pdf, docx, txt)<br>
+                    │   │   ├── extractor/ (ner, regex)<br>
+                    │   │   ├── comparator/ (ranges)<br>
+                    │   │   └── explainer/ (biogpt, causes)<br>
+                    │   ├── models/ (sqlite)<br>
+                    │   └── main.py<br>
+                    ├── frontend/<br>
+                    │   ├── src/components/<br>
+                    │   ├── pages/<br>
+                    │   └── ...<br>
+                    ├── data/<br>
+                    │   ├── loinc.csv<br>
+                    │   └── lab_ranges.db<br>
+                    └── docker-compose.yml
+                </div>
+            </div>
+            <div class="section-card">
+                <div class="section-title" style="font-size:1.5rem;"><i class="fas fa-project-diagram"></i> 14. Data flow diagram</div>
+                <div class="code-block" style="background: #eaf0f8; color:#1e2f41;">
+User upload (PDF/DOCX/TXT) <br>    ↓<br>[Parser] → raw text + tables<br>    ↓<br>[NER + regex] → list of (test, value, unit)<br>    ↓<br>[Range comparator] (SQLite) → status per test<br>    ↓<br>[Explanation generator] + possible causes<br>    ↓<br>JSON response → UI rendering
+                </div>
+            </div>
+        </div>
+
+        <!-- Engineering Challenges & Testing -->
+        <div class="grid-2col">
+            <div class="section-card">
+                <div class="section-title" style="font-size:1.5rem;"><i class="fas fa-bug"></i> 15. Key engineering challenges</div>
+                <ul class="icon-list">
+                    <li><i class="fas fa-file-pdf" style="color:#c72a2a;"></i> <strong>Messy formats:</strong> scanned PDFs, handwritten tables → OCR with Tesseract + layout analysis.</li>
+                    <li><i class="fas fa-table"></i> <strong>Embedded tables:</strong> pdfplumber + heuristics to extract test-name/value/unit columns.</li>
+                    <li><i class="fas fa-brain"></i> <strong>NER accuracy:</strong> fine-tune scispaCy on 500 annotated lab reports.</li>
+                    <li><i class="fas fa-balance-scale"></i> <strong>Range ambiguity:</strong> different labs use different reference ranges – store multiple ranges per test (age/sex).</li>
+                </ul>
+            </div>
+            <div class="section-card">
+                <div class="section-title" style="font-size:1.5rem;"><i class="fas fa-vial"></i> 16. Testing strategy</div>
+                <ul class="icon-list">
+                    <li><i class="fas fa-check"></i> <strong>Unit:</strong> parser fixtures (PDF, DOCX, TXT samples).</li>
+                    <li><i class="fas fa-check"></i> <strong>Extraction:</strong> compare NER output with annotated ground truth (accuracy > 95%).</li>
+                    <li><i class="fas fa-check"></i> <strong>Classification:</strong> 1000+ synthetic test values, validate status correctness.</li>
+                    <li><i class="fas fa-check"></i> <strong>API integration:</strong> pytest + upload real files, assert JSON structure.</li>
+                    <li><i class="fas fa-check"></i> <strong>Load:</strong> 50 concurrent uploads, measure P95 latency.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Example output badge -->
+        <hr>
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div>
+                <span class="status-badge"><i class="fas fa-check-circle"></i> Normal</span>
+                <span class="status-badge high"><i class="fas fa-exclamation-triangle"></i> High</span>
+                <span class="status-badge critical"><i class="fas fa-skull-crosswalk"></i> Critical</span>
+            </div>
+            <div style="font-size: 0.95rem;"><i class="fas fa-flask"></i> Example output: <span class="inline-code">{tests:[{name:"Hemoglobin",value:10.2,unit:"g/dL",status:"Low",explanation:"...",causes:["Iron deficiency"]}]}</span></div>
+        </div>
+        <hr>
+
+        <!-- footer note -->
+        <div style="color:#3b5777; font-size:0.9rem; text-align: center; padding-top: 1rem;">
+            <i class="fas fa-rocket"></i> MedMind · Lab Explainer — ready for FAANG-level final year project · built with <i class="fas fa-heart" style="color:#c44545;"></i> for execution clarity
+        </div>
+    </div> <!-- end content -->
+</div> <!-- end container -->
+</body>
+</html>
