@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document Text Extractor</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 900px;
+            margin: 50px auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        h2 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+        .subtitle {
+            color: #666;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #667eea;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        input[type="file"] {
+            padding: 10px;
+            border: 2px dashed #ddd;
+            border-radius: 5px;
+            width: 100%;
+            margin: 10px 0;
+            cursor: pointer;
+        }
+        input[type="submit"] {
+            background: #667eea;
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background 0.3s;
+        }
+        input[type="submit"]:hover {
+            background: #5a67d8;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 5px;
+            border-left: 4px solid #667eea;
+        }
+        .error {
+            color: red;
+            margin-top: 10px;
+            padding: 10px;
+            background: #ffe6e6;
+            border-radius: 5px;
+            border-left: 4px solid red;
+        }
+        .success {
+            color: green;
+            margin-top: 10px;
+            padding: 10px;
+            background: #e6ffe6;
+            border-radius: 5px;
+            border-left: 4px solid green;
+        }
+        .file-info {
+            background: #e9ecef;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 15px 0;
+        }
+        .extracted-text {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 20px;
+            border-radius: 5px;
+            max-height: 400px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        .badge {
+            display: inline-block;
+            padding: 4px 8px;
+            background: #667eea;
+            color: white;
+            border-radius: 4px;
+            font-size: 12px;
+            margin-left: 10px;
+        }
+        h3 {
+            margin-top: 0;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>📄 Document Text Extractor</h2>
+        <div class="subtitle">Upload any document to extract text content</div>
+        
+        <form action="/" method="post" enctype="multipart/form-data">
+            <div class="form-group">
+                <input type="file" name="filename" required/>
+            </div>
+            <input type="submit" value="Upload & Extract Text"/>
+        </form>
+        
+        {% if message %}
+        <div class="error">
+            ❌ {{ message }}
+        </div>
+        {% endif %}
+        
+        {% if filename %}
+        <div class="result">
+            <h3>✅ Extraction Complete!</h3>
+            <div class="file-info">
+                <strong>📎 Filename:</strong> {{ filename }}
+                <span class="badge">{{ file_type }}</span>
+            </div>
+            
+            <h3>📝 Extracted Text:</h3>
+            <div class="extracted-text">
+                {{ extracted_text }}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</body>
+</html>
