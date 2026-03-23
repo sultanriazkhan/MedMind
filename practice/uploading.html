@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <form action="sample_text_extraction.py" method="post" enctype="multipart/form-data">
+        <p>
+            Upload File:
+            <input type="file" name="filename"/>
+            <input type="submit" value="Upload"/>
+
+        </p>
+    </form>
+     {% if filename %}
+    <h3>Results:</h3>
+    <p>Filename: {{ filename }}</p>
+    <p>File type detected: {{ file_type }}</p>
+    {% endif %}
+    
+    {% if error %}
+    <p style="color:red">{{ error }}</p>
+    {% endif %}
+</body>
+</html>
