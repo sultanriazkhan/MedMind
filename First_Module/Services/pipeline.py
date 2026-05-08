@@ -2,7 +2,7 @@
 import hashlib
 import time
 import uuid
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Optional, Union, Set
 from dataclasses import dataclass, field
 import logging
 
@@ -40,7 +40,7 @@ class ProcessingPipeline:
         """Execute complete processing pipeline"""
         start_time = time.time()
         request_id = str(uuid.uuid4())
-        errors = []
+        errors: List[str] = []
         
         try:
             # Step 1: Text Normalization
@@ -117,7 +117,7 @@ class ProcessingPipeline:
     
     def _extract_with_regex(self, lines: List[str]) -> List[Dict[str, Any]]:
         """Primary regex-based extraction"""
-        tests = []
+        tests: List[Dict[str, Any]] = []
         
         for line in lines:
             extracted = self.regex_extractor.extract_from_text(line)
@@ -135,12 +135,12 @@ class ProcessingPipeline:
         
         return tests
     
-    def _get_remaining_text(self, lines: List[str], extracted_tests: List[Dict]) -> str:
+    def _get_remaining_text(self, lines: List[str], extracted_tests: List[Dict[str, Any]]) -> str:
         """Get text that wasn't covered by regex extraction"""
         # Simple heuristic: join lines that don't match extracted patterns
-        extracted_texts = set([t['raw_text'] for t in extracted_tests])
+        extracted_texts: Set[str] = {str(t.get('raw_text', '')) for t in extracted_tests}
         
-        remaining = []
+        remaining: List[str] = []
         for line in lines:
             if line not in extracted_texts:
                 remaining.append(line)
@@ -154,24 +154,25 @@ class ProcessingPipeline:
         
         candidates = self.scispacy.extract_test_candidates(text)
         
-        tests = []
+        tests: List[Dict[str, Any]] = []
         for cand in candidates:
-            if cand['value'] is not None:
+            value = cand.get('value')
+            if value is not None:
                 tests.append({
-                    'raw_text': cand['raw_text'],
-                    'test_name': cand['test_name'],
-                    'value': cand['value'],
-                    'unit': cand['unit'],
-                    'reference_range': cand['reference_range'],
+                    'raw_text': cand.get('raw_text', ''),
+                    'test_name': cand.get('test_name', ''),
+                    'value': value,
+                    'unit': cand.get('unit'),
+                    'reference_range': cand.get('reference_range'),
                     'extraction_method': 'scispacy',
-                    'confidence': cand['confidence']
+                    'confidence': cand.get('confidence', 0.5)
                 })
         
         return tests
     
-    def _canonicalize_tests(self, tests: List[Dict]) -> List[Dict]:
+    def _canonicalize_tests(self, tests: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
         """Apply canonicalization to all extracted tests"""
-        canonicalized = []
+        canonicalized: List[Dict[str, Any]] = []
         
         for test in tests:
             canonical = self.canonical_engine.canonicalize_with_context(test)
@@ -179,41 +180,73 @@ class ProcessingPipeline:
         
         return canonicalized
     
-    def _classify_results(self, tests: List[Dict]) -> List[Dict]:
+    def _classify_results(self, tests: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
         """Apply reference range classification"""
         for test in tests:
-            if test.get('canonical_test_id') and test.get('value'):
-                status = self.range_classifier.classify(
-                    canonical_test_id=test['canonical_test_id'],
-                    value=test['value'],
-                    unit=test.get('unit'),
-                    gender=None,  # Could be extracted from report
-                    age_years=None
-                )
-                test['status'] = status.value
+            canonical_test_id = test.get('canonical_test_id')
+            value = test.get('value')
+            unit = test.get('unit')
+            
+            # Only classify if we have both test_id and value
+            if canonical_test_id is not None and value is not None:
+                try:
+                    # Ensure types are correct
+                    test_id_int = int(canonical_test_id) if not isinstance(canonical_test_id, int) else canonical_test_id
+                    value_float = float(value) if not isinstance(value, float) else value
+                    unit_str = str(unit) if unit is not None else None
+                    
+                    status = self.range_classifier.classify(
+                        canonical_test_id=test_id_int,
+                        value=value_float,
+                        unit=unit_str,
+                        gender=None,  # Could be extracted from report
+                        age_years=None
+                    )
+                    test['status'] = status.value
+                except (ValueError, TypeError) as e:
+                    logger.warning(f"Failed to classify test {test.get('test_name')}: {e}")
+                    test['status'] = ResultStatus.UNKNOWN.value
             else:
                 test['status'] = ResultStatus.UNKNOWN.value
         
         return tests
     
-    def _prepare_output(self, tests: List[Dict]) -> List[Dict]:
-        """Prepare final output format"""
-        output = []
+    def _prepare_output(self, tests: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+        """Prepare final output format with consistent keys"""
+        output: List[Dict[str, Any]] = []
         
         for test in tests:
-            output_test = {
+            # Extract and normalize unit safely
+            raw_unit = test.get('unit')
+            if isinstance(raw_unit, str):
+                normalized_unit = UnitNormalizer.normalize(raw_unit)
+            else:
+                normalized_unit = None
+            
+            # Extract value safely
+            raw_value = test.get('value')
+            if raw_value is not None:
+                try:
+                    value_float = float(raw_value)
+                except (ValueError, TypeError):
+                    value_float = None
+            else:
+                value_float = None
+            
+            # Build output dictionary with all fields
+            output_test: Dict[str, Any] = {
                 'raw_text': test.get('raw_text', ''),
                 'raw_test_name': test.get('test_name', ''),
                 'normalized_test_name': test.get('normalized_test_name', ''),
                 'canonical_name': test.get('canonical_name'),
                 'loinc_code': test.get('loinc_code'),
-                'value': test.get('value'),
-                'unit': UnitNormalizer.normalize(test.get('unit')),
+                'value': value_float,
+                'unit': normalized_unit,
                 'reference_range': test.get('reference_range'),
                 'status': test.get('status', ResultStatus.UNKNOWN.value),
                 'match_type': test.get('match_type', 'unknown'),
-                'similarity_score': test.get('similarity_score', 0.0),
-                'confidence_score': test.get('confidence_score', 0.0)
+                'similarity_score': float(test.get('similarity_score', 0.0)),
+                'confidence_score': float(test.get('confidence_score', 0.0))
             }
             output.append(output_test)
         
@@ -221,7 +254,7 @@ class ProcessingPipeline:
     
     def _log_processing(self, request_id: str, test_count: int, 
                        processing_time: float, regex_matches: int,
-                       fallback_matches: int, errors: List[str]):
+                       fallback_matches: int, errors: List[str]) -> None:
         """Log processing for analytics"""
         try:
             with db_manager.get_session() as session:

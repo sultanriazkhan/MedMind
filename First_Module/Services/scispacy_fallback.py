@@ -5,19 +5,24 @@ from dataclasses import dataclass
 
 logger = logging.getLogger(__name__)
 
-# Try to import scispacy, but handle gracefully if not available
+# Try to import scispacy and spaCy, but handle gracefully if not available
 try:
     import scispacy
-    import spacy
     SCISPAXY_AVAILABLE = True
 except ImportError:
     SCISPAXY_AVAILABLE = False
     logger.warning("scispaCy not available. Using fallback NER only.")
 
+try:
+    import spacy
+except ImportError:
+    spacy = None
+    logger.warning("spaCy not available. NER features will be disabled.")
+
 @dataclass
 class NEREntity:
     text: str
-    label: str
+    label: str  
     start: int
     end: int
     confidence: float
@@ -32,7 +37,7 @@ class ScispaCyFallback:
     
     def _initialize(self):
         """Initialize scispaCy model if available"""
-        if SCISPAXY_AVAILABLE:
+        if SCISPAXY_AVAILABLE and spacy is not None:
             try:
                 self.nlp = spacy.load(self.model_name)
                 logger.info(f"Loaded scispaCy model: {self.model_name}")
@@ -44,8 +49,8 @@ class ScispaCyFallback:
         else:
             # Fallback to basic spaCy
             try:
-                import spacy
-                self.nlp = spacy.load("en_core_web_sm")
+                import spacy as spacy_module
+                self.nlp = spacy_module.load("en_core_web_sm")
                 logger.info("Loaded fallback spaCy model")
             except:
                 logger.error("No NER model available")
@@ -81,7 +86,7 @@ class ScispaCyFallback:
         
         for ent in entities:
             # Look for lab test patterns
-            if ent.label_ == 'LAB_TEST' or 'test' in ent.label_.lower():
+            if ent.label == 'LAB_TEST' or 'test' in ent.label.lower():
                 # Find surrounding context
                 context_start = max(0, ent.start - 50)
                 context_end = min(len(text), ent.end + 100)
@@ -96,7 +101,7 @@ class ScispaCyFallback:
                     'unit': unit,
                     'reference_range': ref_range,
                     'raw_text': context,
-                    'ner_label': ent.label_,
+                    'ner_label': ent.label,
                     'confidence': ent.confidence
                 })
         

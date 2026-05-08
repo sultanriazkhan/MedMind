@@ -5,6 +5,7 @@ from enum import Enum
 
 from models.database import db_manager
 from services.alias_resolver import AliasResolver, AliasResolutionResult
+from services.text_normalizer import TextNormalizer
 
 @dataclass
 class CanonicalResult:

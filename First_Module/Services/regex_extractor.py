@@ -170,13 +170,13 @@ class RegexExtractor:
         
         return name
     
-    def _clean_unit(self, unit: str) -> str:
+    def _clean_unit(self, unit: str) -> Optional[str]:
         """Clean unit string"""
         unit = re.sub(r'[^\w\/\%\+\-]', '', unit)
         unit = unit.strip()
         return unit if unit else None
     
-    def _clean_reference_range(self, ref_range: str) -> str:
+    def _clean_reference_range(self, ref_range: str) -> Optional[str]:
         """Clean reference range string"""
         # Remove parentheses and brackets
         ref_range = re.sub(r'[\(\)\[\]\<\>]', '', ref_range)

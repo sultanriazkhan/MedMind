@@ -33,10 +33,12 @@ class AliasResolver:
         """Preload all aliases for faster lookup"""
         try:
             # Preload canonical tests
-            self.canonical_tests = {
-                test.canonical_name: test.id 
-                for test in self.db.query(CanonicalTest).all()
-            }
+            self.canonical_tests = {}
+            for test in self.db.query(CanonicalTest).all():
+                # Extract actual values from ORM objects
+                canonical_name = str(test.canonical_name) if test.canonical_name is not None else ""
+                test_id = test.id
+                self.canonical_tests[canonical_name] = test_id
             
             # Preload aliases
             self.aliases = {}

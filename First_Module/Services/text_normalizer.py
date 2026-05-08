@@ -1,5 +1,6 @@
 # services/text_normalizer.py
 import re
+from typing import Optional, Tuple
 import unicodedata
 from typing import Dict, Any, Tuple
 from dataclasses import dataclass
@@ -78,7 +79,7 @@ class TextNormalizer:
         return text.strip()
     
     @classmethod
-    def extract_numeric_value(cls, text: str) -> Tuple[float, str]:
+    def extract_numeric_value(cls, text: str) -> Tuple[Optional[float], str, str]:
         """Extract numeric value and remaining text"""
         # Pattern for numbers with decimals
         pattern = r'(\d+(?:\.\d+)?)\s*([^\d\s]*)'

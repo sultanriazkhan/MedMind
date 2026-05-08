@@ -66,8 +66,8 @@ class UnitNormalizer:
     def convert(cls, value: float, from_unit: str, to_unit: str, test_name: str) -> Tuple[float, str]:
         """Convert value between units for a specific test"""
         # Normalize units
-        from_unit = cls.normalize(from_unit)
-        to_unit = cls.normalize(to_unit)
+        from_unit = cls.normalize(from_unit) or from_unit
+        to_unit = cls.normalize(to_unit) or to_unit
         
         if from_unit == to_unit:
             return value, to_unit
