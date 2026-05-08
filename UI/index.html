@@ -1,0 +1,1529 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>MedMind — AI Health Intelligence Platform</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      colors: {
+        bg: '#0F172A',
+        surface: '#1E293B',
+        card: '#334155',
+        primary: '#38BDF8',
+        secondary: '#22C55E',
+        warning: '#F59E0B',
+        danger: '#EF4444',
+        txprimary: '#F1F5F9',
+        txsecondary: '#94A3B8',
+        border: '#475569',
+      },
+      fontFamily: {
+        sans: ['Plus Jakarta Sans', 'sans-serif'],
+        mono: ['JetBrains Mono', 'monospace'],
+      }
+    }
+  }
+}
+</script>
+<style>
+  * { box-sizing: border-box; }
+  body { background: #0F172A; color: #F1F5F9; font-family: 'Plus Jakarta Sans', sans-serif; overflow-x: hidden; }
+  
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 5px; }
+  ::-webkit-scrollbar-track { background: #1E293B; }
+  ::-webkit-scrollbar-thumb { background: #475569; border-radius: 4px; }
+
+  /* Sidebar */
+  .sidebar { width: 260px; min-height: 100vh; background: #1E293B; border-right: 1px solid #2D3E52; flex-shrink: 0; position: fixed; left: 0; top: 0; bottom: 0; overflow-y: auto; z-index: 40; transition: transform 0.3s ease; }
+  .main-content { margin-left: 260px; min-height: 100vh; }
+  
+  /* Nav item */
+  .nav-item { display: flex; align-items: center; gap: 10px; padding: 10px 16px; border-radius: 8px; cursor: pointer; transition: all 0.15s ease; color: #94A3B8; font-size: 14px; font-weight: 500; margin: 2px 8px; }
+  .nav-item:hover { background: #334155; color: #F1F5F9; }
+  .nav-item.active { background: rgba(56,189,248,0.12); color: #38BDF8; }
+  .nav-item.active svg { color: #38BDF8; }
+  
+  /* Section panels */
+  .section-panel { display: none; animation: fadeIn 0.2s ease; }
+  .section-panel.active { display: block; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+  
+  /* Cards */
+  .card { background: #1E293B; border: 1px solid #2D3E52; border-radius: 12px; }
+  .card-inner { background: #334155; border: 1px solid #3D5068; border-radius: 10px; }
+  
+  /* Status badges */
+  .badge-normal { background: rgba(34,197,94,0.15); color: #22C55E; border: 1px solid rgba(34,197,94,0.3); }
+  .badge-low { background: rgba(245,158,11,0.15); color: #F59E0B; border: 1px solid rgba(245,158,11,0.3); }
+  .badge-high { background: rgba(251,146,60,0.15); color: #FB923C; border: 1px solid rgba(251,146,60,0.3); }
+  .badge-critical { background: rgba(239,68,68,0.15); color: #EF4444; border: 1px solid rgba(239,68,68,0.3); }
+  
+  /* Upload area */
+  .upload-zone { border: 2px dashed #475569; border-radius: 12px; transition: all 0.2s ease; }
+  .upload-zone:hover, .upload-zone.drag { border-color: #38BDF8; background: rgba(56,189,248,0.05); }
+  
+  /* Chart bars */
+  .bar { background: linear-gradient(to top, #38BDF8, #7DD3FC); border-radius: 4px 4px 0 0; transition: height 0.5s ease; }
+  
+  /* Chat bubbles */
+  .chat-user { background: rgba(56,189,248,0.15); border: 1px solid rgba(56,189,248,0.25); border-radius: 16px 16px 4px 16px; }
+  .chat-ai { background: #1E293B; border: 1px solid #2D3E52; border-radius: 16px 16px 16px 4px; }
+  
+  /* Glow effect */
+  .glow-primary { box-shadow: 0 0 20px rgba(56,189,248,0.15); }
+  
+  /* Pulse dot */
+  .pulse-dot { width: 8px; height: 8px; background: #22C55E; border-radius: 50%; animation: pulse 2s infinite; }
+  @keyframes pulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.5; transform: scale(0.8); } }
+  
+  /* Progress bar */
+  .progress-bar { height: 6px; background: #334155; border-radius: 3px; overflow: hidden; }
+  .progress-fill { height: 100%; border-radius: 3px; transition: width 0.5s ease; }
+  
+  /* Blog card hover */
+  .blog-card { transition: transform 0.2s ease, box-shadow 0.2s ease; }
+  .blog-card:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.3); }
+  
+  /* Skeleton loader */
+  .skeleton { background: linear-gradient(90deg, #1E293B 25%, #2D3E52 50%, #1E293B 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: 6px; }
+  @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+
+  /* Mobile sidebar toggle */
+  @media (max-width: 768px) {
+    .sidebar { transform: translateX(-100%); }
+    .sidebar.open { transform: translateX(0); }
+    .main-content { margin-left: 0; }
+    .sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 30; }
+    .sidebar-overlay.show { display: block; }
+  }
+
+  /* Tab active */
+  .tab-btn { padding: 8px 16px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.15s; color: #94A3B8; border: 1px solid transparent; }
+  .tab-btn.active { background: rgba(56,189,248,0.12); color: #38BDF8; border-color: rgba(56,189,248,0.3); }
+  .tab-btn:hover:not(.active) { background: #334155; color: #F1F5F9; }
+
+  /* Day tab */
+  .day-tab { padding: 6px 14px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.15s; color: #94A3B8; }
+  .day-tab.active { background: #38BDF8; color: #0F172A; }
+
+  /* Smooth scroll */
+  html { scroll-behavior: smooth; }
+
+  /* Input style */
+  .med-input { background: #334155; border: 1px solid #475569; color: #F1F5F9; border-radius: 8px; padding: 10px 14px; font-size: 14px; font-family: inherit; outline: none; transition: border-color 0.15s; width: 100%; }
+  .med-input:focus { border-color: #38BDF8; }
+  .med-input::placeholder { color: #64748B; }
+
+  /* Tooltip */
+  .tooltip-text { visibility: hidden; background: #0F172A; color: #F1F5F9; font-size: 12px; padding: 4px 8px; border-radius: 4px; position: absolute; z-index: 100; white-space: nowrap; border: 1px solid #334155; bottom: 100%; left: 50%; transform: translateX(-50%); margin-bottom: 4px; }
+  .tooltip:hover .tooltip-text { visibility: visible; }
+
+  /* Logo gradient */
+  .logo-text { background: linear-gradient(135deg, #38BDF8, #818CF8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+</style>
+</head>
+<body>
+
+<!-- Sidebar Overlay (mobile) -->
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+
+<!-- SIDEBAR -->
+<aside class="sidebar" id="sidebar">
+  <!-- Logo -->
+  <div class="p-5 border-b border-[#2D3E52]">
+    <div class="flex items-center gap-3">
+      <div class="w-9 h-9 rounded-xl flex items-center justify-center" style="background: linear-gradient(135deg, #38BDF8, #818CF8);">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><path d="M9 3H5a2 2 0 0 0-2 2v4m6-6h10a2 2 0 0 1 2 2v4M9 3v18m0 0h10a2 2 0 0 0 2-2V9M9 21H5a2 2 0 0 1-2-2V9m0 0h18"/></svg>
+      </div>
+      <div>
+        <div class="logo-text text-lg font-800 tracking-tight" style="font-weight:800;">MedMind</div>
+        <div class="text-[10px] text-txsecondary font-500">AI Health Intelligence</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Navigation -->
+  <nav class="p-3 mt-2">
+    <div class="text-[10px] font-700 text-txsecondary uppercase tracking-widest px-3 mb-2">Main</div>
+    
+    <div class="nav-item active" onclick="showSection('dashboard', this)">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+      Dashboard
+    </div>
+    <div class="nav-item" onclick="showSection('labreports', this)">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-4"/><path d="M14 3v4a2 2 0 0 0 2 2h4"/><path d="M9 12l2 2 4-4"/></svg>
+      Lab Reports Explainer
+    </div>
+    <div class="nav-item" onclick="showSection('lifestyle', this)">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+      Lifestyle Recommender
+    </div>
+    <div class="nav-item" onclick="showSection('blog', this)">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+      Health Blog
+    </div>
+    <div class="nav-item" onclick="showSection('assistant', this)">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      Health AI Assistant
+    </div>
+    
+    <div class="text-[10px] font-700 text-txsecondary uppercase tracking-widest px-3 mb-2 mt-5">Account</div>
+    
+    <div class="nav-item" onclick="showSection('profile', this)">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      My Profile
+    </div>
+    <div class="nav-item" onclick="showSection('settings', this)">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      Settings
+    </div>
+  </nav>
+
+  <!-- User card at bottom -->
+  <div class="absolute bottom-0 left-0 right-0 p-4 border-t border-[#2D3E52]">
+    <div class="flex items-center gap-3">
+      <div class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-700 text-white" style="background: linear-gradient(135deg, #38BDF8, #818CF8);">AK</div>
+      <div class="flex-1 min-w-0">
+        <div class="text-sm font-600 text-txprimary truncate">Ahmed Khan</div>
+        <div class="text-xs text-txsecondary">Patient Account</div>
+      </div>
+      <div class="pulse-dot"></div>
+    </div>
+  </div>
+</aside>
+
+<!-- MAIN CONTENT -->
+<div class="main-content">
+  <!-- TOP BAR -->
+  <header class="sticky top-0 z-20 flex items-center justify-between px-6 py-4 border-b border-[#2D3E52]" style="background: rgba(15,23,42,0.85); backdrop-filter: blur(12px);">
+    <!-- Mobile menu button -->
+    <button class="md:hidden p-2 rounded-lg hover:bg-surface" onclick="openSidebar()">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
+    
+    <!-- Search -->
+    <div class="flex-1 max-w-md mx-4 relative">
+      <svg class="absolute left-3 top-1/2 -translate-y-1/2 text-txsecondary" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input class="med-input pl-9 text-sm" placeholder="Search reports, articles, queries…" style="background: #1E293B;"/>
+    </div>
+    
+    <!-- Right side -->
+    <div class="flex items-center gap-3">
+      <button class="relative p-2 rounded-lg hover:bg-surface transition-colors">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        <span class="absolute top-1 right-1 w-2 h-2 bg-danger rounded-full"></span>
+      </button>
+      <button class="p-2 rounded-lg hover:bg-surface transition-colors">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" stroke-width="2"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>
+      </button>
+      <div class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-700 text-white cursor-pointer" style="background: linear-gradient(135deg, #38BDF8, #818CF8);">AK</div>
+    </div>
+  </header>
+
+  <!-- PAGE CONTENT -->
+  <div class="p-6 md:p-8">
+
+    <!-- ============ DASHBOARD ============ -->
+    <div id="section-dashboard" class="section-panel active">
+      <div class="mb-8">
+        <h1 class="text-2xl font-800 text-txprimary mb-1">Good morning, Ahmed 👋</h1>
+        <p class="text-txsecondary text-sm">Here's your health intelligence overview for today.</p>
+      </div>
+
+      <!-- Summary Cards -->
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+        <div class="card p-5 cursor-pointer hover:border-primary transition-colors" onclick="showSection('labreports', document.querySelectorAll('.nav-item')[1])">
+          <div class="flex items-center justify-between mb-4">
+            <div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background: rgba(56,189,248,0.12);">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#38BDF8" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+            </div>
+            <span class="text-xs px-2 py-1 rounded-full badge-normal font-600">+2 new</span>
+          </div>
+          <div class="text-3xl font-800 text-txprimary mb-1">7</div>
+          <div class="text-sm text-txsecondary">Uploaded Reports</div>
+        </div>
+
+        <div class="card p-5">
+          <div class="flex items-center justify-between mb-4">
+            <div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background: rgba(239,68,68,0.12);">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#EF4444" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            </div>
+            <span class="text-xs px-2 py-1 rounded-full badge-high font-600">Action needed</span>
+          </div>
+          <div class="text-3xl font-800 text-txprimary mb-1">3</div>
+          <div class="text-sm text-txsecondary">Abnormal Markers</div>
+        </div>
+
+        <div class="card p-5">
+          <div class="flex items-center justify-between mb-4">
+            <div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background: rgba(34,197,94,0.12);">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#22C55E" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+            </div>
+            <span class="text-xs px-2 py-1 rounded-full badge-normal font-600">Active</span>
+          </div>
+          <div class="text-3xl font-800 text-txprimary mb-1">12</div>
+          <div class="text-sm text-txsecondary">Active Recommendations</div>
+        </div>
+
+        <div class="card p-5">
+          <div class="flex items-center justify-between mb-4">
+            <div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background: rgba(129,140,248,0.12);">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#818CF8" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+            </div>
+            <span class="text-xs px-2 py-1 rounded-full" style="background:rgba(129,140,248,0.15);color:#818CF8;border:1px solid rgba(129,140,248,0.3);" class="font-600">This week</span>
+          </div>
+          <div class="text-3xl font-800 text-txprimary mb-1">24</div>
+          <div class="text-sm text-txsecondary">Saved Articles</div>
+        </div>
+      </div>
+
+      <!-- Charts row -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+        <!-- Health Score Trend -->
+        <div class="card p-6 lg:col-span-2">
+          <div class="flex items-center justify-between mb-6">
+            <div>
+              <h3 class="font-700 text-txprimary text-base">Health Score Trend</h3>
+              <p class="text-xs text-txsecondary mt-0.5">Last 8 weeks · Overall wellness index</p>
+            </div>
+            <div class="flex items-center gap-2 text-secondary text-sm font-600">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+              +8.2%
+            </div>
+          </div>
+          <div class="flex items-end gap-2 h-32">
+            <div class="flex flex-col items-center flex-1 gap-1 h-full justify-end">
+              <div class="bar w-full" style="height:55%"></div>
+              <span class="text-[10px] text-txsecondary">W1</span>
+            </div>
+            <div class="flex flex-col items-center flex-1 gap-1 h-full justify-end">
+              <div class="bar w-full" style="height:62%"></div>
+              <span class="text-[10px] text-txsecondary">W2</span>
+            </div>
+            <div class="flex flex-col items-center flex-1 gap-1 h-full justify-end">
+              <div class="bar w-full" style="height:58%"></div>
+              <span class="text-[10px] text-txsecondary">W3</span>
+            </div>
+            <div class="flex flex-col items-center flex-1 gap-1 h-full justify-end">
+              <div class="bar w-full" style="height:70%"></div>
+              <span class="text-[10px] text-txsecondary">W4</span>
+            </div>
+            <div class="flex flex-col items-center flex-1 gap-1 h-full justify-end">
+              <div class="bar w-full" style="height:65%"></div>
+              <span class="text-[10px] text-txsecondary">W5</span>
+            </div>
+            <div class="flex flex-col items-center flex-1 gap-1 h-full justify-end">
+              <div class="bar w-full" style="height:75%"></div>
+              <span class="text-[10px] text-txsecondary">W6</span>
+            </div>
+            <div class="flex flex-col items-center flex-1 gap-1 h-full justify-end">
+              <div class="bar w-full" style="height:82%"></div>
+              <span class="text-[10px] text-txsecondary">W7</span>
+            </div>
+            <div class="flex flex-col items-center flex-1 gap-1 h-full justify-end">
+              <div class="bar w-full" style="height:88%; background: linear-gradient(to top, #38BDF8, #7DD3FC); box-shadow: 0 0 12px rgba(56,189,248,0.4);"></div>
+              <span class="text-[10px] text-primary font-600">W8</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Risk Donut -->
+        <div class="card p-6">
+          <h3 class="font-700 text-txprimary text-base mb-1">Risk Distribution</h3>
+          <p class="text-xs text-txsecondary mb-5">From latest report</p>
+          
+          <!-- CSS donut chart -->
+          <div class="flex justify-center mb-5">
+            <div class="relative w-28 h-28">
+              <svg viewBox="0 0 36 36" class="w-full h-full -rotate-90">
+                <circle cx="18" cy="18" r="15.9" fill="none" stroke="#334155" stroke-width="3.5"/>
+                <circle cx="18" cy="18" r="15.9" fill="none" stroke="#22C55E" stroke-width="3.5" stroke-dasharray="50 50" stroke-linecap="round"/>
+                <circle cx="18" cy="18" r="15.9" fill="none" stroke="#F59E0B" stroke-width="3.5" stroke-dasharray="25 75" stroke-dashoffset="-50" stroke-linecap="round"/>
+                <circle cx="18" cy="18" r="15.9" fill="none" stroke="#EF4444" stroke-width="3.5" stroke-dasharray="15 85" stroke-dashoffset="-75" stroke-linecap="round"/>
+              </svg>
+              <div class="absolute inset-0 flex flex-col items-center justify-center">
+                <span class="text-xl font-800 text-txprimary">74</span>
+                <span class="text-[10px] text-txsecondary">Health Score</span>
+              </div>
+            </div>
+          </div>
+          
+          <div class="space-y-2">
+            <div class="flex items-center justify-between text-sm">
+              <div class="flex items-center gap-2"><div class="w-2.5 h-2.5 rounded-sm bg-secondary"></div><span class="text-txsecondary text-xs">Normal</span></div>
+              <span class="font-600 text-txprimary text-xs">50%</span>
+            </div>
+            <div class="flex items-center justify-between text-sm">
+              <div class="flex items-center gap-2"><div class="w-2.5 h-2.5 rounded-sm bg-warning"></div><span class="text-txsecondary text-xs">Borderline</span></div>
+              <span class="font-600 text-txprimary text-xs">25%</span>
+            </div>
+            <div class="flex items-center justify-between text-sm">
+              <div class="flex items-center gap-2"><div class="w-2.5 h-2.5 rounded-sm bg-danger"></div><span class="text-txsecondary text-xs">Critical</span></div>
+              <span class="font-600 text-txprimary text-xs">15%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recent Activity -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div class="card p-6">
+          <h3 class="font-700 text-txprimary text-base mb-4">Recent Lab Results</h3>
+          <div class="space-y-3">
+            <div class="flex items-center justify-between p-3 card-inner rounded-lg">
+              <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background: rgba(239,68,68,0.12);">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#EF4444" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg>
+                </div>
+                <div>
+                  <div class="text-sm font-600 text-txprimary">HbA1c</div>
+                  <div class="text-xs text-txsecondary">Glucose regulation</div>
+                </div>
+              </div>
+              <div class="text-right">
+                <div class="font-700 text-txprimary text-sm font-mono">7.2%</div>
+                <span class="text-[10px] px-1.5 py-0.5 rounded badge-high font-600">High</span>
+              </div>
+            </div>
+            <div class="flex items-center justify-between p-3 card-inner rounded-lg">
+              <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background: rgba(245,158,11,0.12);">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                </div>
+                <div>
+                  <div class="text-sm font-600 text-txprimary">Vitamin D</div>
+                  <div class="text-xs text-txsecondary">Bone health marker</div>
+                </div>
+              </div>
+              <div class="text-right">
+                <div class="font-700 text-txprimary text-sm font-mono">18 ng/mL</div>
+                <span class="text-[10px] px-1.5 py-0.5 rounded badge-low font-600">Low</span>
+              </div>
+            </div>
+            <div class="flex items-center justify-between p-3 card-inner rounded-lg">
+              <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background: rgba(34,197,94,0.12);">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#22C55E" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                </div>
+                <div>
+                  <div class="text-sm font-600 text-txprimary">Hemoglobin</div>
+                  <div class="text-xs text-txsecondary">Oxygen transport</div>
+                </div>
+              </div>
+              <div class="text-right">
+                <div class="font-700 text-txprimary text-sm font-mono">14.2 g/dL</div>
+                <span class="text-[10px] px-1.5 py-0.5 rounded badge-normal font-600">Normal</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- AI Insights -->
+        <div class="card p-6">
+          <h3 class="font-700 text-txprimary text-base mb-4">AI Health Insights</h3>
+          <div class="space-y-3">
+            <div class="p-3 rounded-xl border" style="background: rgba(56,189,248,0.06); border-color: rgba(56,189,248,0.2);">
+              <div class="flex items-start gap-2">
+                <div class="mt-0.5 text-primary">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                </div>
+                <div>
+                  <div class="text-sm font-600 text-txprimary mb-1">Glucose Regulation Alert</div>
+                  <p class="text-xs text-txsecondary">Your HbA1c of 7.2% is above the optimal range. Consider reviewing your carbohydrate intake and consult your physician.</p>
+                </div>
+              </div>
+            </div>
+            <div class="p-3 rounded-xl border" style="background: rgba(245,158,11,0.06); border-color: rgba(245,158,11,0.2);">
+              <div class="flex items-start gap-2">
+                <div class="mt-0.5 text-warning">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg>
+                </div>
+                <div>
+                  <div class="text-sm font-600 text-txprimary mb-1">Vitamin D Deficiency</div>
+                  <p class="text-xs text-txsecondary">Low Vitamin D levels detected. Recommend 15 minutes of sun exposure daily and supplementation.</p>
+                </div>
+              </div>
+            </div>
+            <div class="p-3 rounded-xl border" style="background: rgba(34,197,94,0.06); border-color: rgba(34,197,94,0.2);">
+              <div class="flex items-start gap-2">
+                <div class="mt-0.5 text-secondary">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                </div>
+                <div>
+                  <div class="text-sm font-600 text-txprimary mb-1">Exercise Consistency Improving</div>
+                  <p class="text-xs text-txsecondary">Your wellness score improved 8.2% over 8 weeks. Keep up the daily walk routine.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ LAB REPORTS ============ -->
+    <div id="section-labreports" class="section-panel">
+      <div class="mb-8">
+        <h1 class="text-2xl font-800 text-txprimary mb-1">Lab Reports Explainer</h1>
+        <p class="text-txsecondary text-sm">Upload your medical reports and get AI-powered plain-English explanations.</p>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+        <!-- Upload Area -->
+        <div class="card p-6">
+          <h3 class="font-700 text-txprimary mb-4">Upload Report</h3>
+          <div class="upload-zone p-8 text-center cursor-pointer mb-4" id="uploadZone" onclick="simulateUpload()" ondragover="this.classList.add('drag');event.preventDefault();" ondragleave="this.classList.remove('drag')">
+            <div class="w-12 h-12 rounded-2xl flex items-center justify-center mx-auto mb-3" style="background: rgba(56,189,248,0.1);">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#38BDF8" stroke-width="2"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg>
+            </div>
+            <div class="text-sm font-600 text-txprimary mb-1">Drag & Drop or Click</div>
+            <div class="text-xs text-txsecondary mb-3">PDF / DOCX / TXT supported</div>
+            <div class="flex justify-center gap-2">
+              <span class="text-[10px] px-2 py-1 rounded" style="background:#334155;color:#94A3B8;">PDF</span>
+              <span class="text-[10px] px-2 py-1 rounded" style="background:#334155;color:#94A3B8;">DOCX</span>
+              <span class="text-[10px] px-2 py-1 rounded" style="background:#334155;color:#94A3B8;">TXT</span>
+            </div>
+          </div>
+          
+          <div id="uploadProgress" class="hidden mb-4">
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-xs text-txsecondary">CBC_Report_Dec2024.pdf</span>
+              <span class="text-xs text-primary" id="uploadPct">0%</span>
+            </div>
+            <div class="progress-bar">
+              <div class="progress-fill" style="background: #38BDF8;" id="progressFill"></div>
+            </div>
+          </div>
+
+          <div id="uploadSuccess" class="hidden p-3 rounded-lg mb-4" style="background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.3);">
+            <div class="flex items-center gap-2">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#22C55E" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+              <span class="text-xs text-secondary font-600">Analysis complete!</span>
+            </div>
+          </div>
+
+          <!-- Previous uploads -->
+          <div class="space-y-2">
+            <div class="text-xs font-600 text-txsecondary mb-2 uppercase tracking-wide">Previous Reports</div>
+            <div class="flex items-center justify-between p-2.5 rounded-lg" style="background:#334155;">
+              <div class="flex items-center gap-2">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                <span class="text-xs text-txprimary">CBC_Nov2024.pdf</span>
+              </div>
+              <span class="text-[10px] text-txsecondary">Nov 12</span>
+            </div>
+            <div class="flex items-center justify-between p-2.5 rounded-lg" style="background:#334155;">
+              <div class="flex items-center gap-2">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                <span class="text-xs text-txprimary">Lipid_Oct2024.pdf</span>
+              </div>
+              <span class="text-[10px] text-txsecondary">Oct 3</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Risk Summary -->
+        <div class="card p-6 lg:col-span-2">
+          <div class="flex items-center justify-between mb-5">
+            <h3 class="font-700 text-txprimary">Summary Risk Panel</h3>
+            <span class="text-xs px-3 py-1.5 rounded-full font-600 badge-high">CBC — December 2024</span>
+          </div>
+          
+          <div class="grid grid-cols-3 gap-3 mb-5">
+            <div class="p-4 rounded-xl text-center" style="background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.2);">
+              <div class="text-2xl font-800 text-danger mb-1">3</div>
+              <div class="text-xs text-txsecondary">Abnormal Markers</div>
+            </div>
+            <div class="p-4 rounded-xl text-center" style="background: rgba(245,158,11,0.08); border: 1px solid rgba(245,158,11,0.2);">
+              <div class="text-2xl font-800 text-warning mb-1">2</div>
+              <div class="text-xs text-txsecondary">Borderline Values</div>
+            </div>
+            <div class="p-4 rounded-xl text-center" style="background: rgba(34,197,94,0.08); border: 1px solid rgba(34,197,94,0.2);">
+              <div class="text-2xl font-800 text-secondary mb-1">8</div>
+              <div class="text-xs text-txsecondary">Normal Values</div>
+            </div>
+          </div>
+
+          <div class="p-4 rounded-xl mb-5" style="background: rgba(56,189,248,0.06); border: 1px solid rgba(56,189,248,0.15);">
+            <div class="flex items-center gap-2 mb-2">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#38BDF8" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+              <span class="text-sm font-700 text-primary">AI Summary</span>
+            </div>
+            <p class="text-sm text-txsecondary leading-relaxed">
+              <strong class="text-txprimary">3 abnormal markers detected.</strong> Primary concern: <strong class="text-warning">glucose regulation</strong> (HbA1c elevated at 7.2%). Secondary: <strong class="text-warning">Vitamin D deficiency</strong> noted. Recommend physician consultation within 2 weeks. WBC count slightly elevated — monitor for infection.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Lab Results Table -->
+      <div class="card p-6">
+        <div class="flex items-center justify-between mb-5">
+          <h3 class="font-700 text-txprimary">Detailed Lab Results</h3>
+          <button class="text-xs px-3 py-2 rounded-lg font-600 flex items-center gap-1.5" style="background:rgba(56,189,248,0.1);color:#38BDF8;border:1px solid rgba(56,189,248,0.25);">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Export Report
+          </button>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm">
+            <thead>
+              <tr class="text-left border-b border-[#2D3E52]">
+                <th class="pb-3 text-txsecondary font-600 text-xs uppercase tracking-wide pr-4">Test Name</th>
+                <th class="pb-3 text-txsecondary font-600 text-xs uppercase tracking-wide pr-4">Value</th>
+                <th class="pb-3 text-txsecondary font-600 text-xs uppercase tracking-wide pr-4">Unit</th>
+                <th class="pb-3 text-txsecondary font-600 text-xs uppercase tracking-wide pr-4">Ref Range</th>
+                <th class="pb-3 text-txsecondary font-600 text-xs uppercase tracking-wide pr-4">Status</th>
+                <th class="pb-3 text-txsecondary font-600 text-xs uppercase tracking-wide pr-4">AI Explanation</th>
+                <th class="pb-3 text-txsecondary font-600 text-xs uppercase tracking-wide">Possible Causes</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-[#2D3E52]">
+              <tr class="hover:bg-[#1E293B] transition-colors">
+                <td class="py-4 pr-4 font-600 text-txprimary">HbA1c</td>
+                <td class="py-4 pr-4 font-mono font-600 text-danger">7.2</td>
+                <td class="py-4 pr-4 text-txsecondary">%</td>
+                <td class="py-4 pr-4 text-txsecondary font-mono text-xs">&lt;5.7</td>
+                <td class="py-4 pr-4"><span class="px-2 py-1 rounded-full text-xs font-700 badge-high">High</span></td>
+                <td class="py-4 pr-4 text-txsecondary text-xs max-w-xs">Reflects average blood glucose over 3 months. Value above 6.5% indicates diabetes range.</td>
+                <td class="py-4 text-txsecondary text-xs">Type 2 diabetes, insulin resistance, diet high in refined carbs</td>
+              </tr>
+              <tr class="hover:bg-[#1E293B] transition-colors">
+                <td class="py-4 pr-4 font-600 text-txprimary">Vitamin D</td>
+                <td class="py-4 pr-4 font-mono font-600 text-warning">18</td>
+                <td class="py-4 pr-4 text-txsecondary">ng/mL</td>
+                <td class="py-4 pr-4 text-txsecondary font-mono text-xs">30–100</td>
+                <td class="py-4 pr-4"><span class="px-2 py-1 rounded-full text-xs font-700 badge-low">Low</span></td>
+                <td class="py-4 pr-4 text-txsecondary text-xs max-w-xs">Critical for bone health and immune function. Deficiency is common in people with limited sun exposure.</td>
+                <td class="py-4 text-txsecondary text-xs">Insufficient sunlight, poor diet, malabsorption disorders</td>
+              </tr>
+              <tr class="hover:bg-[#1E293B] transition-colors">
+                <td class="py-4 pr-4 font-600 text-txprimary">Cholesterol (Total)</td>
+                <td class="py-4 pr-4 font-mono font-600 text-warning">212</td>
+                <td class="py-4 pr-4 text-txsecondary">mg/dL</td>
+                <td class="py-4 pr-4 text-txsecondary font-mono text-xs">&lt;200</td>
+                <td class="py-4 pr-4"><span class="px-2 py-1 rounded-full text-xs font-700 badge-high">High</span></td>
+                <td class="py-4 pr-4 text-txsecondary text-xs max-w-xs">Slightly above recommended range. Indicates cardiovascular risk monitoring is advisable.</td>
+                <td class="py-4 text-txsecondary text-xs">Saturated fat intake, sedentary lifestyle, genetics</td>
+              </tr>
+              <tr class="hover:bg-[#1E293B] transition-colors">
+                <td class="py-4 pr-4 font-600 text-txprimary">Hemoglobin</td>
+                <td class="py-4 pr-4 font-mono font-600 text-secondary">14.2</td>
+                <td class="py-4 pr-4 text-txsecondary">g/dL</td>
+                <td class="py-4 pr-4 text-txsecondary font-mono text-xs">13.5–17.5</td>
+                <td class="py-4 pr-4"><span class="px-2 py-1 rounded-full text-xs font-700 badge-normal">Normal</span></td>
+                <td class="py-4 pr-4 text-txsecondary text-xs max-w-xs">Protein in red blood cells that carries oxygen. Within healthy range.</td>
+                <td class="py-4 text-txsecondary text-xs">—</td>
+              </tr>
+              <tr class="hover:bg-[#1E293B] transition-colors">
+                <td class="py-4 pr-4 font-600 text-txprimary">WBC Count</td>
+                <td class="py-4 pr-4 font-mono font-600 text-warning">11.2</td>
+                <td class="py-4 pr-4 text-txsecondary">×10³/μL</td>
+                <td class="py-4 pr-4 text-txsecondary font-mono text-xs">4.5–11.0</td>
+                <td class="py-4 pr-4"><span class="px-2 py-1 rounded-full text-xs font-700 badge-high">High</span></td>
+                <td class="py-4 pr-4 text-txsecondary text-xs max-w-xs">White blood cells fight infection. Slightly elevated — may suggest mild infection or inflammatory response.</td>
+                <td class="py-4 text-txsecondary text-xs">Infection, inflammation, stress, medications</td>
+              </tr>
+              <tr class="hover:bg-[#1E293B] transition-colors">
+                <td class="py-4 pr-4 font-600 text-txprimary">Platelets</td>
+                <td class="py-4 pr-4 font-mono font-600 text-secondary">245</td>
+                <td class="py-4 pr-4 text-txsecondary">×10³/μL</td>
+                <td class="py-4 pr-4 text-txsecondary font-mono text-xs">150–400</td>
+                <td class="py-4 pr-4"><span class="px-2 py-1 rounded-full text-xs font-700 badge-normal">Normal</span></td>
+                <td class="py-4 pr-4 text-txsecondary text-xs max-w-xs">Cells responsible for blood clotting. Well within the normal range.</td>
+                <td class="py-4 text-txsecondary text-xs">—</td>
+              </tr>
+              <tr class="hover:bg-[#1E293B] transition-colors">
+                <td class="py-4 pr-4 font-600 text-txprimary">HDL Cholesterol</td>
+                <td class="py-4 pr-4 font-mono font-600 text-secondary">52</td>
+                <td class="py-4 pr-4 text-txsecondary">mg/dL</td>
+                <td class="py-4 pr-4 text-txsecondary font-mono text-xs">&gt;40</td>
+                <td class="py-4 pr-4"><span class="px-2 py-1 rounded-full text-xs font-700 badge-normal">Normal</span></td>
+                <td class="py-4 pr-4 text-txsecondary text-xs max-w-xs">"Good" cholesterol. Helps remove other forms of cholesterol from the bloodstream.</td>
+                <td class="py-4 text-txsecondary text-xs">—</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ LIFESTYLE ============ -->
+    <div id="section-lifestyle" class="section-panel">
+      <div class="mb-8">
+        <h1 class="text-2xl font-800 text-txprimary mb-1">Lifestyle & Diet Recommender</h1>
+        <p class="text-txsecondary text-sm">Personalized recommendations based on your health profile and lab data.</p>
+      </div>
+
+      <!-- Health Profile Card -->
+      <div class="card p-6 mb-6">
+        <h3 class="font-700 text-txprimary mb-4">Your Health Profile</h3>
+        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
+          <div class="card-inner p-4 rounded-xl text-center">
+            <div class="text-2xl font-800 text-primary mb-1">28</div>
+            <div class="text-xs text-txsecondary">Age</div>
+          </div>
+          <div class="card-inner p-4 rounded-xl text-center">
+            <div class="text-2xl font-800 text-txprimary mb-1">Male</div>
+            <div class="text-xs text-txsecondary">Sex</div>
+          </div>
+          <div class="card-inner p-4 rounded-xl text-center">
+            <div class="text-2xl font-800 text-txprimary mb-1">78<span class="text-base font-500">kg</span></div>
+            <div class="text-xs text-txsecondary">Weight</div>
+          </div>
+          <div class="card-inner p-4 rounded-xl text-center">
+            <div class="text-2xl font-800 text-warning mb-1">26.8</div>
+            <div class="text-xs text-txsecondary">BMI</div>
+          </div>
+          <div class="card-inner p-4 rounded-xl text-center">
+            <div class="text-xl font-800 text-txprimary mb-1">175cm</div>
+            <div class="text-xs text-txsecondary">Height</div>
+          </div>
+          <div class="card-inner p-4 rounded-xl text-center">
+            <div class="text-xl font-800 text-secondary mb-1">Moderate</div>
+            <div class="text-xs text-txsecondary">Activity</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Diet Plan -->
+        <div class="card p-6 lg:col-span-2">
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="font-700 text-txprimary">7-Day Diet Plan</h3>
+            <div class="text-xs text-txsecondary font-500">Based on diabetic-friendly protocol</div>
+          </div>
+          
+          <!-- Day Tabs -->
+          <div class="flex gap-1 mb-5 overflow-x-auto pb-1">
+            <button class="day-tab active" onclick="selectDay(this, 'day1')">Mon</button>
+            <button class="day-tab" onclick="selectDay(this, 'day2')">Tue</button>
+            <button class="day-tab" onclick="selectDay(this, 'day3')">Wed</button>
+            <button class="day-tab" onclick="selectDay(this, 'day4')">Thu</button>
+            <button class="day-tab" onclick="selectDay(this, 'day5')">Fri</button>
+            <button class="day-tab" onclick="selectDay(this, 'day6')">Sat</button>
+            <button class="day-tab" onclick="selectDay(this, 'day7')">Sun</button>
+          </div>
+          
+          <div id="day1" class="day-content">
+            <div class="space-y-3">
+              <div class="card-inner p-4 rounded-xl">
+                <div class="flex items-center gap-2 mb-2">
+                  <div class="w-6 h-6 rounded-lg flex items-center justify-center text-xs" style="background:rgba(251,191,36,0.15);color:#FBB724;">☀️</div>
+                  <span class="text-sm font-700 text-txprimary">Breakfast</span>
+                  <span class="ml-auto text-xs text-txsecondary">~420 kcal</span>
+                </div>
+                <p class="text-sm text-txsecondary">Oatmeal with chia seeds + 2 boiled eggs + green tea (no sugar). Whole grain toast optional.</p>
+              </div>
+              <div class="card-inner p-4 rounded-xl">
+                <div class="flex items-center gap-2 mb-2">
+                  <div class="w-6 h-6 rounded-lg flex items-center justify-center text-xs" style="background:rgba(56,189,248,0.15);color:#38BDF8;">🌤</div>
+                  <span class="text-sm font-700 text-txprimary">Lunch</span>
+                  <span class="ml-auto text-xs text-txsecondary">~580 kcal</span>
+                </div>
+                <p class="text-sm text-txsecondary">Grilled chicken breast (150g) + quinoa + steamed broccoli + olive oil dressing. Avoid white rice.</p>
+              </div>
+              <div class="card-inner p-4 rounded-xl">
+                <div class="flex items-center gap-2 mb-2">
+                  <div class="w-6 h-6 rounded-lg flex items-center justify-center text-xs" style="background:rgba(129,140,248,0.15);color:#818CF8;">🌙</div>
+                  <span class="text-sm font-700 text-txprimary">Dinner</span>
+                  <span class="ml-auto text-xs text-txsecondary">~450 kcal</span>
+                </div>
+                <p class="text-sm text-txsecondary">Baked salmon + mixed salad with cucumber, tomato, lemon. Brown rice (small portion, 60g).</p>
+              </div>
+              <div class="card-inner p-4 rounded-xl">
+                <div class="flex items-center gap-2 mb-2">
+                  <div class="w-6 h-6 rounded-lg flex items-center justify-center text-xs" style="background:rgba(34,197,94,0.15);color:#22C55E;">🍎</div>
+                  <span class="text-sm font-700 text-txprimary">Snack</span>
+                  <span class="ml-auto text-xs text-txsecondary">~150 kcal</span>
+                </div>
+                <p class="text-sm text-txsecondary">1 apple or handful of almonds (unsalted). Avoid processed snacks and fruit juices.</p>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Hidden day content placeholders -->
+          <div id="day2" class="day-content hidden">
+            <div class="card-inner p-8 rounded-xl text-center text-txsecondary text-sm">Tuesday's meal plan — oats, lentil soup, grilled fish, walnuts.</div>
+          </div>
+          <div id="day3" class="day-content hidden">
+            <div class="card-inner p-8 rounded-xl text-center text-txsecondary text-sm">Wednesday's meal plan — eggs, chickpea salad, turkey wrap, Greek yogurt.</div>
+          </div>
+          <div id="day4" class="day-content hidden">
+            <div class="card-inner p-8 rounded-xl text-center text-txsecondary text-sm">Thursday's meal plan — smoothie, lentils, grilled chicken, dates (2 only).</div>
+          </div>
+          <div id="day5" class="day-content hidden">
+            <div class="card-inner p-8 rounded-xl text-center text-txsecondary text-sm">Friday's meal plan — whole grain bread, dal, baked cod, orange.</div>
+          </div>
+          <div id="day6" class="day-content hidden">
+            <div class="card-inner p-8 rounded-xl text-center text-txsecondary text-sm">Saturday's meal plan — oatmeal pancakes, tofu stir-fry, grilled shrimp, cashews.</div>
+          </div>
+          <div id="day7" class="day-content hidden">
+            <div class="card-inner p-8 rounded-xl text-center text-txsecondary text-sm">Sunday's meal plan — veggie omelette, vegetable soup, roast chicken, fresh berries.</div>
+          </div>
+        </div>
+
+        <!-- Right column -->
+        <div class="space-y-6">
+          <!-- Exercise Plan -->
+          <div class="card p-5">
+            <h3 class="font-700 text-txprimary mb-4">Daily Exercise Plan</h3>
+            <div class="space-y-3">
+              <div class="flex items-center gap-3 p-3 card-inner rounded-xl">
+                <div class="w-9 h-9 rounded-xl flex items-center justify-center text-lg flex-shrink-0" style="background:rgba(56,189,248,0.1);">🚶</div>
+                <div>
+                  <div class="text-sm font-600 text-txprimary">Brisk Walk</div>
+                  <div class="text-xs text-txsecondary">30 min · Morning</div>
+                </div>
+                <div class="ml-auto">
+                  <div class="w-2.5 h-2.5 rounded-full bg-secondary"></div>
+                </div>
+              </div>
+              <div class="flex items-center gap-3 p-3 card-inner rounded-xl">
+                <div class="w-9 h-9 rounded-xl flex items-center justify-center text-lg flex-shrink-0" style="background:rgba(34,197,94,0.1);">🧘</div>
+                <div>
+                  <div class="text-sm font-600 text-txprimary">Stretching</div>
+                  <div class="text-xs text-txsecondary">15 min · Evening</div>
+                </div>
+                <div class="ml-auto">
+                  <div class="w-2.5 h-2.5 rounded-full bg-secondary"></div>
+                </div>
+              </div>
+              <div class="flex items-center gap-3 p-3 card-inner rounded-xl">
+                <div class="w-9 h-9 rounded-xl flex items-center justify-center text-lg flex-shrink-0" style="background:rgba(251,146,60,0.1);">🏋️</div>
+                <div>
+                  <div class="text-sm font-600 text-txprimary">Resistance Training</div>
+                  <div class="text-xs text-txsecondary">20 min · 3×/week</div>
+                </div>
+                <div class="ml-auto">
+                  <div class="w-2.5 h-2.5 rounded-full bg-warning"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Lifestyle Tips -->
+          <div class="card p-5">
+            <h3 class="font-700 text-txprimary mb-4">Lifestyle Tips</h3>
+            <div class="space-y-3">
+              <div class="flex items-start gap-2">
+                <svg width="14" height="14" class="text-primary mt-0.5 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+                <span class="text-sm text-txsecondary">Improve sleep — aim for 7–8 hrs consistent schedule</span>
+              </div>
+              <div class="flex items-start gap-2">
+                <svg width="14" height="14" class="text-primary mt-0.5 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+                <span class="text-sm text-txsecondary">Reduce sugar intake — cut soft drinks and sweets</span>
+              </div>
+              <div class="flex items-start gap-2">
+                <svg width="14" height="14" class="text-primary mt-0.5 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+                <span class="text-sm text-txsecondary">Hydration — drink 2.5–3L of water daily</span>
+              </div>
+              <div class="flex items-start gap-2">
+                <svg width="14" height="14" class="text-primary mt-0.5 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+                <span class="text-sm text-txsecondary">Sunlight exposure — 15 min daily for Vitamin D</span>
+              </div>
+              <div class="flex items-start gap-2">
+                <svg width="14" height="14" class="text-primary mt-0.5 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+                <span class="text-sm text-txsecondary">Stress management — 10 min mindfulness/breathing</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ BLOG ============ -->
+    <div id="section-blog" class="section-panel">
+      <div id="blog-list-view">
+        <div class="mb-8">
+          <h1 class="text-2xl font-800 text-txprimary mb-1">Health Blog</h1>
+          <p class="text-txsecondary text-sm">Evidence-based articles curated by AI and reviewed by medical professionals.</p>
+        </div>
+
+        <!-- Search + Filters -->
+        <div class="flex flex-col sm:flex-row gap-3 mb-6">
+          <div class="flex-1 relative">
+            <svg class="absolute left-3 top-1/2 -translate-y-1/2 text-txsecondary" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input class="med-input pl-9" placeholder="Search health articles…"/>
+          </div>
+        </div>
+        
+        <!-- Category filters -->
+        <div class="flex gap-2 mb-6 overflow-x-auto pb-1">
+          <button class="tab-btn active whitespace-nowrap">All</button>
+          <button class="tab-btn whitespace-nowrap" onclick="this.parentElement.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));this.classList.add('active')">Nutrition</button>
+          <button class="tab-btn whitespace-nowrap" onclick="this.parentElement.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));this.classList.add('active')">Diseases</button>
+          <button class="tab-btn whitespace-nowrap" onclick="this.parentElement.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));this.classList.add('active')">Lifestyle</button>
+          <button class="tab-btn whitespace-nowrap" onclick="this.parentElement.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));this.classList.add('active')">Mental Health</button>
+          <button class="tab-btn whitespace-nowrap" onclick="this.parentElement.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));this.classList.add('active')">Lab Insights</button>
+        </div>
+
+        <!-- Blog Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+          <div class="card p-5 blog-card cursor-pointer" onclick="showBlogPost()">
+            <div class="flex items-center gap-2 mb-3">
+              <span class="text-[11px] px-2 py-1 rounded-full font-600" style="background:rgba(34,197,94,0.12);color:#22C55E;">Lab Insights</span>
+              <span class="text-xs text-txsecondary ml-auto">5 min read</span>
+            </div>
+            <h3 class="font-700 text-txprimary text-base mb-2 leading-snug">Understanding HbA1c: What Your Diabetes Marker Really Means</h3>
+            <p class="text-sm text-txsecondary leading-relaxed mb-4 line-clamp-3">HbA1c is a crucial blood test that reveals your average blood sugar levels over the past 2–3 months. Unlike daily glucose tests, it gives a broader picture of your glucose regulation…</p>
+            <div class="flex items-center gap-2 pt-3 border-t border-[#2D3E52]">
+              <div class="w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-700 text-white" style="background:linear-gradient(135deg,#38BDF8,#818CF8);">DR</div>
+              <span class="text-xs text-txsecondary">Dr. Raza Ahmed · 2 days ago</span>
+            </div>
+          </div>
+
+          <div class="card p-5 blog-card cursor-pointer" onclick="showBlogPost()">
+            <div class="flex items-center gap-2 mb-3">
+              <span class="text-[11px] px-2 py-1 rounded-full font-600" style="background:rgba(56,189,248,0.12);color:#38BDF8;">Nutrition</span>
+              <span class="text-xs text-txsecondary ml-auto">7 min read</span>
+            </div>
+            <h3 class="font-700 text-txprimary text-base mb-2 leading-snug">The Complete Guide to Vitamin D: Sun, Supplements & Deficiency</h3>
+            <p class="text-sm text-txsecondary leading-relaxed mb-4 line-clamp-3">Vitamin D is often called the "sunshine vitamin" but millions remain deficient. Learn about optimal levels, food sources, supplementation protocols and the impact on immunity…</p>
+            <div class="flex items-center gap-2 pt-3 border-t border-[#2D3E52]">
+              <div class="w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-700 text-white" style="background:linear-gradient(135deg,#F59E0B,#EF4444);">SK</div>
+              <span class="text-xs text-txsecondary">Dr. Sara Khan · 3 days ago</span>
+            </div>
+          </div>
+
+          <div class="card p-5 blog-card cursor-pointer" onclick="showBlogPost()">
+            <div class="flex items-center gap-2 mb-3">
+              <span class="text-[11px] px-2 py-1 rounded-full font-600" style="background:rgba(251,146,60,0.12);color:#FB923C;">Lifestyle</span>
+              <span class="text-xs text-txsecondary ml-auto">4 min read</span>
+            </div>
+            <h3 class="font-700 text-txprimary text-base mb-2 leading-snug">How Sleep Deprivation Impacts Blood Sugar and Metabolic Health</h3>
+            <p class="text-sm text-txsecondary leading-relaxed mb-4 line-clamp-3">Poor sleep increases cortisol and disrupts insulin sensitivity. Even one night of bad sleep can elevate fasting glucose. Discover evidence-based strategies for better metabolic health…</p>
+            <div class="flex items-center gap-2 pt-3 border-t border-[#2D3E52]">
+              <div class="w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-700 text-white" style="background:linear-gradient(135deg,#818CF8,#38BDF8);">AM</div>
+              <span class="text-xs text-txsecondary">Dr. Ali Mirza · 5 days ago</span>
+            </div>
+          </div>
+
+          <div class="card p-5 blog-card cursor-pointer" onclick="showBlogPost()">
+            <div class="flex items-center gap-2 mb-3">
+              <span class="text-[11px] px-2 py-1 rounded-full font-600" style="background:rgba(129,140,248,0.12);color:#818CF8;">Mental Health</span>
+              <span class="text-xs text-txsecondary ml-auto">6 min read</span>
+            </div>
+            <h3 class="font-700 text-txprimary text-base mb-2 leading-snug">The Gut-Brain Axis: How Your Diet Affects Mental Clarity</h3>
+            <p class="text-sm text-txsecondary leading-relaxed mb-4 line-clamp-3">Emerging research reveals a powerful bidirectional connection between your gut microbiome and brain function. Learn which foods boost cognitive performance and reduce anxiety…</p>
+            <div class="flex items-center gap-2 pt-3 border-t border-[#2D3E52]">
+              <div class="w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-700 text-white" style="background:linear-gradient(135deg,#22C55E,#38BDF8);">NF</div>
+              <span class="text-xs text-txsecondary">Dr. Nadia Fatima · 1 week ago</span>
+            </div>
+          </div>
+
+          <div class="card p-5 blog-card cursor-pointer" onclick="showBlogPost()">
+            <div class="flex items-center gap-2 mb-3">
+              <span class="text-[11px] px-2 py-1 rounded-full font-600" style="background:rgba(239,68,68,0.12);color:#EF4444;">Diseases</span>
+              <span class="text-xs text-txsecondary ml-auto">8 min read</span>
+            </div>
+            <h3 class="font-700 text-txprimary text-base mb-2 leading-snug">Cholesterol Demystified: LDL, HDL and Cardiovascular Risk</h3>
+            <p class="text-sm text-txsecondary leading-relaxed mb-4 line-clamp-3">Not all cholesterol is bad. Understanding the difference between LDL and HDL cholesterol is crucial for assessing your true cardiovascular risk and making informed lifestyle decisions…</p>
+            <div class="flex items-center gap-2 pt-3 border-t border-[#2D3E52]">
+              <div class="w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-700 text-white" style="background:linear-gradient(135deg,#EF4444,#F59E0B);">HB</div>
+              <span class="text-xs text-txsecondary">Dr. Hassan Bukhari · 1 week ago</span>
+            </div>
+          </div>
+
+          <div class="card p-5 blog-card cursor-pointer" onclick="showBlogPost()">
+            <div class="flex items-center gap-2 mb-3">
+              <span class="text-[11px] px-2 py-1 rounded-full font-600" style="background:rgba(56,189,248,0.12);color:#38BDF8;">Nutrition</span>
+              <span class="text-xs text-txsecondary ml-auto">5 min read</span>
+            </div>
+            <h3 class="font-700 text-txprimary text-base mb-2 leading-snug">Iron-Rich Foods to Combat Anemia: A Practical Guide</h3>
+            <p class="text-sm text-txsecondary leading-relaxed mb-4 line-clamp-3">Iron deficiency affects over 1 billion people globally. Discover the best dietary sources of iron, how to enhance absorption, and when supplementation is necessary…</p>
+            <div class="flex items-center gap-2 pt-3 border-t border-[#2D3E52]">
+              <div class="w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-700 text-white" style="background:linear-gradient(135deg,#38BDF8,#22C55E);">ZM</div>
+              <span class="text-xs text-txsecondary">Dr. Zara Malik · 2 weeks ago</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Single Blog Post View -->
+      <div id="blog-post-view" class="hidden">
+        <button onclick="hideBlogPost()" class="flex items-center gap-2 text-txsecondary hover:text-txprimary text-sm mb-6 transition-colors">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+          Back to Articles
+        </button>
+
+        <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+          <!-- TOC -->
+          <div class="card p-5 h-fit lg:order-last">
+            <div class="text-xs font-700 text-txsecondary uppercase tracking-widest mb-3">Table of Contents</div>
+            <div class="space-y-2 text-sm">
+              <div class="text-primary font-600 cursor-pointer">1. What is HbA1c?</div>
+              <div class="text-txsecondary cursor-pointer hover:text-txprimary">2. Normal vs. Abnormal Ranges</div>
+              <div class="text-txsecondary cursor-pointer hover:text-txprimary">3. What Causes High HbA1c?</div>
+              <div class="text-txsecondary cursor-pointer hover:text-txprimary">4. How to Lower It Naturally</div>
+              <div class="text-txsecondary cursor-pointer hover:text-txprimary">5. When to See a Doctor</div>
+              <div class="text-txsecondary cursor-pointer hover:text-txprimary">6. Key Takeaways</div>
+            </div>
+            
+            <div class="mt-5 pt-4 border-t border-[#2D3E52]">
+              <div class="text-xs font-600 text-txsecondary mb-2">Related Articles</div>
+              <div class="text-xs text-primary cursor-pointer hover:underline mb-1">Managing Type 2 Diabetes with Diet</div>
+              <div class="text-xs text-primary cursor-pointer hover:underline">Insulin Resistance Explained</div>
+            </div>
+          </div>
+
+          <!-- Article -->
+          <div class="card p-8 lg:col-span-3">
+            <div class="flex items-center gap-2 mb-4">
+              <span class="text-[11px] px-2 py-1 rounded-full font-600" style="background:rgba(34,197,94,0.12);color:#22C55E;">Lab Insights</span>
+              <span class="text-xs text-txsecondary">5 min read · Published Dec 10, 2024</span>
+            </div>
+            
+            <h1 class="text-2xl font-800 text-txprimary mb-3 leading-tight">Understanding HbA1c: What Your Diabetes Marker Really Means</h1>
+            
+            <div class="flex items-center gap-3 mb-6 pb-6 border-b border-[#2D3E52]">
+              <div class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-700 text-white" style="background:linear-gradient(135deg,#38BDF8,#818CF8);">DR</div>
+              <div>
+                <div class="text-sm font-600 text-txprimary">Dr. Raza Ahmed</div>
+                <div class="text-xs text-txsecondary">Endocrinologist · MBBS, FCPS</div>
+              </div>
+            </div>
+
+            <div class="prose max-w-none">
+              <h2 class="text-lg font-700 text-txprimary mb-3">What is HbA1c?</h2>
+              <p class="text-txsecondary text-sm leading-relaxed mb-4">HbA1c, or glycated hemoglobin, is a blood test that measures the percentage of hemoglobin coated with sugar (glycated). Since red blood cells live approximately 3 months, this test reflects your average blood glucose control over that period.</p>
+              
+              <p class="text-txsecondary text-sm leading-relaxed mb-6">Unlike a fasting glucose test that only captures a single moment in time, HbA1c provides a comprehensive 90-day window into your metabolic health.</p>
+
+              <h2 class="text-lg font-700 text-txprimary mb-3">Normal vs. Abnormal Ranges</h2>
+              
+              <div class="card-inner p-4 rounded-xl mb-5">
+                <div class="space-y-3">
+                  <div class="flex items-center justify-between">
+                    <span class="text-sm text-txsecondary">Normal</span>
+                    <span class="font-mono font-600 text-secondary text-sm">Below 5.7%</span>
+                  </div>
+                  <div class="flex items-center justify-between">
+                    <span class="text-sm text-txsecondary">Prediabetes</span>
+                    <span class="font-mono font-600 text-warning text-sm">5.7% – 6.4%</span>
+                  </div>
+                  <div class="flex items-center justify-between">
+                    <span class="text-sm text-txsecondary">Diabetes</span>
+                    <span class="font-mono font-600 text-danger text-sm">6.5% or above</span>
+                  </div>
+                </div>
+              </div>
+
+              <h2 class="text-lg font-700 text-txprimary mb-3">How to Lower It Naturally</h2>
+              <ul class="space-y-2 mb-5">
+                <li class="flex items-start gap-2 text-sm text-txsecondary"><span class="text-primary mt-1">•</span> Reduce refined carbohydrates and added sugars</li>
+                <li class="flex items-start gap-2 text-sm text-txsecondary"><span class="text-primary mt-1">•</span> Increase dietary fiber (vegetables, legumes, whole grains)</li>
+                <li class="flex items-start gap-2 text-sm text-txsecondary"><span class="text-primary mt-1">•</span> Exercise at least 150 minutes per week (moderate intensity)</li>
+                <li class="flex items-start gap-2 text-sm text-txsecondary"><span class="text-primary mt-1">•</span> Maintain a healthy sleep schedule (7–8 hours)</li>
+                <li class="flex items-start gap-2 text-sm text-txsecondary"><span class="text-primary mt-1">•</span> Monitor blood glucose regularly with a home glucometer</li>
+              </ul>
+
+              <div class="p-4 rounded-xl" style="background:rgba(56,189,248,0.06);border:1px solid rgba(56,189,248,0.15);">
+                <div class="flex items-center gap-2 mb-2">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#38BDF8" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+                  <span class="text-xs font-700 text-primary">Medical Disclaimer</span>
+                </div>
+                <p class="text-xs text-txsecondary">This article is for educational purposes only and does not constitute medical advice. Always consult a qualified healthcare professional for diagnosis and treatment.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ AI ASSISTANT ============ -->
+    <div id="section-assistant" class="section-panel">
+      <div class="mb-6">
+        <h1 class="text-2xl font-800 text-txprimary mb-1">Health AI Assistant</h1>
+        <p class="text-txsecondary text-sm">Powered by RAG — answers grounded in medical literature and your health data.</p>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-4 gap-6" style="height: calc(100vh - 260px); min-height: 500px;">
+        <!-- Conversation History -->
+        <div class="card p-4 overflow-y-auto">
+          <div class="text-xs font-700 text-txsecondary uppercase tracking-widest mb-3">History</div>
+          <div class="space-y-2">
+            <div class="p-3 rounded-xl cursor-pointer" style="background:rgba(56,189,248,0.1);border:1px solid rgba(56,189,248,0.2);">
+              <div class="text-sm font-600 text-primary mb-1">HbA1c Explained</div>
+              <div class="text-xs text-txsecondary truncate">What does HbA1c 7.2% mean...</div>
+              <div class="text-[10px] text-txsecondary mt-1">Today, 10:24 AM</div>
+            </div>
+            <div class="p-3 rounded-xl cursor-pointer hover:bg-surface transition-colors">
+              <div class="text-sm font-600 text-txprimary mb-1">Vitamin D Deficiency</div>
+              <div class="text-xs text-txsecondary truncate">How to increase Vitamin D naturally</div>
+              <div class="text-[10px] text-txsecondary mt-1">Yesterday</div>
+            </div>
+            <div class="p-3 rounded-xl cursor-pointer hover:bg-surface transition-colors">
+              <div class="text-sm font-600 text-txprimary mb-1">Cholesterol Management</div>
+              <div class="text-xs text-txsecondary truncate">Foods to lower LDL cholesterol...</div>
+              <div class="text-[10px] text-txsecondary mt-1">Dec 8</div>
+            </div>
+            <div class="p-3 rounded-xl cursor-pointer hover:bg-surface transition-colors">
+              <div class="text-sm font-600 text-txprimary mb-1">Exercise for Diabetes</div>
+              <div class="text-xs text-txsecondary truncate">Best exercises for blood sugar...</div>
+              <div class="text-[10px] text-txsecondary mt-1">Dec 5</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Chat Panel -->
+        <div class="card flex flex-col lg:col-span-3">
+          <!-- Chat Header -->
+          <div class="p-4 border-b border-[#2D3E52] flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <div class="w-9 h-9 rounded-xl flex items-center justify-center" style="background:linear-gradient(135deg,#38BDF8,#818CF8);">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm0 18a8 8 0 1 1 8-8 8 8 0 0 1-8 8z"/><path d="M12 6v6l4 2"/></svg>
+              </div>
+              <div>
+                <div class="text-sm font-700 text-txprimary">MedMind AI</div>
+                <div class="flex items-center gap-1.5"><div class="pulse-dot" style="width:6px;height:6px;"></div><span class="text-xs text-secondary">Online · RAG enabled</span></div>
+              </div>
+            </div>
+            <div class="flex items-center gap-3">
+              <div class="flex items-center gap-2">
+                <span class="text-xs text-txsecondary">Use my lab data</span>
+                <div class="relative inline-block cursor-pointer" onclick="this.querySelector('.toggle-inner').classList.toggle('translate-x-4');this.classList.toggle('bg-primary');this.classList.toggle('bg-[#334155]');" style="width:36px;height:20px;border-radius:10px;background:#334155;transition:background 0.2s;">
+                  <div class="toggle-inner absolute w-4 h-4 bg-white rounded-full top-0.5 left-0.5 transition-transform duration-200 shadow"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Messages -->
+          <div class="flex-1 overflow-y-auto p-4 space-y-4" id="chatMessages">
+            <!-- AI greeting -->
+            <div class="flex items-start gap-3">
+              <div class="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0" style="background:linear-gradient(135deg,#38BDF8,#818CF8);">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><circle cx="12" cy="12" r="10"/></svg>
+              </div>
+              <div class="chat-ai p-4 max-w-lg">
+                <p class="text-sm text-txprimary mb-3">Hello, Ahmed! I'm your MedMind Health Assistant. I'm trained on medical literature and have access to your recent lab reports (with your permission). How can I help you today?</p>
+                <div class="flex flex-wrap gap-2 mt-3">
+                  <button class="text-xs px-3 py-1.5 rounded-lg font-500 hover:bg-surface transition-colors" style="background:#334155;color:#94A3B8;" onclick="sendQuickMsg('What does my HbA1c result mean?')">What does my HbA1c mean?</button>
+                  <button class="text-xs px-3 py-1.5 rounded-lg font-500 hover:bg-surface transition-colors" style="background:#334155;color:#94A3B8;" onclick="sendQuickMsg('How can I improve my Vitamin D levels?')">Improve Vitamin D levels?</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- User message -->
+            <div class="flex justify-end">
+              <div class="chat-user p-3 max-w-md">
+                <p class="text-sm text-txprimary">What does my HbA1c result of 7.2% mean and should I be worried?</p>
+              </div>
+            </div>
+
+            <!-- AI response with citation -->
+            <div class="flex items-start gap-3">
+              <div class="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0" style="background:linear-gradient(135deg,#38BDF8,#818CF8);">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><circle cx="12" cy="12" r="10"/></svg>
+              </div>
+              <div class="space-y-2 max-w-lg">
+                <div class="chat-ai p-4">
+                  <p class="text-sm text-txprimary leading-relaxed mb-3">Your HbA1c of <strong>7.2%</strong> is above the normal range (&lt;5.7%) and falls in the <strong class="text-danger">diabetes range (≥6.5%)</strong>. This means your average blood glucose over the past 2–3 months has been consistently elevated.</p>
+                  <p class="text-sm text-txprimary leading-relaxed">This is worth taking seriously, but it's manageable with lifestyle changes and medical guidance. I recommend scheduling a physician appointment within 2 weeks.</p>
+                </div>
+                
+                <!-- Citations -->
+                <div class="card-inner p-3 rounded-xl">
+                  <div class="text-[10px] font-700 text-txsecondary uppercase tracking-wide mb-2">📚 Sources</div>
+                  <div class="space-y-2">
+                    <div class="p-2 rounded-lg" style="background:#1E293B;">
+                      <div class="text-xs font-600 text-primary mb-1">WHO Diabetes Guidelines 2023</div>
+                      <div class="text-xs text-txsecondary">"An HbA1c level of 6.5% or higher on two separate occasions is diagnostic of diabetes…"</div>
+                    </div>
+                    <div class="p-2 rounded-lg" style="background:#1E293B;">
+                      <div class="text-xs font-600 text-primary mb-1">American Diabetes Association Standards 2024</div>
+                      <div class="text-xs text-txsecondary">"For most non-pregnant adults, the recommended HbA1c target is less than 7%..."</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Typing indicator placeholder -->
+            <div id="typingIndicator" class="hidden flex items-start gap-3">
+              <div class="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0" style="background:linear-gradient(135deg,#38BDF8,#818CF8);">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><circle cx="12" cy="12" r="10"/></svg>
+              </div>
+              <div class="chat-ai p-4">
+                <div class="flex gap-1">
+                  <div class="w-2 h-2 bg-txsecondary rounded-full" style="animation: bounce 1s infinite;"></div>
+                  <div class="w-2 h-2 bg-txsecondary rounded-full" style="animation: bounce 1s infinite 0.2s;"></div>
+                  <div class="w-2 h-2 bg-txsecondary rounded-full" style="animation: bounce 1s infinite 0.4s;"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Input area -->
+          <div class="p-4 border-t border-[#2D3E52]">
+            <div class="flex gap-3">
+              <input class="med-input flex-1" id="chatInput" placeholder="Ask about your health, lab results, medications…" onkeypress="if(event.key==='Enter')sendChatMsg()"/>
+              <button onclick="sendChatMsg()" class="px-4 py-2.5 rounded-xl font-600 text-sm transition-all hover:opacity-90 flex-shrink-0" style="background:linear-gradient(135deg,#38BDF8,#0EA5E9);color:#0F172A;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+              </button>
+            </div>
+            <div class="flex items-center gap-1 mt-2">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#64748B" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+              <span class="text-[11px] text-txsecondary">AI responses are not a substitute for professional medical advice.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ PROFILE ============ -->
+    <div id="section-profile" class="section-panel">
+      <div class="mb-8">
+        <h1 class="text-2xl font-800 text-txprimary mb-1">My Profile</h1>
+        <p class="text-txsecondary text-sm">Manage your health information and personal details.</p>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div class="card p-6 text-center">
+          <div class="w-20 h-20 rounded-full flex items-center justify-center text-2xl font-800 text-white mx-auto mb-4" style="background:linear-gradient(135deg,#38BDF8,#818CF8);">AK</div>
+          <h3 class="text-lg font-700 text-txprimary mb-1">Ahmed Khan</h3>
+          <p class="text-sm text-txsecondary mb-4">Patient · ID: MM-00247</p>
+          <div class="flex justify-center gap-2 flex-wrap">
+            <span class="text-xs px-2 py-1 rounded-full badge-normal font-600">Account Active</span>
+            <span class="text-xs px-2 py-1 rounded-full" style="background:rgba(56,189,248,0.12);color:#38BDF8;border:1px solid rgba(56,189,248,0.3);">Premium</span>
+          </div>
+          <button class="mt-5 w-full py-2.5 rounded-xl text-sm font-600 transition-colors hover:bg-opacity-80" style="background:#334155;color:#94A3B8;">Edit Photo</button>
+        </div>
+
+        <div class="card p-6 lg:col-span-2">
+          <h3 class="font-700 text-txprimary mb-5">Personal Information</h3>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label class="text-xs font-600 text-txsecondary uppercase tracking-wide block mb-1.5">Full Name</label>
+              <input class="med-input" value="Ahmed Khan"/>
+            </div>
+            <div>
+              <label class="text-xs font-600 text-txsecondary uppercase tracking-wide block mb-1.5">Date of Birth</label>
+              <input class="med-input" value="March 15, 1996"/>
+            </div>
+            <div>
+              <label class="text-xs font-600 text-txsecondary uppercase tracking-wide block mb-1.5">Email</label>
+              <input class="med-input" value="ahmed.khan@email.com"/>
+            </div>
+            <div>
+              <label class="text-xs font-600 text-txsecondary uppercase tracking-wide block mb-1.5">Phone</label>
+              <input class="med-input" value="+92 321 555 0194"/>
+            </div>
+            <div>
+              <label class="text-xs font-600 text-txsecondary uppercase tracking-wide block mb-1.5">Blood Type</label>
+              <input class="med-input" value="B+"/>
+            </div>
+            <div>
+              <label class="text-xs font-600 text-txsecondary uppercase tracking-wide block mb-1.5">Emergency Contact</label>
+              <input class="med-input" value="Sara Khan (Sister)"/>
+            </div>
+          </div>
+          
+          <div class="mt-5 pt-5 border-t border-[#2D3E52]">
+            <h4 class="font-600 text-txprimary mb-3 text-sm">Medical Conditions</h4>
+            <div class="flex flex-wrap gap-2">
+              <span class="text-xs px-3 py-1.5 rounded-full badge-high font-600">Pre-diabetes</span>
+              <span class="text-xs px-3 py-1.5 rounded-full badge-low font-600">Vitamin D Deficiency</span>
+              <span class="text-xs px-3 py-1.5 rounded-full badge-normal font-600">None (Hypertension)</span>
+              <button class="text-xs px-3 py-1.5 rounded-full font-600" style="background:#334155;color:#94A3B8;border:1px dashed #475569;">+ Add condition</button>
+            </div>
+          </div>
+          
+          <button class="mt-5 px-5 py-2.5 rounded-xl text-sm font-700 transition-opacity hover:opacity-90" style="background:linear-gradient(135deg,#38BDF8,#0EA5E9);color:#0F172A;">Save Changes</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ SETTINGS ============ -->
+    <div id="section-settings" class="section-panel">
+      <div class="mb-8">
+        <h1 class="text-2xl font-800 text-txprimary mb-1">Settings</h1>
+        <p class="text-txsecondary text-sm">Configure your MedMind experience and privacy preferences.</p>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div class="card p-6">
+          <h3 class="font-700 text-txprimary mb-5">AI Preferences</h3>
+          <div class="space-y-4">
+            <div class="flex items-center justify-between py-3 border-b border-[#2D3E52]">
+              <div>
+                <div class="text-sm font-600 text-txprimary">Use Lab Data for AI Chat</div>
+                <div class="text-xs text-txsecondary mt-0.5">Allow AI to reference your uploaded reports</div>
+              </div>
+              <div class="relative inline-block cursor-pointer" style="width:40px;height:22px;">
+                <div style="width:40px;height:22px;border-radius:11px;background:#38BDF8;position:relative;">
+                  <div style="position:absolute;width:16px;height:16px;background:white;border-radius:50%;top:3px;right:3px;box-shadow:0 1px 3px rgba(0,0,0,0.3);"></div>
+                </div>
+              </div>
+            </div>
+            <div class="flex items-center justify-between py-3 border-b border-[#2D3E52]">
+              <div>
+                <div class="text-sm font-600 text-txprimary">Proactive Health Alerts</div>
+                <div class="text-xs text-txsecondary mt-0.5">Get notified when AI detects new risks</div>
+              </div>
+              <div class="relative inline-block cursor-pointer" style="width:40px;height:22px;">
+                <div style="width:40px;height:22px;border-radius:11px;background:#38BDF8;position:relative;">
+                  <div style="position:absolute;width:16px;height:16px;background:white;border-radius:50%;top:3px;right:3px;box-shadow:0 1px 3px rgba(0,0,0,0.3);"></div>
+                </div>
+              </div>
+            </div>
+            <div class="flex items-center justify-between py-3">
+              <div>
+                <div class="text-sm font-600 text-txprimary">Weekly Health Summary</div>
+                <div class="text-xs text-txsecondary mt-0.5">Receive email digest every Sunday</div>
+              </div>
+              <div class="relative inline-block cursor-pointer" style="width:40px;height:22px;">
+                <div style="width:40px;height:22px;border-radius:11px;background:#334155;position:relative;border:1px solid #475569;">
+                  <div style="position:absolute;width:16px;height:16px;background:white;border-radius:50%;top:2px;left:2px;box-shadow:0 1px 3px rgba(0,0,0,0.3);"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card p-6">
+          <h3 class="font-700 text-txprimary mb-5">Privacy & Data</h3>
+          <div class="space-y-3">
+            <div class="p-3 card-inner rounded-xl flex items-center justify-between">
+              <div class="text-sm text-txprimary">Data Retention Period</div>
+              <select class="text-xs rounded-lg px-2 py-1.5 font-600" style="background:#1E293B;color:#F1F5F9;border:1px solid #475569;outline:none;">
+                <option>2 years</option>
+                <option>1 year</option>
+                <option>6 months</option>
+              </select>
+            </div>
+            <div class="p-3 card-inner rounded-xl flex items-center justify-between">
+              <div class="text-sm text-txprimary">Share with Physician</div>
+              <span class="text-xs badge-normal px-2 py-1 rounded font-600">Enabled</span>
+            </div>
+            <div class="p-3 card-inner rounded-xl flex items-center justify-between">
+              <div class="text-sm text-txprimary">Anonymous Research Usage</div>
+              <span class="text-xs badge-low px-2 py-1 rounded font-600">Disabled</span>
+            </div>
+          </div>
+
+          <button class="mt-5 w-full py-2.5 rounded-xl text-sm font-600" style="background:rgba(239,68,68,0.1);color:#EF4444;border:1px solid rgba(239,68,68,0.25);">Delete My Data</button>
+        </div>
+
+        <div class="card p-6">
+          <h3 class="font-700 text-txprimary mb-5">Notification Settings</h3>
+          <div class="space-y-3">
+            <div class="flex items-center gap-3">
+              <input type="checkbox" checked class="w-4 h-4 rounded" style="accent-color:#38BDF8;"/>
+              <span class="text-sm text-txprimary">Critical lab result alerts</span>
+            </div>
+            <div class="flex items-center gap-3">
+              <input type="checkbox" checked class="w-4 h-4 rounded" style="accent-color:#38BDF8;"/>
+              <span class="text-sm text-txprimary">New article recommendations</span>
+            </div>
+            <div class="flex items-center gap-3">
+              <input type="checkbox" class="w-4 h-4 rounded" style="accent-color:#38BDF8;"/>
+              <span class="text-sm text-txprimary">Daily health tip push notifications</span>
+            </div>
+            <div class="flex items-center gap-3">
+              <input type="checkbox" checked class="w-4 h-4 rounded" style="accent-color:#38BDF8;"/>
+              <span class="text-sm text-txprimary">Diet plan reminders (meal times)</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="card p-6">
+          <h3 class="font-700 text-txprimary mb-5">Account</h3>
+          <div class="space-y-3">
+            <button class="w-full text-left p-3 card-inner rounded-xl text-sm text-txprimary hover:text-primary transition-colors flex items-center justify-between">
+              Change Password
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+            </button>
+            <button class="w-full text-left p-3 card-inner rounded-xl text-sm text-txprimary hover:text-primary transition-colors flex items-center justify-between">
+              Two-Factor Authentication
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+            </button>
+            <button class="w-full text-left p-3 card-inner rounded-xl text-sm text-txprimary hover:text-primary transition-colors flex items-center justify-between">
+              Download My Data
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /page content -->
+</div><!-- /main content -->
+
+<style>
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+}
+</style>
+
+<script>
+// ======== NAVIGATION ========
+function showSection(id, navEl) {
+  document.querySelectorAll('.section-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('section-' + id).classList.add('active');
+  if (navEl) navEl.classList.add('active');
+  closeSidebar();
+}
+
+// ======== SIDEBAR MOBILE ========
+function openSidebar() {
+  document.getElementById('sidebar').classList.add('open');
+  document.getElementById('sidebarOverlay').classList.add('show');
+}
+function closeSidebar() {
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('sidebarOverlay').classList.remove('show');
+}
+
+// ======== UPLOAD SIMULATION ========
+function simulateUpload() {
+  const prog = document.getElementById('uploadProgress');
+  const fill = document.getElementById('progressFill');
+  const pct = document.getElementById('uploadPct');
+  const success = document.getElementById('uploadSuccess');
+  
+  prog.classList.remove('hidden');
+  success.classList.add('hidden');
+  
+  let p = 0;
+  const interval = setInterval(() => {
+    p += Math.random() * 18 + 5;
+    if (p >= 100) { p = 100; clearInterval(interval); 
+      setTimeout(() => {
+        prog.classList.add('hidden');
+        success.classList.remove('hidden');
+      }, 300);
+    }
+    fill.style.width = p + '%';
+    pct.textContent = Math.round(p) + '%';
+  }, 180);
+}
+
+// ======== CHAT ========
+const aiResponses = [
+  {
+    text: "Based on your lab results and medical literature, here is what I found. Your question touches on an important aspect of your metabolic health. I recommend tracking this closely over the next few months.",
+    sources: [
+      { title: "WHO Clinical Guidelines 2023", excerpt: "Evidence-based recommendations for managing metabolic markers..." },
+      { title: "NEJM — Metabolic Health Review", excerpt: "Recent studies indicate significant lifestyle intervention benefits..." }
+    ]
+  },
+  {
+    text: "That's a great question. According to the latest clinical evidence, maintaining consistent monitoring and lifestyle adjustments can significantly improve your biomarker levels within 3–6 months.",
+    sources: [
+      { title: "American Journal of Medicine 2024", excerpt: "Dietary fiber intake has shown 0.5–1% reduction in HbA1c..." }
+    ]
+  },
+  {
+    text: "Based on your uploaded CBC report from December 2024, I can see several markers that are relevant to your question. Let me break this down in plain language for you.",
+    sources: [
+      { title: "Your CBC Report — Dec 2024", excerpt: "Lab values cross-referenced with clinical reference ranges..." },
+      { title: "MedLine Plus — Lab Tests", excerpt: "Standard reference ranges vary by age, sex and laboratory..." }
+    ]
+  }
+];
+
+let aiIdx = 0;
+
+function sendChatMsg() {
+  const input = document.getElementById('chatInput');
+  const msg = input.value.trim();
+  if (!msg) return;
+  input.value = '';
+  appendUserMsg(msg);
+  showTyping();
+  setTimeout(() => {
+    hideTyping();
+    appendAiMsg(aiResponses[aiIdx % aiResponses.length]);
+    aiIdx++;
+  }, 1400 + Math.random() * 800);
+}
+
+function sendQuickMsg(msg) {
+  document.getElementById('chatInput').value = msg;
+  sendChatMsg();
+}
+
+function appendUserMsg(msg) {
+  const container = document.getElementById('chatMessages');
+  const div = document.createElement('div');
+  div.className = 'flex justify-end';
+  div.innerHTML = `<div class="chat-user p-3 max-w-md"><p class="text-sm text-txprimary">${msg}</p></div>`;
+  container.appendChild(div);
+  container.scrollTop = container.scrollHeight;
+}
+
+function appendAiMsg(resp) {
+  const container = document.getElementById('chatMessages');
+  const sourcesHtml = resp.sources.map(s => `
+    <div class="p-2 rounded-lg" style="background:#1E293B;">
+      <div class="text-xs font-600 text-primary mb-1">${s.title}</div>
+      <div class="text-xs text-txsecondary">"${s.excerpt}"</div>
+    </div>
+  `).join('');
+  
+  const div = document.createElement('div');
+  div.className = 'flex items-start gap-3';
+  div.innerHTML = `
+    <div class="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0" style="background:linear-gradient(135deg,#38BDF8,#818CF8);">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><circle cx="12" cy="12" r="10"/></svg>
+    </div>
+    <div class="space-y-2 max-w-lg">
+      <div class="chat-ai p-4">
+        <p class="text-sm text-txprimary leading-relaxed">${resp.text}</p>
+      </div>
+      <div class="card-inner p-3 rounded-xl">
+        <div class="text-[10px] font-700 text-txsecondary uppercase tracking-wide mb-2">📚 Sources</div>
+        <div class="space-y-2">${sourcesHtml}</div>
+      </div>
+    </div>
+  `;
+  container.appendChild(div);
+  container.scrollTop = container.scrollHeight;
+}
+
+function showTyping() {
+  const el = document.getElementById('typingIndicator');
+  el.classList.remove('hidden');
+  el.classList.add('flex');
+  document.getElementById('chatMessages').scrollTop = document.getElementById('chatMessages').scrollHeight;
+}
+
+function hideTyping() {
+  const el = document.getElementById('typingIndicator');
+  el.classList.add('hidden');
+  el.classList.remove('flex');
+}
+
+// ======== DIET DAYS ========
+function selectDay(btn, dayId) {
+  btn.closest('.card').querySelectorAll('.day-tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  btn.closest('.card').querySelectorAll('.day-content').forEach(d => d.classList.add('hidden'));
+  document.getElementById(dayId).classList.remove('hidden');
+}
+
+// ======== BLOG ========
+function showBlogPost() {
+  document.getElementById('blog-list-view').classList.add('hidden');
+  document.getElementById('blog-post-view').classList.remove('hidden');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function hideBlogPost() {
+  document.getElementById('blog-list-view').classList.remove('hidden');
+  document.getElementById('blog-post-view').classList.add('hidden');
+}
+</script>
+</body>
+</html>
