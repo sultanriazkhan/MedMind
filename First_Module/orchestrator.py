@@ -1,19 +1,17 @@
-# orchestrator.py - CORRECTED VERSION
-"""Main orchestrator that connects all services"""
 import sys
 import os
 from pathlib import Path
 
 # Add pathology_processor to Python path (CORRECTED)
 pathology_path = Path(__file__).parent / 'pathology_processor'
-sys.path.insert(0, str(pathology_path))
+sys.path.insert(0, str(Path(__file__).parent))
 
 from flask import Flask, request, jsonify
 import requests
 import logging
 
-# Import your pathology pipeline directly (CORRECTED - no pathology_processor prefix)
 from pathology_processor.services.pipeline import ProcessingPipeline
+
 
 app = Flask(__name__)
 logging.basicConfig(level=logging.INFO)

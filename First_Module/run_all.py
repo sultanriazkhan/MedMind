@@ -30,7 +30,7 @@ def main():
         print(f"❌ AI Explainer not found at {ai_path}")
     
     # 2. Start Text Extractor on port 5000
-    extractor_path = base_dir / 'text_extractor.py'
+    extractor_path = base_dir / 'text_extraction.py'
     if extractor_path.exists():
         processes.append(start_service("Text Extractor", f"python {extractor_path}", 5000, 3))
     else:
