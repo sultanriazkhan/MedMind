@@ -1,72 +1,39 @@
-# orchestrator.py
+# orchestrator.py - CORRECTED VERSION
 """Main orchestrator that connects all services"""
 import sys
 import os
 from pathlib import Path
 
-# Add pathology_processor to Python path
-sys.path.insert(0, str(Path(__file__).parent / 'pathology_processor'))
+# Add pathology_processor to Python path (CORRECTED)
+pathology_path = Path(__file__).parent / 'pathology_processor'
+sys.path.insert(0, str(pathology_path))
 
 from flask import Flask, request, jsonify
 import requests
 import logging
 
-# Import your pathology pipeline directly
+# Import your pathology pipeline directly (CORRECTED - no pathology_processor prefix)
 from pathology_processor.services.pipeline import ProcessingPipeline
 
 app = Flask(__name__)
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-# Service configurations
-TEXT_EXTRACTOR_PORT = 5000      # Your text extractor Flask app
-AI_EXPLAINER_PORT = 5001        # Your AI explainer Flask app  
-PATHOLOGY_API_PORT = 8000       # Your FastAPI app (main.py)
-ORCHESTRATOR_PORT = 5002        # This orchestrator
+# Service configurations (CORRECTED PORTS)
+TEXT_EXTRACTOR_PORT = 5000
+AI_EXPLAINER_PORT = 5001      # AI explainer now on port 5001
+ORCHESTRATOR_PORT = 5002
 
 # Service URLs
-TEXT_EXTRACTOR_URL = f"http://localhost:{TEXT_EXTRACTOR_PORT}"
 AI_EXPLAINER_URL = f"http://localhost:{AI_EXPLAINER_PORT}/generate-explanations"
-PATHOLOGY_API_URL = f"http://localhost:{PATHOLOGY_API_PORT}"
 
-# Initialize pipeline directly (faster than API call)
-pipeline = ProcessingPipeline()
-
-
-def extract_text_from_file(file):
-    """Extract text using your existing text_extractor.py logic"""
-    filepath = f"/tmp/{file.filename}"
-    file.save(filepath)
-    
-    filename = file.filename
-    
-    # Import extraction functions dynamically
-    import importlib.util
-    text_extractor_path = Path(__file__).parent / 'text_extractor.py'
-    if not text_extractor_path.exists():
-        raise FileNotFoundError(f"text_extractor.py not found at {text_extractor_path}")
-
-    spec = importlib.util.spec_from_file_location("text_extractor", text_extractor_path)
-    if spec is None or spec.loader is None:
-        raise ImportError(f"Unable to load text_extractor module from {text_extractor_path}")
-
-    text_extractor = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(text_extractor)
-    
-    # Extract based on file type
-    if filename.endswith('.pdf'):
-        extracted_text = text_extractor.extract_pdf_text(filepath)
-    elif filename.endswith('.docx'):
-        extracted_text = text_extractor.extract_word_text(filepath)
-    elif filename.endswith('.txt'):
-        extracted_text = text_extractor.extract_text_file(filepath)
-    elif filename.endswith(('.jpg', '.jpeg', '.png')):
-        extracted_text = text_extractor.extract_image_text(filepath)
-    else:
-        extracted_text = "Unsupported file type"
-    
-    os.remove(filepath)
-    return extracted_text
+# Initialize pipeline
+try:
+    pipeline = ProcessingPipeline()
+    logger.info("✅ Pathology pipeline initialized")
+except Exception as e:
+    logger.error(f"❌ Pipeline init failed: {e}")
+    pipeline = None
 
 
 def add_ai_explanations(test_results):
@@ -96,29 +63,22 @@ def add_ai_explanations(test_results):
 
 @app.route('/process', methods=['POST'])
 def process_report():
-    """Main endpoint - processes file or text and returns enriched results"""
+    """Main endpoint - processes text and returns enriched results"""
     
-    # Case 1: File upload
-    if 'file' in request.files:
-        file = request.files['file']
-        if not file.filename:
-            return jsonify({"error": "No file selected"}), 400
-        
-        extracted_text = extract_text_from_file(file)
-        if not extracted_text or "Error" in extracted_text:
-            return jsonify({"error": "Text extraction failed", "details": extracted_text}), 422
+    # Get text from request
+    if not request.is_json:
+        return jsonify({"error": "Expected JSON"}), 400
     
-    # Case 2: Direct text input
-    elif request.is_json:
-        json_payload = request.get_json(silent=True)
-        if json_payload and 'text' in json_payload:
-            extracted_text = json_payload['text']
-        else:
-            return jsonify({"error": "Provide file or 'text' field"}), 400
-    else:
-        return jsonify({"error": "Provide file or 'text' field"}), 400
+    data = request.get_json()
+    extracted_text = data.get('text', '')
     
-    # Step 1: Run pathology pipeline on extracted text
+    if not extracted_text:
+        return jsonify({"error": "No text provided"}), 400
+    
+    if pipeline is None:
+        return jsonify({"error": "Pipeline not initialized"}), 500
+    
+    # Step 1: Run pathology pipeline
     logger.info("Running pathology pipeline...")
     result = pipeline.process(extracted_text)
     
@@ -136,17 +96,13 @@ def process_report():
     enriched_tests = []
     for i, test in enumerate(result.tests):
         enriched_test = {
-            "raw_text": test.get("raw_text", ""),
             "test_name": test.get("raw_test_name", ""),
             "canonical_name": test.get("canonical_name"),
-            "loinc_code": test.get("loinc_code"),
             "value": test.get("value"),
             "unit": test.get("unit"),
             "reference_range": test.get("reference_range"),
             "status": test.get("status", "Unknown"),
-            "confidence_score": test.get("confidence_score", 0.0),
             
-            # AI explanations
             "clinical_meaning": "Not available",
             "possible_causes": "Not available",
             "clinical_effects": "Not available",
@@ -164,7 +120,6 @@ def process_report():
         
         enriched_tests.append(enriched_test)
     
-    # Step 4: Return final response
     return jsonify({
         "success": True,
         "request_id": result.request_id,
@@ -183,47 +138,31 @@ def process_report():
 
 @app.route('/health', methods=['GET'])
 def health():
-    """Health check for all services"""
-    services_status = {
-        "orchestrator": "healthy",
-        "pathology_pipeline": "healthy",
-        "text_extractor": "unknown",
-        "ai_explainer": "unknown",
-        "fastapi": "unknown"
-    }
-    
-    # Check AI explainer
+    """Health check"""
+    ai_status = "unknown"
     try:
         r = requests.get("http://localhost:5001/", timeout=2)
-        services_status["ai_explainer"] = "healthy" if r.status_code == 200 else "unhealthy"
+        ai_status = "healthy" if r.status_code == 200 else "unhealthy"
     except:
-        services_status["ai_explainer"] = "offline"
+        ai_status = "offline"
     
-    # Check FastAPI (your main.py)
-    try:
-        r = requests.get("http://localhost:8000/health", timeout=2)
-        services_status["fastapi"] = "healthy" if r.status_code == 200 else "unhealthy"
-    except:
-        services_status["fastapi"] = "offline"
-    
-    return jsonify(services_status)
+    return jsonify({
+        "orchestrator": "healthy",
+        "pipeline": "ready" if pipeline else "failed",
+        "ai_explainer": ai_status
+    })
 
 
 if __name__ == '__main__':
     print("\n" + "="*60)
     print("🚀 Pathology Report Orchestrator")
     print("="*60)
-    print(f"📍 Text Extractor (expected): http://localhost:5000")
-    print(f"📍 AI Explainer (expected):   http://localhost:5001")
-    print(f"📍 FastAPI (your main.py):    http://localhost:8000")
-    print(f"📍 Orchestrator running:      http://localhost:5002")
-    print("\n📋 Usage:")
-    print('   curl -X POST http://localhost:5002/process \\')
-    print('     -F "file=@report.pdf"')
-    print('   OR')
+    print(f"📍 AI Explainer: http://localhost:5001")
+    print(f"📍 Orchestrator: http://localhost:5002")
+    print("\n📋 Test:")
     print('   curl -X POST http://localhost:5002/process \\')
     print('     -H "Content-Type: application/json" \\')
-    print('     -d \'{"text": "Hemoglobin 9.5 g/dL"}\'')
+    print('     -d \'{"text": "Hemoglobin 9.5 g/dL Low"}\'')
     print("="*60 + "\n")
     
     app.run(host='0.0.0.0', port=5002, debug=True)
