@@ -1,0 +1,17 @@
+[
+  {
+    "test_name": "Hemoglobin",
+    "value": 9.5,
+    "status": "Low"
+  },
+  {
+    "test_name": "Glucose",
+    "value": 180,
+    "status": "High"
+  },
+  {
+    "test_name": "WBC",
+    "value": 12000,
+    "status": "High"
+  }
+]
