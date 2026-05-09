@@ -1,0 +1,138 @@
+<!-- templates/results.html -->
+<!DOCTYPE html>
+<html lang="en"> 
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lab Report Results</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f5f5f5; padding: 20px; }
+        .container { max-width: 1200px; margin: 0 auto; }
+        
+        /* Header */
+        .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; border-radius: 10px; margin-bottom: 20px; }
+        .header h1 { margin-bottom: 10px; }
+        .header p { opacity: 0.9; }
+        
+        /* Summary Cards */
+        .summary-section { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 30px; }
+        .summary-card { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); text-align: center; }
+        .summary-card h3 { color: #667eea; font-size: 28px; margin-bottom: 5px; }
+        .summary-card p { color: #666; font-size: 14px; }
+        
+        /* Test Cards */
+        .test-card { background: white; margin-bottom: 20px; padding: 20px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .test-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px; }
+        .test-name h2 { color: #333; font-size: 20px; }
+        .test-name small { color: #999; font-size: 12px; }
+        .test-values { text-align: right; }
+        .value { font-size: 28px; font-weight: bold; color: #333; }
+        .unit { color: #666; font-size: 14px; }
+        .reference { color: #999; font-size: 12px; margin-top: 5px; }
+        
+        .status { display: inline-block; padding: 5px 15px; border-radius: 20px; font-size: 12px; font-weight: bold; margin-left: 10px; }
+        .status-Normal { background: #d4edda; color: #155724; }
+        .status-Low { background: #fff3cd; color: #856404; }
+        .status-High { background: #fff3cd; color: #856404; }
+        .status-Critical-Low { background: #f8d7da; color: #721c24; }
+        .status-Critical-High { background: #f8d7da; color: #721c24; }
+        
+        /* AI Section */
+        .ai-section { background: #f8f9fa; padding: 15px; border-radius: 8px; margin-top: 15px; }
+        .ai-section h4 { color: #667eea; margin-bottom: 8px; font-size: 14px; }
+        .ai-section p { color: #555; line-height: 1.5; margin-bottom: 12px; }
+        
+        /* Raw Text */
+        .raw-text { background: #2d2d2d; color: #f8f8f2; padding: 20px; border-radius: 10px; overflow-x: auto; font-family: 'Courier New', monospace; font-size: 12px; margin-top: 30px; }
+        
+        .btn { display: inline-block; padding: 10px 20px; background: #667eea; color: white; text-decoration: none; border-radius: 5px; margin-top: 20px; }
+        .btn:hover { background: #5a67d8; }
+        
+        @media (max-width: 768px) {
+            .test-header { flex-direction: column; align-items: flex-start; }
+            .test-values { text-align: left; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔬 Lab Report Analysis Results</h1>
+            <p>File: {{ filename }} ({{ file_type }})</p>
+            <p>Request ID: {{ request_id }}</p>
+        </div>
+        
+        <div class="summary-section">
+            <div class="summary-card">
+                <h3>{{ summary.total_tests }}</h3>
+                <p>Total Tests Detected</p>
+            </div>
+            <div class="summary-card">
+                <h3>{{ summary.regex_matches }}</h3>
+                <p>Regex Matches</p>
+            </div>
+            <div class="summary-card">
+                <h3>{{ summary.ai_enriched }}</h3>
+                <p>AI Enriched</p>
+            </div>
+            <div class="summary-card">
+                <h3>{{ "%.0f"|format(processing_time) }}</h3>
+                <p>Processing Time (ms)</p>
+            </div>
+        </div>
+        
+        <h2>📊 Test Results</h2>
+        
+        {% for test in tests %}
+        <div class="test-card">
+            <div class="test-header">
+                <div class="test-name">
+                    <h2>{{ test.test_name }}</h2>
+                    {% if test.canonical_name and test.canonical_name != test.test_name %}
+                    <small>Canonical: {{ test.canonical_name }}</small>
+                    {% endif %}
+                </div>
+                <div class="test-values">
+                    <span class="value">{{ test.value }}</span>
+                    <span class="unit">{{ test.unit }}</span>
+                    <span class="status status-{{ test.status|replace(' ', '-') }}">{{ test.status }}</span>
+                    {% if test.reference_range %}
+                    <div class="reference">Ref: {{ test.reference_range }}</div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <div class="ai-section">
+                <h4>💡 Clinical Meaning</h4>
+                <p>{{ test.clinical_meaning }}</p>
+                
+                <h4>🔍 Possible Causes</h4>
+                <p>{{ test.possible_causes }}</p>
+                
+                <h4>⚠️ Clinical Effects</h4>
+                <p>{{ test.clinical_effects }}</p>
+                
+                <h4>📋 Recommendations</h4>
+                <p>{{ test.recommendations }}</p>
+            </div>
+        </div>
+        {% else %}
+        <div class="test-card">
+            <p style="text-align: center; color: #666;">No tests were detected in this document.</p>
+        </div>
+        {% endfor %}
+        
+        {% if extracted_text %}
+        <div class="raw-text">
+            <strong>📄 Raw Extracted Text (Preview):</strong><br><br>
+            <pre style="background: none; color: #f8f8f2; margin: 0; white-space: pre-wrap;">{{ extracted_text }}</pre>
+        </div>
+        {% endif %}
+        
+        <div style="text-align: center;">
+            <a href="/" class="btn">← Upload Another File</a>
+        </div>
+    </div>
+</body>
+</html>
