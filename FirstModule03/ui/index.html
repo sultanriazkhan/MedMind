@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MedMind Lab Processing System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            opacity: 0.9;
+        }
+        
+        .tabs {
+            display: flex;
+            border-bottom: 2px solid #e0e0e0;
+            background: #f9f9f9;
+        }
+        
+        .tab {
+            flex: 1;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 500;
+            color: #666;
+            border: none;
+            background: none;
+            font-size: 16px;
+        }
+        
+        .tab:hover {
+            background: #f0f0f0;
+        }
+        
+        .tab.active {
+            color: #667eea;
+            border-bottom: 3px solid #667eea;
+            background: white;
+        }
+        
+        .tab-content {
+            display: none;
+            padding: 30px;
+            animation: fadeIn 0.5s;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .upload-area {
+            border: 2px dashed #ccc;
+            border-radius: 10px;
+            padding: 40px;
+            text-align: center;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        
+        .upload-area:hover {
+            border-color: #667eea;
+            background: #f9f9ff;
+        }
+        
+        .upload-area.drag-over {
+            border-color: #667eea;
+            background: #f0f0ff;
+        }
+        
+        .file-input {
+            display: none;
+        }
+        
+        textarea {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            resize: vertical;
+            transition: border-color 0.3s;
+        }
+        
+        textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            margin-top: 20px;
+            transition: transform 0.2s;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+        }
+        
+        button:active {
+            transform: translateY(0);
+        }
+        
+        .result {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f9f9f9;
+            border-radius: 10px;
+            display: none;
+        }
+        
+        .result h3 {
+            color: #333;
+            margin-bottom: 15px;
+        }
+        
+        pre {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 15px;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-size: 12px;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 20px;
+            display: none;
+        }
+        
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .error {
+            background: #fee;
+            color: #c33;
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏥 MedMind Lab Processing System</h1>
+            <p>Upload or paste lab results for instant analysis</p>
+        </div>
+        
+        <div class="tabs">
+            <button class="tab active" onclick="switchTab('file')">📁 Upload File</button>
+            <button class="tab" onclick="switchTab('text')">📝 Paste Text</button>
+        </div>
+        
+        <div id="file-tab" class="tab-content active">
+            <div class="upload-area" id="upload-area" onclick="document.getElementById('file-input').click()">
+                <p>📂 Click or drag and drop</p>
+                <p style="font-size: 12px; color: #999; margin-top: 10px;">Supports: JPG, PNG, PDF, DOCX, TXT</p>
+            </div>
+            <input type="file" id="file-input" class="file-input" accept=".jpg,.jpeg,.png,.pdf,.docx,.txt,image/*">
+            <div id="file-name" style="margin-top: 10px; font-size: 14px; color: #666;"></div>
+        </div>
+        
+        <div id="text-tab" class="tab-content">
+            <textarea id="text-input" rows="8" placeholder="Example:&#10;Hemoglobin 9.5 g/dL&#10;Glucose 180 mg/dL&#10;Creatinine 1.2 mg/dL"></textarea>
+        </div>
+        
+        <div style="padding: 0 30px 30px 30px;">
+            <button id="submit-btn" onclick="processInput()">🚀 Process Results</button>
+        </div>
+        
+        <div id="loading" class="loading">
+            <div class="spinner"></div>
+            <p style="margin-top: 10px;">Processing...</p>
+        </div>
+        
+        <div id="result" class="result">
+            <h3>📊 Analysis Results</h3>
+            <pre id="result-content"></pre>
+        </div>
+    </div>
+    
+    <script>
+        let currentTab = 'file';
+        
+        function switchTab(tab) {
+            currentTab = tab;
+            document.querySelectorAll('.tab').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            
+            if (tab === 'file') {
+                document.querySelector('.tab:first-child').classList.add('active');
+                document.getElementById('file-tab').classList.add('active');
+            } else {
+                document.querySelector('.tab:last-child').classList.add('active');
+                document.getElementById('text-tab').classList.add('active');
+            }
+            
+            document.getElementById('result').style.display = 'none';
+        }
+        
+        // Drag and drop
+        const dropZone = document.getElementById('upload-area');
+        
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.classList.add('drag-over');
+        });
+        
+        dropZone.addEventListener('dragleave', () => {
+            dropZone.classList.remove('drag-over');
+        });
+        
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('drag-over');
+            const file = e.dataTransfer.files[0];
+            if (file) {
+                document.getElementById('file-input').files = e.dataTransfer.files;
+                document.getElementById('file-name').innerHTML = `📎 ${file.name}`;
+            }
+        });
+        
+        document.getElementById('file-input').addEventListener('change', (e) => {
+            if (e.target.files[0]) {
+                document.getElementById('file-name').innerHTML = `📎 ${e.target.files[0].name}`;
+            }
+        });
+        
+        async function processInput() {
+            const submitBtn = document.getElementById('submit-btn');
+            const loading = document.getElementById('loading');
+            const resultDiv = document.getElementById('result');
+            const resultContent = document.getElementById('result-content');
+            
+            submitBtn.disabled = true;
+            loading.style.display = 'block';
+            resultDiv.style.display = 'none';
+            
+            try {
+                let response;
+                
+                if (currentTab === 'file') {
+                    const fileInput = document.getElementById('file-input');
+                    const file = fileInput.files[0];
+                    
+                    if (!file) {
+                        throw new Error('Please select a file');
+                    }
+                    
+                    const formData = new FormData();
+                    formData.append('file', file);
+                    
+                    response = await fetch('/process', {
+                        method: 'POST',
+                        body: formData
+                    });
+                } else {
+                    const text = document.getElementById('text-input').value;
+                    if (!text.trim()) {
+                        throw new Error('Please enter some text');
+                    }
+                    
+                    response = await fetch('/process', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                        },
+                        body: 'text_input=' + encodeURIComponent(text)
+                    });
+                }
+                
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(error.detail || 'Processing failed');
+                }
+                
+                const result = await response.json();
+                resultContent.textContent = JSON.stringify(result, null, 2);
+                resultDiv.style.display = 'block';
+                
+            } catch (error) {
+                resultContent.textContent = JSON.stringify({ error: error.message }, null, 2);
+                resultDiv.style.display = 'block';
+            } finally {
+                submitBtn.disabled = false;
+                loading.style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>
