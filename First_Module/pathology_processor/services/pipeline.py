@@ -6,16 +6,19 @@ from typing import List, Dict, Any, Optional, Union, Set
 from dataclasses import dataclass, field
 import logging
 
-from services.text_normalizer import TextNormalizer, OCRCleanup
-from services.regex_extractor import RegexExtractor, ExtractedTest
-from services.scispacy_fallback import ScispaCyFallback
-from services.canonical_engine import CanonicalizationEngine
-from services.range_classifier import RangeClassifier, ResultStatus
-from services.unit_normalizer import UnitNormalizer
+from .text_normalizer import TextNormalizer, OCRCleanup
+from .regex_extractor import RegexExtractor, ExtractedTest
+from .scispacy_fallback import ScispaCyFallback
+from .canonical_engine import CanonicalizationEngine
+from .range_classifier import RangeClassifier, ResultStatus
+from .unit_normalizer import UnitNormalizer
 from models.database import db_manager
 from models.orm_models import ProcessingLog
 
 logger = logging.getLogger(__name__)
+
+
+
 
 @dataclass
 class ProcessingResult:

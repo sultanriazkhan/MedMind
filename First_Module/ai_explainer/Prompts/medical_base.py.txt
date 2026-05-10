@@ -1,0 +1,657 @@
+You are a senior medical content expert and Python developer. Create a comprehensive medical knowledge base file called `medical_knowledge_base.py` that contains clinical explanations for lab test results.
+
+## REQUIREMENTS:
+
+### 1. DATA STRUCTURE:
+
+Create a Python dictionary named `MEDICAL_KNOWLEDGE_BASE` with the following structure:
+
+```python
+
+MEDICAL_KNOWLEDGE_BASE = {
+
+    "test_name_normalized": {
+
+        "Low": {
+
+            "meaning": "string - What low value means clinically",
+
+            "causes": "string - Common causes of low value",
+
+            "effects": "string - Clinical effects/symptoms on body",
+
+            "solution": "string - Recommended actions/treatments"
+
+        },
+
+        "High": {
+
+            "meaning": "string - What high value means clinically",
+
+            "causes": "string - Common causes of high value",
+
+            "effects": "string - Clinical effects/symptoms on body", 
+
+            "solution": "string - Recommended actions/treatments"
+
+        },
+
+        "Normal": {
+
+            "meaning": "string - What normal range indicates",
+
+            "causes": "N/A - This is a normal result",
+
+            "effects": "string - Normal physiological state",
+
+            "solution": "string - Preventive health recommendations"
+
+        }
+
+    }
+
+}
+
+
+
+Hematology Tests
+
+
+
+* CBC (Complete Blood Count)
+
+* Hemoglobin (Hb)
+
+* Hematocrit (HCT)
+
+* RBC Count
+
+* WBC Count
+
+* Platelet Count
+
+* ESR
+
+* PCV (Packed Cell Volume)
+
+* MCV
+
+* MCH
+
+* MCHC
+
+* RDW
+
+* Peripheral Blood Smear (PBS)
+
+* Reticulocyte Count
+
+* Absolute Eosinophil Count (AEC)
+
+* Differential Leukocyte Count (DLC)
+
+* Total Leukocyte Count (TLC)
+
+* Sickling Test
+
+* Osmotic Fragility Test
+
+* G6PD Assay
+
+* Coombs Test (Direct/Indirect)
+
+* Hemoglobin Electrophoresis
+
+Coagulation / Bleeding Profile
+
+
+
+* PT
+
+* INR
+
+* aPTT
+
+* Bleeding Time (BT)
+
+* Clotting Time (CT)
+
+* D-Dimer
+
+* Fibrinogen
+
+* FDP (Fibrin Degradation Products)
+
+* Thrombin Time
+
+* Factor Assays
+
+Blood Sugar / Diabetes Tests
+
+
+
+* Fasting Blood Sugar (FBS)
+
+* Random Blood Sugar (RBS)
+
+* Postprandial Blood Sugar (PPBS)
+
+* HbA1c
+
+* OGTT
+
+* Insulin Level
+
+* C-Peptide
+
+* Urine Sugar
+
+* Urine Ketones
+
+* Fructosamine
+
+Kidney Function Tests (KFT/RFT)
+
+
+
+* Blood Urea
+
+* Serum Creatinine
+
+* BUN
+
+* Uric Acid
+
+* eGFR
+
+* Creatinine Clearance
+
+* Sodium
+
+* Potassium
+
+* Chloride
+
+* Bicarbonate
+
+* Calcium
+
+* Phosphorus
+
+* Magnesium
+
+* Urine Protein
+
+* Microalbuminuria
+
+* 24-Hour Urine Protein
+
+* Urine Electrolytes
+
+Liver Function Tests (LFT)
+
+
+
+* Total Bilirubin
+
+* Direct Bilirubin
+
+* Indirect Bilirubin
+
+* ALT (SGPT)
+
+* AST (SGOT)
+
+* ALP
+
+* GGT
+
+* LDH
+
+* Total Protein
+
+* Albumin
+
+* Globulin
+
+* A/G Ratio
+
+* Serum Ammonia
+
+* Prothrombin Time (for liver function)
+
+Lipid Profile
+
+
+
+* Total Cholesterol
+
+* HDL Cholesterol
+
+* LDL Cholesterol
+
+* VLDL
+
+* Triglycerides
+
+* Non-HDL Cholesterol
+
+* Apolipoprotein A1
+
+* Apolipoprotein B
+
+* Lipoprotein(a)
+
+Cardiac Marker Tests
+
+
+
+* Troponin I
+
+* Troponin T
+
+* CK-MB
+
+* CPK
+
+* LDH
+
+* BNP
+
+* NT-proBNP
+
+* Myoglobin
+
+* Homocysteine
+
+Thyroid Function Tests
+
+
+
+* TSH
+
+* T3
+
+* T4
+
+* Free T3
+
+* Free T4
+
+* Anti-TPO Antibody
+
+* Thyroglobulin
+
+* Thyroglobulin Antibody
+
+Hormonal / Endocrine Tests
+
+
+
+* Testosterone
+
+* Free Testosterone
+
+* Estrogen
+
+* Progesterone
+
+* LH
+
+* FSH
+
+* Prolactin
+
+* Cortisol
+
+* ACTH
+
+* Insulin
+
+* C-Peptide
+
+* PTH
+
+* Growth Hormone (GH)
+
+* IGF-1
+
+* DHEAS
+
+* Beta hCG
+
+* AMH
+
+Vitamin / Nutrition Tests
+
+
+
+* Vitamin D
+
+* Vitamin B12
+
+* Folate
+
+* Ferritin
+
+* Iron
+
+* TIBC
+
+* Transferrin Saturation
+
+* Calcium
+
+* Magnesium
+
+* Zinc
+
+* Copper
+
+* Selenium
+
+* Prealbumin
+
+Urine Tests
+
+
+
+* Urine Routine Examination
+
+* Urine Microscopy
+
+* Urine Culture & Sensitivity
+
+* Urine Protein
+
+* Urine Albumin
+
+* Urine Creatinine
+
+* Urine Ketones
+
+* Urine Bile Salts
+
+* Urine Bile Pigments
+
+* Urine Specific Gravity
+
+* Urine pH
+
+* Urine Pregnancy Test
+
+* Urine Drug Screen
+
+* 24-Hour Urine Collection
+
+* Urine Cytology
+
+Stool Tests
+
+
+
+* Stool Routine Examination
+
+* Stool Microscopy
+
+* Stool Culture
+
+* Stool for Ova & Parasites
+
+* Occult Blood Test (FOBT)
+
+* Stool Calprotectin
+
+* Stool Reducing Substances
+
+* Fecal Fat Test
+
+* H. pylori Stool Antigen
+
+Serology / Infectious Disease Tests
+
+Viral
+
+
+
+* HIV 1 & 2
+
+* HBsAg
+
+* HBeAg
+
+* Anti-HCV
+
+* HAV IgM
+
+* HEV IgM
+
+* Dengue NS1
+
+* Dengue IgM
+
+* Dengue IgG
+
+* COVID-19 PCR
+
+* COVID Antigen Test
+
+* CMV IgG/IgM
+
+* EBV Profile
+
+* HSV IgG/IgM
+
+* Rubella IgG/IgM
+
+Bacterial
+
+
+
+* Widal Test
+
+* Typhidot
+
+* VDRL
+
+* TPHA
+
+* ASO Titer
+
+* Weil-Felix Test
+
+* Brucella Test
+
+Parasitic
+
+
+
+* Malaria Parasite (MP)
+
+* Rapid Malaria Antigen Test
+
+* Filariasis Test
+
+* Leishmania Test
+
+Tuberculosis
+
+
+
+* Mantoux Test
+
+* Sputum AFB
+
+* GeneXpert / CBNAAT
+
+* TB Gold Test
+
+Culture & Sensitivity Tests
+
+
+
+* Blood Culture
+
+* Urine Culture
+
+* Stool Culture
+
+* Sputum Culture
+
+* Throat Swab Culture
+
+* Pus Culture
+
+* Wound Swab Culture
+
+* Semen Culture
+
+Autoimmune / Immunology Tests
+
+
+
+* ANA
+
+* Anti-dsDNA
+
+* ENA Panel
+
+* Rheumatoid Factor (RF)
+
+* Anti-CCP
+
+* ANCA
+
+* Complement C3
+
+* Complement C4
+
+* CRP
+
+* hs-CRP
+
+* Immunoglobulin Levels (IgG, IgA, IgM, IgE)
+
+* HLA-B27
+
+Allergy Tests
+
+
+
+* Total IgE
+
+* Specific IgE
+
+* Allergy Panel
+
+* Food Allergy Testing
+
+* Drug Allergy Testing
+
+Tumor Markers
+
+
+
+* PSA
+
+* CEA
+
+* AFP
+
+* CA-125
+
+* CA 19-9
+
+* CA 15-3
+
+* Beta hCG
+
+* Calcitonin
+
+* Thyroglobulin
+
+* NSE
+
+Fertility / Reproductive Tests
+
+
+
+* Semen Analysis
+
+* Sperm Count
+
+* Sperm Motility
+
+* Sperm Morphology
+
+* AMH
+
+* Ovulation Hormone Profile
+
+* Beta hCG
+
+* TORCH Profile
+
+Toxicology / Drug Tests
+
+
+
+* Blood Alcohol Level
+
+* Toxicology Screen
+
+* Heavy Metal Screen
+
+* Lead Level
+
+* Arsenic Level
+
+* Mercury Level
+
+* Drug Abuse Panel
+
+Cytology / Histopathology
+
+
+
+* FNAC
+
+* Biopsy
+
+* Histopathology Examination (HPE)
+
+* Pap Smear
+
+* Bone Marrow Aspiration
+
+* Bone Marrow Biopsy
+
+* CSF Analysis
+
+* Pleural Fluid Analysis
+
+* Ascitic Fluid Analysis
+
+* Synovial Fluid Analysis
+
+* Semen Analysis
+
+* Cytology Examination
+
+Common Body Fluid Analysis
+
+
+
+* CSF Routine Examination
+
+* Pleural Fluid Examination
+
+* Ascitic Fluid Examination
+
+* Pericardial Fluid Analysis
+
+* Synovial Fluid Analysis
+
+* Semen Analysis
+
+For each test above, provide medically accurate explanations:
