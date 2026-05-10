@@ -3,9 +3,9 @@ from typing import Dict, Any, Optional
 from dataclasses import dataclass
 from enum import Enum
 
-from models.database import db_manager
-from services.alias_resolver import AliasResolver, AliasResolutionResult
-from services.text_normalizer import TextNormalizer
+from pathology_processor.models.database import db_manager
+from .alias_resolver import AliasResolver, AliasResolutionResult
+from .text_normalizer import TextNormalizer
 
 @dataclass
 class CanonicalResult:

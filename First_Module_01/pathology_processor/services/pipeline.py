@@ -12,8 +12,8 @@ from .scispacy_fallback import ScispaCyFallback
 from .canonical_engine import CanonicalizationEngine
 from .range_classifier import RangeClassifier, ResultStatus
 from .unit_normalizer import UnitNormalizer
-from models.database import db_manager
-from models.orm_models import ProcessingLog
+from pathology_processor.models.database import db_manager      # ← CHANGED
+from pathology_processor.models.orm_models import ProcessingLog 
 
 logger = logging.getLogger(__name__)
 

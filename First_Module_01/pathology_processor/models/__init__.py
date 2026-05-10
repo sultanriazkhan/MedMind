@@ -1,7 +1,7 @@
 # models/__init__.py
 """Database models module"""
 
-from models.orm_models import (
+from .orm_models import (
     Base,
     CanonicalTest,
     TestAlias,
@@ -10,7 +10,7 @@ from models.orm_models import (
     LOINCMapping,
     ProcessingLog
 )
-from models.database import DatabaseManager, db_manager
+from .database import DatabaseManager, db_manager
 
 __all__ = [
     'Base',

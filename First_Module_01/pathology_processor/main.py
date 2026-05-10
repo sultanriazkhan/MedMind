@@ -297,20 +297,6 @@ async def lookup_test(test_name: str):
                 "input": test_name,
                 "message": "Test not found in alias database"
             }
-# In orchestrator.py - Alternative using HTTP call
-
-def process_with_fastapi(text):
-    """Call FastAPI endpoint instead of direct import"""
-    response = requests.post(
-        "http://localhost:8000/api/process",
-        json={"text": text}
-    )
-    
-    if response.status_code == 200:
-        data = response.json()
-        return data['tests']
-    else:
-        return None
 # ============ MAIN ENTRY POINT ============
 def main():
     """Main entry point"""
@@ -325,16 +311,15 @@ def main():
     print(f"🔍 Health: http://{host}:{port}/health")
     print(f"⚡ Process: POST http://{host}:{port}/api/process")
     print("="*60 + "\n")
-    
     uvicorn.run(
         "main:api_app",
         host=host,
         port=port,
         reload=False,
-        workers=2,  # Reduced from 4 for better stability
+        workers=1,
         log_level="info",
         access_log=True
     )
-
+    
 if __name__ == "__main__":
     main()

@@ -1,0 +1,58 @@
+============================================================
+PROJECT STRUCTURE REPORT
+Root: C:\black_paper\MedMind\First_Module
+============================================================
+
+📁 First_Module/
+📁 ai_explainer/
+  📄 .env.example
+  📄 AI_Explanation_Module_Documentation.docx
+  📄 Medical_base.py
+  📄 app.py
+  📄 explanation_engine.py
+  📄 requirements.txt
+  📄 sample_payload.json
+  📁 .venv/
+    📄 pyvenv.cfg
+    📁 Include/
+    📁 Lib/
+      📁 site-packages/
+    📁 Scripts/
+      📄 python.exe
+      📄 pythonw.exe
+  📁 Old_architecture/
+    📄 ai_explainer_restricted.py
+    📄 parser_utils.py
+    📄 prompt_builder.py
+  📁 Prompts/
+    📄 medical_base.py.txt
+📁 pathology_processor/
+  📄 config.py
+  📄 main.py
+  📁 api/
+    📄 __init__.py
+    📄 routes.py
+  📁 models/
+    📄 __init__.py
+    📄 database.py
+    📄 orm_models.py
+  📁 services/
+    📄 __init__.py
+    📄 alias_resolver.py
+    📄 canonical_engine.py
+    📄 pipeline.py
+    📄 range_classifier.py
+    📄 regex_extractor.py
+    📄 scispacy_fallback.py
+    📄 seed_data.py
+    📄 text_normalizer.py
+    📄 unit_normalizer.py
+  📁 tests/
+    📄 test_extraction.py
+📁 templates/
+  📄 results.html
+  📄 uploading.html
+
+============================================================
+Report generated on: 2026-05-10 17:10:28.530629
+============================================================

@@ -4,8 +4,8 @@ from enum import Enum
 from datetime import datetime
 import logging
 
-from models.database import db_manager
-from models.orm_models import ReferenceRange, CriticalThreshold
+from pathology_processor.models.database import db_manager
+from pathology_processor.models.orm_models import ReferenceRange, CriticalThreshold
 
 logger = logging.getLogger(__name__)
 

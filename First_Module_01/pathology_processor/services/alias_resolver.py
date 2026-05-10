@@ -4,8 +4,8 @@ from typing import Optional, List, Dict, Tuple
 from sqlalchemy.orm import Session
 from rapidfuzz import fuzz, process
 
-from models.orm_models import CanonicalTest, TestAlias
-from services.text_normalizer import TextNormalizer
+from pathology_processor.models.orm_models import CanonicalTest, TestAlias
+from .text_normalizer import TextNormalizer
 
 logger = logging.getLogger(__name__)
 
