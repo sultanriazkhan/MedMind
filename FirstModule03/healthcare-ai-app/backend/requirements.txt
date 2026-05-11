@@ -1,0 +1,14 @@
+Flask==2.3.3
+Flask-CORS==4.0.0
+Flask-SQLAlchemy==3.0.5
+Flask-Migrate==4.0.5
+PyJWT==2.8.0
+bcrypt==4.0.1
+python-dotenv==1.0.0
+Werkzeug==2.3.7
+Pillow==10.0.0
+PyPDF2==3.0.1
+python-docx==1.0.0
+redis==5.0.0
+celery==5.3.1
+sendgrid==6.10.0
