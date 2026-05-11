@@ -82,7 +82,7 @@ UNIT_PATTERN = re.compile(
         g/?dL |                    # g/dL, gm/dL, g/dl
         gm/?dL |
         mg/?dL |                   # mg/dL
-        mg/? ?[Ll] |               # mg/L
+        mg/? [Ll] |               # mg/L
         [uU][gG]/?dL |             # ug/dL, mcg/dL
         [nN][gG]/?[mM][lL] |       # ng/mL
         [pP][gG]/?[mM][lL] |       # pg/mL

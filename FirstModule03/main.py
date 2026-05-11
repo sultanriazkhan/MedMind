@@ -1,7 +1,4 @@
-"""
-MedMind Core Engine
-FastAPI single entry point
-"""
+
 from fastapi import FastAPI, UploadFile, File, Form, HTTPException
 from fastapi.responses import HTMLResponse
 from typing import Optional
