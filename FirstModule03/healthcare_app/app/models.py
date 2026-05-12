@@ -1,35 +1,53 @@
-"""
-Database Models (Placeholder)
-To be implemented with actual database
-"""
+# app/models.py
+from flask_login import UserMixin
 
-class User:
-    """User model placeholder"""
+class User(UserMixin):
+    """User model for Flask-Login"""
     
-    def __init__(self, id, email, name=None):
-        self.id = id
+    def __init__(self, id, email, name):
+        self.id = str(id)  # Must be string
         self.email = email
         self.name = name
-        self.is_authenticated = True
-        self.is_active = True
-        self.is_anonymous = False
+        # These are properties from UserMixin, don't set them directly
+        # They default to True automatically
     
     def get_id(self):
-        """Return user ID for Flask-Login"""
-        return str(self.id)
+        """Required by Flask-Login"""
+        return self.id
+    
+    @property
+    def is_active(self):
+        """Override if you want to deactivate users"""
+        return True
+    
+    @property
+    def is_authenticated(self):
+        """Override if needed"""
+        return True
+    
+    @property
+    def is_anonymous(self):
+        """Override if needed"""
+        return False
     
     @staticmethod
     def get_by_id(user_id):
-        """Retrieve user by ID - placeholder"""
-        # Placeholder implementation
+        """Get user by ID - CRITICAL for Flask-Login"""
+        print(f"Getting user by ID: {user_id}")
+        if user_id == '1' or user_id == 1:
+            return User(id='1', email='demo@healthai.com', name='Demo User')
         return None
     
     @staticmethod
     def get_by_email(email):
-        """Retrieve user by email - placeholder"""
+        """Get user by email"""
+        print(f"Getting user by email: {email}")
+        if email:
+            return User(id='1', email=email, name=email.split('@')[0])
         return None
     
     @staticmethod
     def create(email, password, name):
-        """Create new user - placeholder"""
-        return None
+        """Create new user (demo)"""
+        print(f"Creating user: {email}, {name}")
+        return User(id='1', email=email, name=name)

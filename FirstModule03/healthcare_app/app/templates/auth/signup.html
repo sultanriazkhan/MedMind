@@ -88,7 +88,8 @@
                                id="fullname"
                                required
                                class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 transition-all duration-300 outline-none"
-                               placeholder="John Doe">
+                               placeholder="John Doe"
+                               value="Demo User">
                     </div>
                     
                     <!-- Email -->
@@ -102,8 +103,8 @@
                                id="email"
                                required
                                class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 transition-all duration-300 outline-none"
-                               placeholder="you@example.com">
-                        <div class="email-status text-xs hidden"></div>
+                               placeholder="you@example.com"
+                               value="demo@healthai.com">
                     </div>
                     
                     <!-- Password -->
@@ -112,50 +113,13 @@
                             <i class="bi bi-lock-fill text-purple-500"></i>
                             <span>Password</span>
                         </label>
-                        <div class="relative">
-                            <input type="password" 
-                                   name="password" 
-                                   id="password"
-                                   required
-                                   class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 transition-all duration-300 outline-none"
-                                   placeholder="Create a strong password">
-                            <button type="button" 
-                                    onclick="togglePassword('password', 'togglePassIcon')"
-                                    class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors">
-                                <i class="bi bi-eye-fill" id="togglePassIcon"></i>
-                            </button>
-                        </div>
-                        <!-- Password Strength Meter -->
-                        <div class="mt-2">
-                            <div class="flex space-x-1 h-1">
-                                <div class="flex-1 rounded-full bg-gray-200 dark:bg-gray-700" id="strength-bar-1"></div>
-                                <div class="flex-1 rounded-full bg-gray-200 dark:bg-gray-700" id="strength-bar-2"></div>
-                                <div class="flex-1 rounded-full bg-gray-200 dark:bg-gray-700" id="strength-bar-3"></div>
-                                <div class="flex-1 rounded-full bg-gray-200 dark:bg-gray-700" id="strength-bar-4"></div>
-                            </div>
-                            <p class="text-xs mt-1" id="strength-text"></p>
-                        </div>
-                    </div>
-                    
-                    <!-- Confirm Password -->
-                    <div class="space-y-2">
-                        <label class="text-sm font-semibold text-gray-700 dark:text-gray-300 flex items-center space-x-2">
-                            <i class="bi bi-shield-lock-fill text-green-500"></i>
-                            <span>Confirm Password</span>
-                        </label>
-                        <div class="relative">
-                            <input type="password" 
-                                   id="confirm-password"
-                                   required
-                                   class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 transition-all duration-300 outline-none"
-                                   placeholder="Confirm your password">
-                            <button type="button" 
-                                    onclick="togglePassword('confirm-password', 'toggleConfirmIcon')"
-                                    class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors">
-                                <i class="bi bi-eye-fill" id="toggleConfirmIcon"></i>
-                            </button>
-                        </div>
-                        <div class="password-match text-xs hidden"></div>
+                        <input type="password" 
+                               name="password" 
+                               id="password"
+                               required
+                               class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 transition-all duration-300 outline-none"
+                               placeholder="Create a strong password"
+                               value="demo123">
                     </div>
                     
                     <!-- Terms Checkbox -->
@@ -175,8 +139,7 @@
                     <!-- Submit Button -->
                     <button type="submit" 
                             id="submit-btn"
-                            disabled
-                            class="w-full py-3 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-semibold rounded-xl transition-all duration-300 transform hover:scale-[1.02] shadow-lg hover:shadow-xl btn-hover disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100">
+                            class="w-full py-3 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-semibold rounded-xl transition-all duration-300 transform hover:scale-[1.02] shadow-lg hover:shadow-xl">
                         Create Account
                     </button>
                 </form>
@@ -193,12 +156,12 @@
                     </div>
                     
                     <div class="mt-6 grid grid-cols-2 gap-3">
-                        <button onclick="showToast('Google signup coming soon!', 'info')"
+                        <button type="button" onclick="showToast('Google signup coming soon!', 'info')"
                                 class="flex items-center justify-center px-4 py-2 border-2 border-gray-200 dark:border-gray-700 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-800 transition-all duration-300">
                             <i class="bi bi-google text-red-500 mr-2"></i>
                             <span class="text-sm font-medium">Google</span>
                         </button>
-                        <button onclick="showToast('Apple signup coming soon!', 'info')"
+                        <button type="button" onclick="showToast('Apple signup coming soon!', 'info')"
                                 class="flex items-center justify-center px-4 py-2 border-2 border-gray-200 dark:border-gray-700 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-800 transition-all duration-300">
                             <i class="bi bi-apple text-gray-900 dark:text-white mr-2"></i>
                             <span class="text-sm font-medium">Apple</span>
@@ -218,207 +181,63 @@
     </div>
 </div>
 
-<script>
-    // Password Strength Meter
-    const passwordInput = document.getElementById('password');
-    const confirmPassword = document.getElementById('confirm-password');
-    const strengthBars = [
-        document.getElementById('strength-bar-1'),
-        document.getElementById('strength-bar-2'),
-        document.getElementById('strength-bar-3'),
-        document.getElementById('strength-bar-4')
-    ];
-    const strengthText = document.getElementById('strength-text');
-    
-    function checkPasswordStrength(password) {
-        let strength = 0;
-        
-        if (password.length >= 8) strength++;
-        if (password.match(/[a-z]/) && password.match(/[A-Z]/)) strength++;
-        if (password.match(/[0-9]/)) strength++;
-        if (password.match(/[^a-zA-Z0-9]/)) strength++;
-        
-        return strength;
-    }
-    
-    function updateStrengthMeter() {
-        const password = passwordInput.value;
-        const strength = checkPasswordStrength(password);
-        
-        // Reset bars
-        strengthBars.forEach(bar => {
-            bar.className = 'flex-1 rounded-full bg-gray-200 dark:bg-gray-700';
-        });
-        
-        if (password.length === 0) {
-            strengthText.textContent = '';
-            return;
-        }
-        
-        // Update colors based on strength
-        const colors = ['bg-red-500', 'bg-orange-500', 'bg-yellow-500', 'bg-green-500'];
-        const messages = ['Weak', 'Fair', 'Good', 'Strong'];
-        
-        for (let i = 0; i < strength; i++) {
-            strengthBars[i].className = `flex-1 rounded-full ${colors[strength - 1]}`;
-        }
-        
-        strengthText.textContent = messages[strength - 1];
-        strengthText.className = `text-xs mt-1 text-${strength === 4 ? 'green' : strength === 3 ? 'yellow' : 'orange'}-600`;
-    }
-    
-    // Password match validation
-    function checkPasswordMatch() {
-        const password = passwordInput.value;
-        const confirm = confirmPassword.value;
-        const matchDiv = document.querySelector('.password-match');
-        
-        if (confirm.length === 0) {
-            matchDiv.classList.add('hidden');
-            return;
-        }
-        
-        if (password === confirm) {
-            matchDiv.textContent = '✓ Passwords match';
-            matchDiv.className = 'password-match text-xs mt-1 text-green-600';
-            matchDiv.classList.remove('hidden');
-        } else {
-            matchDiv.textContent = '✗ Passwords do not match';
-            matchDiv.className = 'password-match text-xs mt-1 text-red-600';
-            matchDiv.classList.remove('hidden');
-        }
-        
-        validateForm();
-    }
-    
-    // Email validation
-    const emailInput = document.getElementById('email');
-    const emailStatus = document.querySelector('.email-status');
-    
-    function validateEmail(email) {
-        const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        return re.test(email);
-    }
-    
-    function checkEmailAvailability() {
-        const email = emailInput.value;
-        
-        if (email.length === 0) {
-            emailStatus.classList.add('hidden');
-            return;
-        }
-        
-        if (!validateEmail(email)) {
-            emailStatus.textContent = 'Please enter a valid email address';
-            emailStatus.className = 'email-status text-xs mt-1 text-red-600';
-            emailStatus.classList.remove('hidden');
-        } else {
-            emailStatus.textContent = '✓ Email looks good!';
-            emailStatus.className = 'email-status text-xs mt-1 text-green-600';
-            emailStatus.classList.remove('hidden');
-        }
-        
-        validateForm();
-    }
-    
-    // Form validation for submit button
-    const termsCheckbox = document.getElementById('terms');
-    const submitBtn = document.getElementById('submit-btn');
-    
-    function validateForm() {
-        const name = document.getElementById('fullname').value;
-        const email = emailInput.value;
-        const password = passwordInput.value;
-        const confirm = confirmPassword.value;
-        const termsChecked = termsCheckbox.checked;
-        
-        const isValid = name.length > 0 &&
-                       validateEmail(email) &&
-                       password.length >= 8 &&
-                       password === confirm &&
-                       termsChecked;
-        
-        submitBtn.disabled = !isValid;
-    }
-    
-    // Event listeners
-    passwordInput.addEventListener('input', () => {
-        updateStrengthMeter();
-        checkPasswordMatch();
-        validateForm();
-    });
-    
-    confirmPassword.addEventListener('input', () => {
-        checkPasswordMatch();
-        validateForm();
-    });
-    
-    emailInput.addEventListener('input', () => {
-        checkEmailAvailability();
-        validateForm();
-    });
-    
-    document.getElementById('fullname').addEventListener('input', validateForm);
-    termsCheckbox.addEventListener('change', validateForm);
-    
-    function togglePassword(fieldId, iconId) {
-        const field = document.getElementById(fieldId);
-        const icon = document.getElementById(iconId);
-        
-        if (field.type === 'password') {
-            field.type = 'text';
-            icon.classList.remove('bi-eye-fill');
-            icon.classList.add('bi-eye-slash-fill');
-        } else {
-            field.type = 'password';
-            icon.classList.remove('bi-eye-slash-fill');
-            icon.classList.add('bi-eye-fill');
-        }
-    }
-    
-    // Form submission
-    document.getElementById('signup-form')?.addEventListener('submit', function(e) {
-        if (submitBtn.disabled) {
-            e.preventDefault();
-            showToast('Please fill all fields correctly', 'error');
-        } else {
-            showToast('Account created successfully! Redirecting...', 'success');
-            showLoader();
-        }
-    });
-    
-    // Demo hint
-    setTimeout(() => {
-        showToast('Demo: Create account with any details', 'info');
-    }, 1000);
-</script>
-
 <style>
     @keyframes float-slow {
         0%, 100% { transform: translateY(0px); }
         50% { transform: translateY(-20px); }
     }
-    
     @keyframes float-mid {
         0%, 100% { transform: translateY(0px); }
         50% { transform: translateY(-15px); }
     }
-    
     @keyframes float-fast {
         0%, 100% { transform: translateY(0px); }
         50% { transform: translateY(-10px); }
     }
-    
-    .animate-float-slow {
-        animation: float-slow 6s ease-in-out infinite;
-    }
-    
-    .animate-float-mid {
-        animation: float-mid 5s ease-in-out infinite;
-    }
-    
-    .animate-float-fast {
-        animation: float-fast 4s ease-in-out infinite;
-    }
+    .animate-float-slow { animation: float-slow 6s ease-in-out infinite; }
+    .animate-float-mid { animation: float-mid 5s ease-in-out infinite; }
+    .animate-float-fast { animation: float-fast 4s ease-in-out infinite; }
 </style>
+
+<script>
+    function showToast(message, type) {
+        const toastContainer = document.getElementById('toast-container');
+        if (!toastContainer) return;
+        
+        const toast = document.createElement('div');
+        toast.className = `toast-slide-in ${type === 'success' ? 'bg-green-500' : 'bg-blue-500'} text-white px-6 py-3 rounded-xl shadow-lg flex items-center space-x-3 min-w-[280px]`;
+        toast.innerHTML = `
+            <i class="bi ${type === 'success' ? 'bi-check-circle-fill' : 'bi-info-circle-fill'} text-xl"></i>
+            <span class="flex-1 text-sm font-medium">${message}</span>
+            <button onclick="this.parentElement.remove()" class="hover:opacity-80">
+                <i class="bi bi-x-lg"></i>
+            </button>
+        `;
+        toastContainer.appendChild(toast);
+        
+        setTimeout(() => {
+            toast.style.opacity = '0';
+            toast.style.transform = 'translateX(100px)';
+            setTimeout(() => toast.remove(), 300);
+        }, 3000);
+    }
+    
+    // Auto-check terms and enable submit
+    const termsCheckbox = document.getElementById('terms');
+    const submitBtn = document.getElementById('submit-btn');
+    
+    if (termsCheckbox && submitBtn) {
+        // Auto-check terms for demo
+        termsCheckbox.checked = true;
+        
+        termsCheckbox.addEventListener('change', () => {
+            submitBtn.disabled = !termsCheckbox.checked;
+        });
+    }
+    
+    // Demo hint
+    setTimeout(() => {
+        showToast('Demo: Fill any details to create account', 'info');
+    }, 500);
+</script>
 {% endblock %}
