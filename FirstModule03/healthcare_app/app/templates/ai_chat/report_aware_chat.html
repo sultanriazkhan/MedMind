@@ -1,0 +1,505 @@
+<!-- templates/ai_chat/report_aware_chat.html -->
+{% extends "layouts/base.html" %}
+
+{% block title %}Report-Aware AI Chat{% endblock %}
+
+{% block extra_css %}
+<style>
+    .chat-sidebar {
+        transition: all 0.3s ease;
+    }
+    .chat-message {
+        animation: fadeInUp 0.4s ease-out;
+    }
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    .typing-indicator span {
+        animation: blink 1.4s infinite;
+        animation-fill-mode: both;
+    }
+    .typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
+    .typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes blink {
+        0%, 60%, 100% { opacity: 0; }
+        30% { opacity: 1; }
+    }
+    .context-banner {
+        background: linear-gradient(135deg, rgba(59,130,246,0.1), rgba(139,92,246,0.1));
+        border-left: 4px solid #3b82f6;
+        animation: glowPulse 2s infinite;
+    }
+    @keyframes glowPulse {
+        0%, 100% { box-shadow: 0 0 0 0 rgba(59,130,246,0); }
+        50% { box-shadow: 0 0 20px 0 rgba(59,130,246,0.3); }
+    }
+    .insight-card {
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+    .insight-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    }
+    .toggle-switch {
+        position: relative;
+        display: inline-block;
+        width: 52px;
+        height: 28px;
+    }
+    .toggle-switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
+    .toggle-slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #ccc;
+        transition: 0.3s;
+        border-radius: 34px;
+    }
+    .toggle-slider:before {
+        position: absolute;
+        content: "";
+        height: 22px;
+        width: 22px;
+        left: 3px;
+        bottom: 3px;
+        background-color: white;
+        transition: 0.3s;
+        border-radius: 50%;
+    }
+    input:checked + .toggle-slider {
+        background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+    }
+    input:checked + .toggle-slider:before {
+        transform: translateX(24px);
+    }
+    .biomarker-badge {
+        transition: all 0.2s ease;
+    }
+    .biomarker-badge:hover {
+        transform: scale(1.05);
+        background: rgba(59,130,246,0.2);
+    }
+    .sparkline {
+        width: 60px;
+        height: 30px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="h-screen flex bg-gray-100 dark:bg-gray-900">
+    <!-- Sidebar -->
+    <div class="chat-sidebar w-80 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 flex flex-col">
+        <div class="p-4 border-b border-gray-200 dark:border-gray-700">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-600 rounded-xl flex items-center justify-center">
+                    <i class="bi bi-file-medical-fill text-white"></i>
+                </div>
+                <div>
+                    <h2 class="font-bold text-gray-900 dark:text-white">Report-Aware AI</h2>
+                    <p class="text-xs text-green-500 flex items-center">
+                        <span class="w-2 h-2 bg-green-500 rounded-full mr-1"></span> Connected
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="flex-1 overflow-y-auto p-4">
+            <p class="text-xs font-semibold text-gray-400 uppercase mb-3">Linked Reports</p>
+            <div class="space-y-2 mb-6">
+                <div class="p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-medium text-gray-900 dark:text-white">Lipid_Profile_Mar_2026.pdf</p>
+                            <p class="text-xs text-gray-500">Uploaded Mar 15, 2026</p>
+                        </div>
+                        <i class="bi bi-check-circle-fill text-green-500"></i>
+                    </div>
+                </div>
+                <div class="p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-medium text-gray-900 dark:text-white">CBC_Feb_2026.pdf</p>
+                            <p class="text-xs text-gray-500">Uploaded Feb 28, 2026</p>
+                        </div>
+                        <i class="bi bi-check-circle-fill text-green-500"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <p class="text-xs font-semibold text-gray-400 uppercase mb-3">Active Biomarkers</p>
+            <div class="flex flex-wrap gap-2 mb-6">
+                <span class="biomarker-badge px-2 py-1 bg-orange-100 dark:bg-orange-900/30 text-orange-700 text-xs rounded-full cursor-pointer">LDL: 145 ↑</span>
+                <span class="biomarker-badge px-2 py-1 bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 text-xs rounded-full cursor-pointer">HbA1c: 6.2% ↑</span>
+                <span class="biomarker-badge px-2 py-1 bg-orange-100 dark:bg-orange-900/30 text-orange-700 text-xs rounded-full cursor-pointer">Vitamin D: 28 ↓</span>
+                <span class="biomarker-badge px-2 py-1 bg-orange-100 dark:bg-orange-900/30 text-orange-700 text-xs rounded-full cursor-pointer">Ferritin: 32 ↓</span>
+                <span class="biomarker-badge px-2 py-1 bg-green-100 dark:bg-green-900/30 text-green-700 text-xs rounded-full cursor-pointer">HDL: 52 ✓</span>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Main Chat Area -->
+    <div class="flex-1 flex flex-col">
+        <!-- Header with Context Banner -->
+        <div class="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-b border-gray-200 dark:border-gray-700">
+            <div class="p-4">
+                <div class="flex items-center justify-between mb-3">
+                    <div class="flex items-center space-x-3">
+                        <div class="relative">
+                            <div class="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-600 rounded-2xl flex items-center justify-center">
+                                <i class="bi bi-file-medical text-white text-xl"></i>
+                            </div>
+                            <span class="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-white"></span>
+                        </div>
+                        <div>
+                            <h1 class="text-xl font-bold text-gray-900 dark:text-white">Report-Aware AI Assistant</h1>
+                            <p class="text-xs text-gray-500">Deeply integrated with your lab reports</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <div class="flex items-center space-x-2">
+                            <span class="text-xs text-gray-600 dark:text-gray-400">Context:</span>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="contextToggle" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                            <span id="contextStatus" class="text-xs text-green-600">Enabled</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Context Banner -->
+                <div id="contextBanner" class="context-banner rounded-xl p-3 flex items-center justify-between">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center">
+                            <i class="bi bi-file-pdf-fill text-white"></i>
+                        </div>
+                        <div>
+                            <p class="text-sm font-semibold text-gray-900 dark:text-white">Using: Lipid_Profile_March_2026.pdf</p>
+                            <p class="text-xs text-gray-500">28 biomarkers analyzed • Updated 2 days ago</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <span class="text-xs text-blue-600 bg-blue-50 dark:bg-blue-900/30 px-2 py-1 rounded-full">Context Active</span>
+                        <i class="bi bi-broadcast text-blue-500 animate-pulse"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Chat Messages -->
+        <div id="chatMessages" class="flex-1 overflow-y-auto p-6 space-y-4">
+            <!-- Welcome Message -->
+            <div class="chat-message flex items-start space-x-3">
+                <div class="w-8 h-8 bg-gradient-to-br from-purple-500 to-pink-600 rounded-full flex items-center justify-center flex-shrink-0">
+                    <i class="bi bi-file-medical text-white text-xs"></i>
+                </div>
+                <div class="flex-1">
+                    <div class="bg-white dark:bg-gray-800 rounded-2xl rounded-tl-sm p-4 shadow-sm max-w-2xl">
+                        <p class="text-gray-700 dark:text-gray-300">I've analyzed your lab reports and can provide personalized insights based on your actual biomarkers. I can see you have elevated LDL (145 mg/dL), borderline HbA1c (6.2%), and low Vitamin D (28 ng/mL). How can I help you understand these results better?</p>
+                        <div class="flex flex-wrap gap-2 mt-3">
+                            <span class="source-chip text-xs px-2 py-1 bg-blue-50 dark:bg-blue-900/20 text-blue-600 rounded-full cursor-pointer">Lipid Profile Report</span>
+                            <span class="source-chip text-xs px-2 py-1 bg-blue-50 dark:bg-blue-900/20 text-blue-600 rounded-full cursor-pointer">Recent CBC Analysis</span>
+                        </div>
+                    </div>
+                    <p class="text-xs text-gray-400 mt-1">Just now</p>
+                </div>
+            </div>
+            
+            <!-- Suggested Contextual Questions -->
+            <div class="pl-11">
+                <p class="text-xs text-gray-500 mb-3">Based on your reports, you might ask:</p>
+                <div class="flex flex-wrap gap-3">
+                    <div class="suggestion-card cursor-pointer px-4 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-sm hover:border-purple-500" data-question="Why is my LDL elevated?">
+                        Why is my LDL elevated?
+                    </div>
+                    <div class="suggestion-card cursor-pointer px-4 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-sm hover:border-purple-500" data-question="What does my HbA1c indicate?">
+                        What does my HbA1c indicate?
+                    </div>
+                    <div class="suggestion-card cursor-pointer px-4 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-sm hover:border-purple-500" data-question="How serious is my Vitamin D level?">
+                        How serious is my Vitamin D level?
+                    </div>
+                    <div class="suggestion-card cursor-pointer px-4 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-sm hover:border-purple-500" data-question="Can exercise improve my HbA1c?">
+                        Can exercise improve my HbA1c?
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Input Area -->
+        <div class="border-t border-gray-200 dark:border-gray-700 p-4 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm">
+            <div class="flex items-end space-x-3 max-w-4xl mx-auto">
+                <div class="flex-1 relative">
+                    <textarea id="messageInput" rows="1" placeholder="Ask about your lab results..." class="w-full px-4 py-3 pr-12 border border-gray-200 dark:border-gray-700 rounded-2xl resize-none focus:outline-none focus:ring-2 focus:ring-purple-500 bg-white dark:bg-gray-900 text-gray-900 dark:text-white"></textarea>
+                    <button id="sendBtn" class="absolute right-2 bottom-2 w-8 h-8 bg-gradient-to-r from-purple-500 to-pink-600 rounded-full flex items-center justify-center text-white hover:scale-105 transition-all">
+                        <i class="bi bi-send-fill text-sm"></i>
+                    </button>
+                </div>
+                <button class="w-10 h-10 rounded-full bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 transition-all flex items-center justify-center">
+                    <i class="bi bi-paperclip text-gray-600"></i>
+                </button>
+            </div>
+            <p class="text-xs text-center text-gray-400 mt-3">AI has access to your lab reports for personalized responses</p>
+        </div>
+    </div>
+</div>
+
+<!-- Floating Context Panel -->
+<div id="contextPanel" class="fixed right-4 top-24 w-80 bg-white/95 dark:bg-gray-800/95 backdrop-blur-xl rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-700 p-4 z-10 hidden lg:block">
+    <div class="flex items-center justify-between mb-3">
+        <h3 class="font-semibold text-gray-900 dark:text-white text-sm">Active Report Context</h3>
+        <i class="bi bi-robot text-purple-500"></i>
+    </div>
+    <div class="space-y-3">
+        <div class="p-2 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+            <div class="flex justify-between items-center">
+                <span class="text-xs font-medium text-gray-700">LDL Cholesterol</span>
+                <span class="text-xs font-bold text-orange-600">145 mg/dL</span>
+            </div>
+            <div class="w-full bg-gray-200 rounded-full h-1.5 mt-1">
+                <div class="bg-orange-500 h-1.5 rounded-full" style="width: 85%"></div>
+            </div>
+            <p class="text-xs text-gray-500 mt-1">Normal: &lt;100 mg/dL</p>
+        </div>
+        <div class="p-2 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg">
+            <div class="flex justify-between items-center">
+                <span class="text-xs font-medium text-gray-700">HbA1c</span>
+                <span class="text-xs font-bold text-yellow-600">6.2%</span>
+            </div>
+            <div class="w-full bg-gray-200 rounded-full h-1.5 mt-1">
+                <div class="bg-yellow-500 h-1.5 rounded-full" style="width: 65%"></div>
+            </div>
+            <p class="text-xs text-gray-500 mt-1">Normal: &lt;5.7%</p>
+        </div>
+        <div class="p-2 bg-orange-50 dark:bg-orange-900/20 rounded-lg">
+            <div class="flex justify-between items-center">
+                <span class="text-xs font-medium text-gray-700">Vitamin D</span>
+                <span class="text-xs font-bold text-orange-600">28 ng/mL</span>
+            </div>
+            <div class="w-full bg-gray-200 rounded-full h-1.5 mt-1">
+                <div class="bg-orange-500 h-1.5 rounded-full" style="width: 45%"></div>
+            </div>
+            <p class="text-xs text-gray-500 mt-1">Optimal: 30-100 ng/mL</p>
+        </div>
+    </div>
+    <div class="mt-3 pt-3 border-t border-gray-200 dark:border-gray-700">
+        <p class="text-xs text-gray-500 flex items-center">
+            <i class="bi bi-shield-check text-green-500 mr-1"></i>
+            AI Confidence: 96%
+        </p>
+    </div>
+</div>
+
+<script>
+    const chatMessages = document.getElementById('chatMessages');
+    const messageInput = document.getElementById('messageInput');
+    const sendBtn = document.getElementById('sendBtn');
+    const contextToggle = document.getElementById('contextToggle');
+    const contextStatus = document.getElementById('contextStatus');
+    const contextBanner = document.getElementById('contextBanner');
+    
+    let isTyping = false;
+    let contextEnabled = true;
+    
+    function addUserMessage(message) {
+        const messageDiv = document.createElement('div');
+        messageDiv.className = 'chat-message flex items-start space-x-3 justify-end';
+        messageDiv.innerHTML = `
+            <div class="flex-1 text-right">
+                <div class="inline-block bg-gradient-to-r from-purple-500 to-pink-600 text-white rounded-2xl rounded-tr-sm p-4 shadow-sm max-w-2xl">
+                    <p class="text-white">${message}</p>
+                </div>
+                <p class="text-xs text-gray-400 mt-1 text-right">Just now</p>
+            </div>
+            <div class="w-8 h-8 bg-gray-300 dark:bg-gray-600 rounded-full flex items-center justify-center flex-shrink-0">
+                <i class="bi bi-person text-white text-xs"></i>
+            </div>
+        `;
+        chatMessages.appendChild(messageDiv);
+        scrollToBottom();
+    }
+    
+    function showTypingIndicator() {
+        const typingDiv = document.createElement('div');
+        typingDiv.id = 'typingIndicator';
+        typingDiv.className = 'chat-message flex items-start space-x-3';
+        typingDiv.innerHTML = `
+            <div class="w-8 h-8 bg-gradient-to-br from-purple-500 to-pink-600 rounded-full flex items-center justify-center flex-shrink-0">
+                <i class="bi bi-file-medical text-white text-xs"></i>
+            </div>
+            <div class="bg-white dark:bg-gray-800 rounded-2xl rounded-tl-sm p-4 shadow-sm">
+                <div class="typing-indicator flex space-x-1">
+                    <span class="w-2 h-2 bg-gray-400 rounded-full"></span>
+                    <span class="w-2 h-2 bg-gray-400 rounded-full"></span>
+                    <span class="w-2 h-2 bg-gray-400 rounded-full"></span>
+                </div>
+            </div>
+        `;
+        chatMessages.appendChild(typingDiv);
+        scrollToBottom();
+    }
+    
+    function removeTypingIndicator() {
+        const indicator = document.getElementById('typingIndicator');
+        if (indicator) indicator.remove();
+    }
+    
+    function addAIMessage(message, sources = [], insights = []) {
+        const messageDiv = document.createElement('div');
+        messageDiv.className = 'chat-message flex items-start space-x-3';
+        
+        let insightsHtml = '';
+        if (insights.length > 0) {
+            insightsHtml = `<div class="grid grid-cols-2 gap-2 mt-3">${insights.map(i => `
+                <div class="insight-card p-2 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
+                    <p class="text-xs font-semibold text-gray-700 dark:text-gray-300">${i.name}</p>
+                    <p class="text-lg font-bold ${i.color}">${i.value}</p>
+                    <p class="text-xs text-gray-500">${i.trend}</p>
+                </div>
+            `).join('')}</div>`;
+        }
+        
+        messageDiv.innerHTML = `
+            <div class="w-8 h-8 bg-gradient-to-br from-purple-500 to-pink-600 rounded-full flex items-center justify-center flex-shrink-0">
+                <i class="bi bi-file-medical text-white text-xs"></i>
+            </div>
+            <div class="flex-1">
+                <div class="bg-white dark:bg-gray-800 rounded-2xl rounded-tl-sm p-4 shadow-sm">
+                    <p class="text-gray-700 dark:text-gray-300">${message}</p>
+                    ${insightsHtml}
+                    ${sources.length > 0 ? `<div class="flex flex-wrap gap-2 mt-3">${sources.map(s => `<span class="source-chip text-xs px-2 py-1 bg-purple-50 dark:bg-purple-900/20 text-purple-600 rounded-full cursor-pointer">${s}</span>`).join('')}</div>` : ''}
+                </div>
+                <p class="text-xs text-gray-400 mt-1">Just now</p>
+            </div>
+        `;
+        chatMessages.appendChild(messageDiv);
+        scrollToBottom();
+    }
+    
+    function scrollToBottom() {
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+    
+    async function getAIResponse(question) {
+        const contextNote = contextEnabled ? "Using report data: " : "";
+        
+        const responses = {
+            ldl: `${contextNote}Your LDL cholesterol is 145 mg/dL, which is borderline high (optimal <100 mg/dL). This elevation, combined with your HDL of 52 mg/dL, suggests increased cardiovascular risk. Contributing factors may include saturated fat intake, genetics, and physical activity levels. I recommend increasing soluble fiber (oats, beans, apples) and moderate cardio 150 min/week.`,
+            hba1c: `${contextNote}Your HbA1c is 6.2%, which falls in the prediabetic range (5.7-6.4%). This indicates insulin resistance. Your lifestyle factors show moderate activity and occasional high stress. Focus on low-glycemic foods, post-meal walks, and stress reduction techniques.`,
+            vitamin: `${contextNote}Your Vitamin D level is 28 ng/mL (insufficient, optimal 30-100 ng/mL). This deficiency can affect bone density, immune function, and mood. Based on your profile, I recommend 2000 IU Vitamin D3 daily plus 15-20 min morning sunlight exposure.`,
+            exercise: `${contextNote}Given your LDL of 145 and HbA1c of 6.2%, moderate cardio is ideal. Aim for 150 minutes weekly (30 min, 5 days). Brisk walking, cycling, or swimming are excellent choices. Avoid high-intensity intervals until levels improve.`,
+            default: `${contextNote}Based on your lab report, I can see you have elevated LDL (145 mg/dL), borderline HbA1c (6.2%), and low Vitamin D (28 ng/mL). Would you like me to provide specific recommendations for any of these biomarkers?`
+        };
+        
+        if (question.toLowerCase().includes('ldl') || question.toLowerCase().includes('cholesterol')) return responses.ldl;
+        if (question.toLowerCase().includes('hba1c') || question.toLowerCase().includes('glucose')) return responses.hba1c;
+        if (question.toLowerCase().includes('vitamin')) return responses.vitamin;
+        if (question.toLowerCase().includes('exercise')) return responses.exercise;
+        return responses.default;
+    }
+    
+    async function getInsights(question) {
+        if (question.toLowerCase().includes('ldl') || question.toLowerCase().includes('cholesterol')) {
+            return [
+                { name: 'LDL', value: '145', trend: '↑ 12%', color: 'text-orange-600' },
+                { name: 'HDL', value: '52', trend: '↑ 3%', color: 'text-green-600' }
+            ];
+        }
+        if (question.toLowerCase().includes('hba1c')) {
+            return [
+                { name: 'HbA1c', value: '6.2%', trend: '↑ 0.4%', color: 'text-yellow-600' },
+                { name: 'Glucose', value: '98', trend: 'Stable', color: 'text-green-600' }
+            ];
+        }
+        return [];
+    }
+    
+    async function handleSendMessage() {
+        const message = messageInput.value.trim();
+        if (!message || isTyping) return;
+        
+        addUserMessage(message);
+        messageInput.value = '';
+        messageInput.style.height = 'auto';
+        
+        isTyping = true;
+        showTypingIndicator();
+        
+        await new Promise(resolve => setTimeout(resolve, 1500));
+        
+        const response = await getAIResponse(message);
+        const insights = await getInsights(message);
+        removeTypingIndicator();
+        
+        const sources = contextEnabled ? 
+            ["Lipid_Profile_March_2026.pdf", "Recent Lab Analysis", "AHA Guidelines"] :
+            ["General Medical Knowledge", "WHO Recommendations"];
+        
+        addAIMessage(response, sources, insights);
+        
+        isTyping = false;
+    }
+    
+    // Context toggle
+    contextToggle.addEventListener('change', (e) => {
+        contextEnabled = e.target.checked;
+        contextStatus.textContent = contextEnabled ? 'Enabled' : 'Disabled';
+        contextStatus.className = `text-xs ${contextEnabled ? 'text-green-600' : 'text-gray-500'}`;
+        
+        if (contextEnabled) {
+            contextBanner.style.opacity = '1';
+            contextBanner.style.display = 'flex';
+        } else {
+            contextBanner.style.opacity = '0.5';
+            setTimeout(() => {
+                if (!contextEnabled) contextBanner.style.display = 'none';
+            }, 300);
+        }
+        
+        showToast(contextEnabled ? 'Report context enabled for personalized responses' : 'Context disabled - responses will be general', 'info');
+    });
+    
+    sendBtn.addEventListener('click', handleSendMessage);
+    messageInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            handleSendMessage();
+        }
+    });
+    
+    messageInput.addEventListener('input', function() {
+        this.style.height = 'auto';
+        this.style.height = Math.min(this.scrollHeight, 120) + 'px';
+    });
+    
+    document.querySelectorAll('.suggestion-card').forEach(card => {
+        card.addEventListener('click', () => {
+            messageInput.value = card.dataset.question || card.textContent;
+            handleSendMessage();
+        });
+    });
+    
+    document.querySelectorAll('.biomarker-badge').forEach(badge => {
+        badge.addEventListener('click', () => {
+            const text = badge.textContent;
+            messageInput.value = `Tell me more about my ${text.split(':')[0]} levels`;
+            handleSendMessage();
+        });
+    });
+</script>
+{% endblock %}

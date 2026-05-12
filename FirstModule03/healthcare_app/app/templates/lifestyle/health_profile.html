@@ -1,0 +1,605 @@
+<!-- templates/lifestyle/health_profile.html -->
+{% extends "layouts/base.html" %}
+
+{% block title %}Health Profile Setup{% endblock %}
+
+{% block extra_css %}
+<style>
+    .step-indicator {
+        transition: all 0.3s ease;
+    }
+    .step-indicator.active {
+        background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+        color: white;
+        transform: scale(1.05);
+    }
+    .step-indicator.completed {
+        background: #10b981;
+        color: white;
+    }
+    .step-pane {
+        animation: fadeIn 0.5s ease-out;
+    }
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateX(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+    .condition-card, .restriction-card, .goal-card {
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        cursor: pointer;
+    }
+    .condition-card.selected, .restriction-card.selected, .goal-card.selected {
+        background: linear-gradient(135deg, rgba(59,130,246,0.2), rgba(139,92,246,0.2));
+        border-color: #3b82f6;
+        transform: scale(1.02);
+        box-shadow: 0 10px 25px -5px rgba(59,130,246,0.3);
+    }
+    .condition-card:hover, .restriction-card:hover, .goal-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 20px 25px -12px rgba(0,0,0,0.15);
+    }
+    .slider {
+
+        -webkit-appearance: none;
+        appearance: none;
+        width: 100%;
+        height: 6px;
+        border-radius: 5px;
+        background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+        outline: none;
+    }
+    .slider::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background: white;
+        border: 2px solid #3b82f6;
+        cursor: pointer;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    }
+    .floating-input {
+        transition: all 0.3s ease;
+    }
+    .floating-input:focus {
+        transform: translateY(-2px);
+    }
+    .progress-ring {
+        transition: stroke-dashoffset 0.5s ease;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800 py-12">
+    <div class="container mx-auto px-4 max-w-5xl">
+        <!-- Header -->
+        <div class="text-center mb-12">
+            <div class="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl shadow-lg mb-4">
+                <i class="bi bi-person-badge text-white text-3xl"></i>
+            </div>
+            <h1 class="text-4xl font-bold text-gray-900 dark:text-white mb-2">Your Health Profile</h1>
+            <p class="text-gray-600 dark:text-gray-400">Let's personalize your AI wellness journey</p>
+        </div>
+
+        <!-- Step Indicators -->
+        <div class="flex justify-between mb-12 px-4">
+            <div class="step-indicator w-10 h-10 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center font-semibold" data-step="1">1</div>
+            <div class="flex-1 h-1 bg-gray-200 dark:bg-gray-700 mt-5 mx-2"></div>
+            <div class="step-indicator w-10 h-10 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center font-semibold" data-step="2">2</div>
+            <div class="flex-1 h-1 bg-gray-200 dark:bg-gray-700 mt-5 mx-2"></div>
+            <div class="step-indicator w-10 h-10 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center font-semibold" data-step="3">3</div>
+            <div class="flex-1 h-1 bg-gray-200 dark:bg-gray-700 mt-5 mx-2"></div>
+            <div class="step-indicator w-10 h-10 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center font-semibold" data-step="4">4</div>
+            <div class="flex-1 h-1 bg-gray-200 dark:bg-gray-700 mt-5 mx-2"></div>
+            <div class="step-indicator w-10 h-10 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center font-semibold" data-step="5">5</div>
+            <div class="flex-1 h-1 bg-gray-200 dark:bg-gray-700 mt-5 mx-2"></div>
+            <div class="step-indicator w-10 h-10 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center font-semibold" data-step="6">6</div>
+        </div>
+
+        <!-- Step 1: Basic Information -->
+        <div class="step-pane" data-step-pane="1">
+            <div class="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-3xl shadow-2xl p-8">
+                <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">Basic Information</h2>
+                <p class="text-gray-600 dark:text-gray-400 mb-6">Tell us about yourself to get started</p>
+                
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Full Name</label>
+                        <input type="text" id="fullName" class="floating-input w-full px-4 py-3 rounded-xl border-2 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all" placeholder="Sarah Johnson">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Age</label>
+                        <input type="number" id="age" class="floating-input w-full px-4 py-3 rounded-xl border-2 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all" placeholder="27">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Biological Sex</label>
+                        <select id="sex" class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all">
+                            <option value="">Select</option>
+                            <option value="female">Female</option>
+                            <option value="male">Male</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Blood Group</label>
+                        <select id="bloodGroup" class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all">
+                            <option value="">Select</option>
+                            <option value="A+">A+</option>
+                            <option value="A-">A-</option>
+                            <option value="B+">B+</option>
+                            <option value="B-">B-</option>
+                            <option value="AB+">AB+</option>
+                            <option value="AB-">AB-</option>
+                            <option value="O+">O+</option>
+                            <option value="O-">O-</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Height (cm)</label>
+                        <input type="number" id="height" class="floating-input w-full px-4 py-3 rounded-xl border-2 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all" placeholder="170">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Weight (kg)</label>
+                        <input type="number" id="weight" class="floating-input w-full px-4 py-3 rounded-xl border-2 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all" placeholder="68">
+                    </div>
+                </div>
+                
+                <div class="mt-8 flex justify-end">
+                    <button class="next-btn px-8 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl font-semibold hover:shadow-lg transition-all transform hover:scale-105">
+                        Continue <i class="bi bi-arrow-right ml-2"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Step 2: Activity & Lifestyle -->
+        <div class="step-pane hidden" data-step-pane="2">
+            <div class="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-3xl shadow-2xl p-8">
+                <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">Activity & Lifestyle</h2>
+                <p class="text-gray-600 dark:text-gray-400 mb-6">Help us understand your daily habits</p>
+                
+                <div class="space-y-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Activity Level</label>
+                        <input type="range" id="activityLevel" class="slider" min="0" max="4" step="1" value="2">
+                        <div class="flex justify-between mt-2 text-xs text-gray-500">
+                            <span>Sedentary</span>
+                            <span>Light</span>
+                            <span>Moderate</span>
+                            <span>Active</span>
+                            <span>Athlete</span>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Average Sleep Duration (hours)</label>
+                        <input type="range" id="sleepDuration" class="slider" min="4" max="10" step="0.5" value="7">
+                        <div class="flex justify-between mt-2 text-xs text-gray-500">
+                            <span>4h</span>
+                            <span>5h</span>
+                            <span>6h</span>
+                            <span>7h</span>
+                            <span>8h</span>
+                            <span>9h</span>
+                            <span>10h</span>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Water Intake (glasses/day)</label>
+                        <input type="range" id="waterIntake" class="slider" min="2" max="12" step="1" value="6">
+                        <div class="flex justify-between mt-2 text-xs text-gray-500">
+                            <span>2</span>
+                            <span>4</span>
+                            <span>6</span>
+                            <span>8</span>
+                            <span>10</span>
+                            <span>12</span>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Stress Level</label>
+                        <select id="stressLevel" class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all">
+                            <option value="low">Low - Well managed</option>
+                            <option value="moderate">Moderate - Occasional stress</option>
+                            <option value="high">High - Frequently stressed</option>
+                            <option value="severe">Severe - Overwhelming stress</option>
+                        </select>
+                    </div>
+                    
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Smoking Status</label>
+                            <select id="smoking" class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all">
+                                <option value="never">Never smoked</option>
+                                <option value="former">Former smoker</option>
+                                <option value="occasional">Occasional</option>
+                                <option value="regular">Regular</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Alcohol Consumption</label>
+                            <select id="alcohol" class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all">
+                                <option value="none">Non-drinker</option>
+                                <option value="occasional">Occasional (1-3/week)</option>
+                                <option value="moderate">Moderate (4-7/week)</option>
+                                <option value="heavy">Heavy (8+ /week)</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mt-8 flex justify-between">
+                    <button class="prev-btn px-8 py-3 border-2 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-xl font-semibold hover:bg-gray-50 dark:hover:bg-gray-700 transition-all">
+                        <i class="bi bi-arrow-left mr-2"></i> Back
+                    </button>
+                    <button class="next-btn px-8 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl font-semibold hover:shadow-lg transition-all transform hover:scale-105">
+                        Continue <i class="bi bi-arrow-right ml-2"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Step 3: Existing Conditions -->
+        <div class="step-pane hidden" data-step-pane="3">
+            <div class="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-3xl shadow-2xl p-8">
+                <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">Existing Conditions</h2>
+                <p class="text-gray-600 dark:text-gray-400 mb-6">Select any health conditions you have (multiple selection)</p>
+                
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div class="condition-card p-4 rounded-xl border-2 border-gray-200 dark:border-gray-700 text-center cursor-pointer" data-condition="diabetes">
+                        <i class="bi bi-droplet text-3xl text-blue-500 mb-2 block"></i>
+                        <span class="text-sm font-medium">Diabetes</span>
+                    </div>
+                    <div class="condition-card p-4 rounded-xl border-2 border-gray-200 dark:border-gray-700 text-center cursor-pointer" data-condition="hypertension">
+                        <i class="bi bi-heart-pulse text-3xl text-red-500 mb-2 block"></i>
+                        <span class="text-sm font-medium">Hypertension</span>
+                    </div>
+                    <div class="condition-card p-4 rounded-xl border-2 border-gray-200 dark:border-gray-700 text-center cursor-pointer" data-condition="thyroid">
+                        <i class="bi bi-shield text-3xl text-purple-500 mb-2 block"></i>
+                        <span class="text-sm font-medium">Thyroid Disorder</span>
+                    </div>
+                    <div class="condition-card p-4 rounded-xl border-2 border-gray-200 dark:border-gray-700 text-center cursor-pointer" data-condition="cholesterol">
+                        <i class="bi bi-egg-fried text-3xl text-orange-500 mb-2 block"></i>
+                        <span class="text-sm font-medium">High Cholesterol</span>
+                    </div>
+                    <div class="condition-card p-4 rounded-xl border-2 border-gray-200 dark:border-gray-700 text-center cursor-pointer" data-condition="asthma">
+                        <i class="bi bi-lungs text-3xl text-green-500 mb-2 block"></i>
+                        <span class="text-sm font-medium">Asthma</span>
+                    </div>
+                    <div class="condition-card p-4 rounded-xl border-2 border-gray-200 dark:border-gray-700 text-center cursor-pointer" data-condition="iron">
+                        <i class="bi bi-droplet-half text-3xl text-yellow-500 mb-2 block"></i>
+                        <span class="text-sm font-medium">Iron Deficiency</span>
+                    </div>
+                    <div class="condition-card p-4 rounded-xl border-2 border-gray-200 dark:border-gray-700 text-center cursor-pointer" data-condition="pcos">
+                        <i class="bi bi-gender-female text-3xl text-pink-500 mb-2 block"></i>
+                        <span class="text-sm font-medium">PCOS</span>
+                    </div>
+                    <div class="condition-card p-4 rounded-xl border-2 border-gray-200 dark:border-gray-700 text-center cursor-pointer" data-condition="cardiovascular">
+                        <i class="bi bi-heart-fill text-3xl text-red-500 mb-2 block"></i>
+                        <span class="text-sm font-medium">Cardiovascular Disease</span>
+                    </div>
+                </div>
+                
+                <div class="mt-8 flex justify-between">
+                    <button class="prev-btn px-8 py-3 border-2 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-xl font-semibold hover:bg-gray-50 dark:hover:bg-gray-700 transition-all">
+                        <i class="bi bi-arrow-left mr-2"></i> Back
+                    </button>
+                    <button class="next-btn px-8 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl font-semibold hover:shadow-lg transition-all transform hover:scale-105">
+                        Continue <i class="bi bi-arrow-right ml-2"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Step 4: Dietary Restrictions -->
+        <div class="step-pane hidden" data-step-pane="4">
+            <div class="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-3xl shadow-2xl p-8">
+                <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">Dietary Preferences</h2>
+                <p class="text-gray-600 dark:text-gray-400 mb-6">Select any dietary restrictions or preferences</p>
+                
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div class="restriction-card p-4 rounded-xl border-2 border-gray-200 dark:border-gray-700 text-center cursor-pointer" data-restriction="vegetarian">
+                        <i class="bi bi-leaf text-3xl text-green-500 mb-2 block"></i>
+                        <span class="text-sm font-medium">Vegetarian</span>
+                    </div>
+                    <div class="restriction-card p-4 rounded-xl border-2 border-gray-200 dark:border-gray-700 text-center cursor-pointer" data-restriction="vegan">
+                        <i class="bi bi-tree text-3xl text-emerald-500 mb-2 block"></i>
+                        <span class="text-sm font-medium">Vegan</span>
+                    </div>
+                    <div class="restriction-card p-4 rounded-xl border-2 border-gray-200 dark:border-gray-700 text-center cursor-pointer" data-restriction="halal">
+                        <i class="bi bi-moon-stars text-3xl text-blue-500 mb-2 block"></i>
+                        <span class="text-sm font-medium">Halal</span>
+                    </div>
+                    <div class="restriction-card p-4 rounded-xl border-2 border-gray-200 dark:border-gray-700 text-center cursor-pointer" data-restriction="keto">
+                        <i class="bi bi-egg-fried text-3xl text-orange-500 mb-2 block"></i>
+                        <span class="text-sm font-medium">Keto</span>
+                    </div>
+                    <div class="restriction-card p-4 rounded-xl border-2 border-gray-200 dark:border-gray-700 text-center cursor-pointer" data-restriction="low-sodium">
+                        <i class="bi bi-droplet text-3xl text-blue-500 mb-2 block"></i>
+                        <span class="text-sm font-medium">Low Sodium</span>
+                    </div>
+                    <div class="restriction-card p-4 rounded-xl border-2 border-gray-200 dark:border-gray-700 text-center cursor-pointer" data-restriction="gluten-free">
+                        <i class="bi bi-wheat text-3xl text-yellow-500 mb-2 block"></i>
+                        <span class="text-sm font-medium">Gluten-Free</span>
+                    </div>
+                    <div class="restriction-card p-4 rounded-xl border-2 border-gray-200 dark:border-gray-700 text-center cursor-pointer" data-restriction="lactose-free">
+                        <i class="bi bi-cup-straw text-3xl text-indigo-500 mb-2 block"></i>
+                        <span class="text-sm font-medium">Lactose-Free</span>
+                    </div>
+                    <div class="restriction-card p-4 rounded-xl border-2 border-gray-200 dark:border-gray-700 text-center cursor-pointer" data-restriction="high-protein">
+                        <i class="bi bi-bullseye text-3xl text-red-500 mb-2 block"></i>
+                        <span class="text-sm font-medium">High Protein</span>
+                    </div>
+                </div>
+                
+                <div class="mt-8 flex justify-between">
+                    <button class="prev-btn px-8 py-3 border-2 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-xl font-semibold hover:bg-gray-50 dark:hover:bg-gray-700 transition-all">
+                        <i class="bi bi-arrow-left mr-2"></i> Back
+                    </button>
+                    <button class="next-btn px-8 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl font-semibold hover:shadow-lg transition-all transform hover:scale-105">
+                        Continue <i class="bi bi-arrow-right ml-2"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Step 5: Health Goals -->
+        <div class="step-pane hidden" data-step-pane="5">
+            <div class="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-3xl shadow-2xl p-8">
+                <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">Health Goals</h2>
+                <p class="text-gray-600 dark:text-gray-400 mb-6">What would you like to achieve?</p>
+                
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div class="goal-card p-4 rounded-xl border-2 border-gray-200 dark:border-gray-700 text-center cursor-pointer" data-goal="weight-loss">
+                        <i class="bi bi-arrow-down-circle text-3xl text-blue-500 mb-2 block"></i>
+                        <span class="text-sm font-medium">Weight Loss</span>
+                    </div>
+                    <div class="goal-card p-4 rounded-xl border-2 border-gray-200 dark:border-gray-700 text-center cursor-pointer" data-goal="muscle-gain">
+                        <i class="bi bi-arrow-up-circle text-3xl text-green-500 mb-2 block"></i>
+                        <span class="text-sm font-medium">Muscle Gain</span>
+                    </div>
+                    <div class="goal-card p-4 rounded-xl border-2 border-gray-200 dark:border-gray-700 text-center cursor-pointer" data-goal="better-sleep">
+                        <i class="bi bi-moon-stars text-3xl text-purple-500 mb-2 block"></i>
+                        <span class="text-sm font-medium">Better Sleep</span>
+                    </div>
+                    <div class="goal-card p-4 rounded-xl border-2 border-gray-200 dark:border-gray-700 text-center cursor-pointer" data-goal="heart-health">
+                        <i class="bi bi-heart-pulse text-3xl text-red-500 mb-2 block"></i>
+                        <span class="text-sm font-medium">Heart Health</span>
+                    </div>
+                    <div class="goal-card p-4 rounded-xl border-2 border-gray-200 dark:border-gray-700 text-center cursor-pointer" data-goal="blood-sugar">
+                        <i class="bi bi-droplet text-3xl text-orange-500 mb-2 block"></i>
+                        <span class="text-sm font-medium">Blood Sugar Control</span>
+                    </div>
+                    <div class="goal-card p-4 rounded-xl border-2 border-gray-200 dark:border-gray-700 text-center cursor-pointer" data-goal="stress-reduction">
+                        <i class="bi bi-flower text-3xl text-indigo-500 mb-2 block"></i>
+                        <span class="text-sm font-medium">Stress Reduction</span>
+                    </div>
+                    <div class="goal-card p-4 rounded-xl border-2 border-gray-200 dark:border-gray-700 text-center cursor-pointer" data-goal="energy">
+                        <i class="bi bi-lightning-charge text-3xl text-yellow-500 mb-2 block"></i>
+                        <span class="text-sm font-medium">Energy Improvement</span>
+                    </div>
+                    <div class="goal-card p-4 rounded-xl border-2 border-gray-200 dark:border-gray-700 text-center cursor-pointer" data-goal="cholesterol">
+                        <i class="bi bi-egg-fried text-3xl text-pink-500 mb-2 block"></i>
+                        <span class="text-sm font-medium">Cholesterol Management</span>
+                    </div>
+                </div>
+                
+                <div class="mt-8 flex justify-between">
+                    <button class="prev-btn px-8 py-3 border-2 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-xl font-semibold hover:bg-gray-50 dark:hover:bg-gray-700 transition-all">
+                        <i class="bi bi-arrow-left mr-2"></i> Back
+                    </button>
+                    <button class="next-btn px-8 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl font-semibold hover:shadow-lg transition-all transform hover:scale-105">
+                        Continue <i class="bi bi-arrow-right ml-2"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Step 6: Profile Summary -->
+        <div class="step-pane hidden" data-step-pane="6">
+            <div class="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-3xl shadow-2xl p-8">
+                <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">Your Health Snapshot</h2>
+                <p class="text-gray-600 dark:text-gray-400 mb-6">AI-generated wellness profile based on your inputs</p>
+                
+                <div class="grid md:grid-cols-2 gap-6 mb-8">
+                    <div class="p-6 bg-gradient-to-br from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 rounded-2xl">
+                        <h3 class="font-semibold text-gray-900 dark:text-white mb-4">Profile Summary</h3>
+                        <div class="space-y-2 text-sm" id="profileSummary">
+                            <p><i class="bi bi-person text-blue-500 mr-2"></i> Name: Sarah Johnson</p>
+                            <p><i class="bi bi-calendar text-blue-500 mr-2"></i> Age: 27 years</p>
+                            <p><i class="bi bi-rulers text-blue-500 mr-2"></i> Height: 170cm | Weight: 68kg</p>
+                            <p><i class="bi bi-activity text-blue-500 mr-2"></i> Activity: Moderately Active</p>
+                            <p><i class="bi bi-moon text-blue-500 mr-2"></i> Sleep: 7 hours</p>
+                        </div>
+                    </div>
+                    <div class="p-6 bg-gradient-to-br from-green-50 to-blue-50 dark:from-green-900/20 dark:to-blue-900/20 rounded-2xl">
+                        <h3 class="font-semibold text-gray-900 dark:text-white mb-4">Wellness Scores</h3>
+                        <div class="space-y-4">
+                            <div>
+                                <div class="flex justify-between text-sm mb-1">
+                                    <span>Overall Health</span>
+                                    <span class="font-semibold">82%</span>
+                                </div>
+                                <div class="w-full bg-gray-200 rounded-full h-2">
+                                    <div class="bg-gradient-to-r from-blue-500 to-purple-600 h-2 rounded-full" style="width: 82%"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="flex justify-between text-sm mb-1">
+                                    <span>Lifestyle Readiness</span>
+                                    <span class="font-semibold">78%</span>
+                                </div>
+                                <div class="w-full bg-gray-200 rounded-full h-2">
+                                    <div class="bg-gradient-to-r from-green-500 to-blue-500 h-2 rounded-full" style="width: 78%"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="flex justify-between text-sm mb-1">
+                                    <span>Dietary Compliance</span>
+                                    <span class="font-semibold">75%</span>
+                                </div>
+                                <div class="w-full bg-gray-200 rounded-full h-2">
+                                    <div class="bg-gradient-to-r from-yellow-500 to-orange-500 h-2 rounded-full" style="width: 75%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="p-6 bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl text-white mb-8">
+                    <div class="flex items-center justify-between flex-wrap gap-4">
+                        <div>
+                            <h3 class="text-xl font-bold mb-2">✨ AI Wellness Snapshot</h3>
+                            <p class="text-blue-100">Based on your profile, focus on cardiovascular health and Vitamin D optimization.</p>
+                        </div>
+                        <i class="bi bi-robot text-4xl text-white/50"></i>
+                    </div>
+                </div>
+                
+                <div class="flex justify-between">
+                    <button class="prev-btn px-8 py-3 border-2 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-xl font-semibold hover:bg-gray-50 dark:hover:bg-gray-700 transition-all">
+                        <i class="bi bi-arrow-left mr-2"></i> Back
+                    </button>
+                    <button id="completeSetup" class="px-8 py-3 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-xl font-semibold hover:shadow-lg transition-all transform hover:scale-105">
+                        Complete Setup <i class="bi bi-check-circle ml-2"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let currentStep = 1;
+    const totalSteps = 6;
+    
+    // Store selections
+    let selectedConditions = [];
+    let selectedRestrictions = [];
+    let selectedGoals = [];
+    
+    // Update step indicators
+    function updateSteps() {
+        document.querySelectorAll('.step-indicator').forEach((indicator, idx) => {
+            const stepNum = idx + 1;
+            if (stepNum < currentStep) {
+                indicator.classList.add('completed');
+                indicator.classList.remove('active');
+            } else if (stepNum === currentStep) {
+                indicator.classList.add('active');
+                indicator.classList.remove('completed');
+            } else {
+                indicator.classList.remove('active', 'completed');
+            }
+        });
+    }
+    
+    // Show current step
+    function showStep(step) {
+        document.querySelectorAll('.step-pane').forEach(pane => {
+            pane.classList.add('hidden');
+        });
+        document.querySelector(`[data-step-pane="${step}"]`).classList.remove('hidden');
+        updateSteps();
+    }
+    
+    // Condition cards
+    document.querySelectorAll('.condition-card').forEach(card => {
+        card.addEventListener('click', () => {
+            card.classList.toggle('selected');
+            const condition = card.dataset.condition;
+            if (card.classList.contains('selected')) {
+                selectedConditions.push(condition);
+            } else {
+                selectedConditions = selectedConditions.filter(c => c !== condition);
+            }
+        });
+    });
+    
+    // Restriction cards
+    document.querySelectorAll('.restriction-card').forEach(card => {
+        card.addEventListener('click', () => {
+            card.classList.toggle('selected');
+            const restriction = card.dataset.restriction;
+            if (card.classList.contains('selected')) {
+                selectedRestrictions.push(restriction);
+            } else {
+                selectedRestrictions = selectedRestrictions.filter(r => r !== restriction);
+            }
+        });
+    });
+    
+    // Goal cards
+    document.querySelectorAll('.goal-card').forEach(card => {
+        card.addEventListener('click', () => {
+            card.classList.toggle('selected');
+            const goal = card.dataset.goal;
+            if (card.classList.contains('selected')) {
+                selectedGoals.push(goal);
+            } else {
+                selectedGoals = selectedGoals.filter(g => g !== goal);
+            }
+        });
+    });
+    
+    // Navigation
+    document.querySelectorAll('.next-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            if (currentStep < totalSteps) {
+                currentStep++;
+                showStep(currentStep);
+            }
+        });
+    });
+    
+    document.querySelectorAll('.prev-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            if (currentStep > 1) {
+                currentStep--;
+                showStep(currentStep);
+            }
+        });
+    });
+    
+    // Complete setup
+    document.getElementById('completeSetup')?.addEventListener('click', () => {
+        showToast('Profile setup complete! Redirecting to recommendations...', 'success');
+        showLoader();
+        setTimeout(() => {
+            window.location.href = "{{ url_for('lifestyle.recommendations') }}";
+        }, 2000);
+    });
+    
+    // Update profile summary with real values
+    function updateSummary() {
+        const name = document.getElementById('fullName').value || 'Sarah Johnson';
+        const age = document.getElementById('age').value || '27';
+        const height = document.getElementById('height').value || '170';
+        const weight = document.getElementById('weight').value || '68';
+        const activityLevels = ['Sedentary', 'Lightly Active', 'Moderately Active', 'Very Active', 'Athlete'];
+        const activityIndex = document.getElementById('activityLevel')?.value || 2;
+        
+        document.getElementById('profileSummary').innerHTML = `
+            <p><i class="bi bi-person text-blue-500 mr-2"></i> Name: ${name}</p>
+            <p><i class="bi bi-calendar text-blue-500 mr-2"></i> Age: ${age} years</p>
+            <p><i class="bi bi-rulers text-blue-500 mr-2"></i> Height: ${height}cm | Weight: ${weight}kg</p>
+            <p><i class="bi bi-activity text-blue-500 mr-2"></i> Activity: ${activityLevels[activityIndex]}</p>
+            <p><i class="bi bi-moon text-blue-500 mr-2"></i> Sleep: ${document.getElementById('sleepDuration')?.value || 7} hours</p>
+        `;
+    }
+    
+    // Update summary when inputs change
+    ['fullName', 'age', 'height', 'weight', 'activityLevel', 'sleepDuration'].forEach(id => {
+        document.getElementById(id)?.addEventListener('input', updateSummary);
+    });
+</script>
+{% endblock %}

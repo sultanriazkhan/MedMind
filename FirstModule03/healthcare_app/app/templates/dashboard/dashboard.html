@@ -1,0 +1,416 @@
+<!-- templates/dashboard/dashboard.html -->
+{% extends "layouts/base.html" %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block extra_css %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+    .health-score-ring {
+        transition: all 0.3s ease;
+    }
+    .sparkline {
+        width: 100px;
+        height: 40px;
+    }
+    .card-hover {
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .card-hover:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+    }
+    .glow-card {
+        position: relative;
+        overflow: hidden;
+    }
+    .glow-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+        transition: left 0.5s;
+    }
+    .glow-card:hover::before {
+        left: 100%;
+    }
+    .trend-up { color: #10b981; }
+    .trend-down { color: #ef4444; }
+    .trend-neutral { color: #f59e0b; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="bg-gray-50 dark:bg-gray-900 min-h-screen">
+    <div class="container mx-auto px-4 py-8">
+        <!-- Page Header -->
+        <div class="mb-8">
+            <h1 class="text-3xl font-bold text-gray-900 dark:text-white">Welcome back, {{ current_user.name or 'Sarah' }} 👋</h1>
+            <p class="text-gray-600 dark:text-gray-400 mt-2">Here's your health overview and recent activity</p>
+        </div>
+
+        <!-- Stats Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+            <!-- Health Score Card -->
+            <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6 card-hover glow-card">
+                <div class="flex justify-between items-start mb-4">
+                    <div>
+                        <p class="text-gray-500 dark:text-gray-400 text-sm">Overall Health Score</p>
+                        <h3 class="text-3xl font-bold text-gray-900 dark:text-white mt-1">78<span class="text-lg">/100</span></h3>
+                    </div>
+                    <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center">
+                        <i class="bi bi-heart-pulse-fill text-white text-xl"></i>
+                    </div>
+                </div>
+                <div class="mt-4">
+                    <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                        <div class="bg-gradient-to-r from-blue-500 to-purple-600 h-2 rounded-full" style="width: 78%"></div>
+                    </div>
+                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-2">↑ 5% from last month</p>
+                </div>
+            </div>
+
+            <!-- Latest Report Card -->
+            <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6 card-hover">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <p class="text-gray-500 dark:text-gray-400 text-sm">Latest Report</p>
+                        <h3 class="text-xl font-bold text-gray-900 dark:text-white mt-1">Annual Health Checkup</h3>
+                        <p class="text-xs text-gray-500 mt-2">March 15, 2026</p>
+                    </div>
+                    <div class="w-12 h-12 bg-green-100 dark:bg-green-900/30 rounded-xl flex items-center justify-center">
+                        <i class="bi bi-check-circle-fill text-green-500 text-xl"></i>
+                    </div>
+                </div>
+                <div class="mt-4 flex items-center space-x-2">
+                    <span class="px-2 py-1 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 text-xs rounded-lg">Analyzed</span>
+                    <span class="text-xs text-gray-500">AI Confidence: 96%</span>
+                </div>
+            </div>
+
+            <!-- Abnormal Markers Card -->
+            <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6 card-hover">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <p class="text-gray-500 dark:text-gray-400 text-sm">Abnormal Markers</p>
+                        <h3 class="text-3xl font-bold text-orange-500 mt-1">4</h3>
+                        <p class="text-xs text-gray-500 mt-2">out of 28 tests</p>
+                    </div>
+                    <div class="w-12 h-12 bg-orange-100 dark:bg-orange-900/30 rounded-xl flex items-center justify-center">
+                        <i class="bi bi-exclamation-triangle-fill text-orange-500 text-xl"></i>
+                    </div>
+                </div>
+                <div class="mt-4">
+                    <p class="text-xs text-gray-600 dark:text-gray-400">⚠️ Vitamin D, LDL, HbA1c, Ferritin</p>
+                </div>
+            </div>
+
+            <!-- AI Insights Card -->
+            <div class="bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl shadow-lg p-6 card-hover">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <p class="text-white/80 text-sm">AI Health Insights</p>
+                        <p class="text-white text-lg font-semibold mt-1">3 new insights available</p>
+                    </div>
+                    <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center backdrop-blur-sm">
+                        <i class="bi bi-robot text-white text-xl"></i>
+                    </div>
+                </div>
+                <div class="mt-4">
+                    <p class="text-white/90 text-sm">Vitamin D deficiency detected. Increased cardiovascular risk markers.</p>
+                </div>
+            </div>
+
+            <!-- Recommendations Card -->
+            <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6 card-hover">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <p class="text-gray-500 dark:text-gray-400 text-sm">Active Recommendations</p>
+                        <h3 class="text-3xl font-bold text-gray-900 dark:text-white mt-1">6</h3>
+                    </div>
+                    <div class="w-12 h-12 bg-purple-100 dark:bg-purple-900/30 rounded-xl flex items-center justify-center">
+                        <i class="bi bi-list-check text-purple-500 text-xl"></i>
+                    </div>
+                </div>
+                <div class="mt-4 space-y-1">
+                    <p class="text-xs text-gray-600 dark:text-gray-400">• Increase Vitamin D intake</p>
+                    <p class="text-xs text-gray-600 dark:text-gray-400">• Reduce saturated fats</p>
+                    <p class="text-xs text-gray-600 dark:text-gray-400">• 30-min daily cardio</p>
+                </div>
+            </div>
+
+            <!-- Upcoming Checkup Card -->
+            <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6 card-hover">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <p class="text-gray-500 dark:text-gray-400 text-sm">Next Checkup</p>
+                        <h3 class="text-xl font-bold text-gray-900 dark:text-white mt-1">June 15, 2026</h3>
+                        <p class="text-xs text-gray-500 mt-2">In 3 months</p>
+                    </div>
+                    <div class="w-12 h-12 bg-blue-100 dark:bg-blue-900/30 rounded-xl flex items-center justify-center">
+                        <i class="bi bi-calendar-check text-blue-500 text-xl"></i>
+                    </div>
+                </div>
+                <div class="mt-4">
+                    <button class="text-xs text-blue-600 hover:text-blue-700 font-medium">Set Reminder →</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts Row -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+            <!-- Health Trends Chart -->
+            <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6">
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Health Score Trends</h3>
+                <canvas id="healthTrendsChart" height="200"></canvas>
+            </div>
+
+            <!-- Biomarkers Radar -->
+            <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6">
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Key Biomarkers</h3>
+                <canvas id="biomarkersChart" height="200"></canvas>
+            </div>
+        </div>
+
+        <!-- Recent Reports Table -->
+        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg overflow-hidden mb-8">
+            <div class="p-6 border-b border-gray-200 dark:border-gray-700">
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Recent Lab Reports</h3>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full">
+                    <thead class="bg-gray-50 dark:bg-gray-900/50">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Report Name</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Upload Date</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Abnormal Markers</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">AI Confidence</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+                        <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
+                            <td class="px-6 py-4 text-sm font-medium text-gray-900 dark:text-white">Complete Blood Count (CBC)</td>
+                            <td class="px-6 py-4 text-sm text-gray-600 dark:text-gray-400">Mar 15, 2026</td>
+                            <td class="px-6 py-4 text-sm"><span class="text-red-600">2</span> <span class="text-gray-500">/ 15</span></td>
+                            <td class="px-6 py-4 text-sm text-gray-600 dark:text-gray-400">94%</td>
+                            <td class="px-6 py-4"><span class="px-2 py-1 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 text-xs rounded-lg">Analyzed</span></td>
+                        </tr>
+                        <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
+                            <td class="px-6 py-4 text-sm font-medium text-gray-900 dark:text-white">Lipid Profile</td>
+                            <td class="px-6 py-4 text-sm text-gray-600 dark:text-gray-400">Mar 15, 2026</td>
+                            <td class="px-6 py-4 text-sm"><span class="text-red-600">3</span> <span class="text-gray-500">/ 8</span></td>
+                            <td class="px-6 py-4 text-sm text-gray-600 dark:text-gray-400">96%</td>
+                            <td class="px-6 py-4"><span class="px-2 py-1 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 text-xs rounded-lg">Analyzed</span></td>
+                        </tr>
+                        <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
+                            <td class="px-6 py-4 text-sm font-medium text-gray-900 dark:text-white">Liver Function Test</td>
+                            <td class="px-6 py-4 text-sm text-gray-600 dark:text-gray-400">Feb 28, 2026</td>
+                            <td class="px-6 py-4 text-sm"><span class="text-green-600">0</span> <span class="text-gray-500">/ 12</span></td>
+                            <td class="px-6 py-4 text-sm text-gray-600 dark:text-gray-400">98%</td>
+                            <td class="px-6 py-4"><span class="px-2 py-1 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 text-xs rounded-lg">Analyzed</span></td>
+                        </tr>
+                        <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
+                            <td class="px-6 py-4 text-sm font-medium text-gray-900 dark:text-white">Vitamin Panel</td>
+                            <td class="px-6 py-4 text-sm text-gray-600 dark:text-gray-400">Feb 10, 2026</td>
+                            <td class="px-6 py-4 text-sm"><span class="text-red-600">2</span> <span class="text-gray-500">/ 6</span></td>
+                            <td class="px-6 py-4 text-sm text-gray-600 dark:text-gray-400">92%</td>
+                            <td class="px-6 py-4"><span class="px-2 py-1 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 text-xs rounded-lg">Analyzed</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Two Column Layout -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Left Column - Recommendations & Q&A -->
+            <div class="lg:col-span-2 space-y-6">
+                <!-- Active Recommendations -->
+                <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6">
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Active Health Recommendations</h3>
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between p-3 bg-blue-50 dark:bg-blue-900/20 rounded-xl">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center">
+                                    <i class="bi bi-sun text-white"></i>
+                                </div>
+                                <div>
+                                    <p class="font-medium text-gray-900 dark:text-white">Increase Vitamin D intake</p>
+                                    <p class="text-xs text-gray-500">2000 IU daily supplement recommended</p>
+                                </div>
+                            </div>
+                            <span class="text-xs text-blue-600 font-medium">Priority: High</span>
+                        </div>
+                        <div class="flex items-center justify-between p-3 bg-red-50 dark:bg-red-900/20 rounded-xl">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-10 h-10 bg-red-500 rounded-lg flex items-center justify-center">
+                                    <i class="bi bi-egg-fried text-white"></i>
+                                </div>
+                                <div>
+                                    <p class="font-medium text-gray-900 dark:text-white">Reduce saturated fats</p>
+                                    <p class="text-xs text-gray-500">Limit red meat, increase omega-3s</p>
+                                </div>
+                            </div>
+                            <span class="text-xs text-red-600 font-medium">Priority: High</span>
+                        </div>
+                        <div class="flex items-center justify-between p-3 bg-green-50 dark:bg-green-900/20 rounded-xl">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-10 h-10 bg-green-500 rounded-lg flex items-center justify-center">
+                                    <i class="bi bi-bicycle text-white"></i>
+                                </div>
+                                <div>
+                                    <p class="font-medium text-gray-900 dark:text-white">30-min cardio, 5x/week</p>
+                                    <p class="text-xs text-gray-500">Walking, jogging, or swimming</p>
+                                </div>
+                            </div>
+                            <span class="text-xs text-green-600 font-medium">Priority: Medium</span>
+                        </div>
+                        <div class="flex items-center justify-between p-3 bg-purple-50 dark:bg-purple-900/20 rounded-xl">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-10 h-10 bg-purple-500 rounded-lg flex items-center justify-center">
+                                    <i class="bi bi-droplet text-white"></i>
+                                </div>
+                                <div>
+                                    <p class="font-medium text-gray-900 dark:text-white">Hydration goal: 2.5L/day</p>
+                                    <p class="text-xs text-gray-500">Currently averaging 1.8L/day</p>
+                                </div>
+                            </div>
+                            <span class="text-xs text-purple-600 font-medium">In Progress</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- AI Q&A History -->
+                <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6">
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Recent AI Health Q&A</h3>
+                    <div class="space-y-4">
+                        <div class="p-4 bg-gray-50 dark:bg-gray-700/50 rounded-xl">
+                            <div class="flex items-start space-x-3">
+                                <i class="bi bi-question-circle text-blue-500 text-lg mt-1"></i>
+                                <div class="flex-1">
+                                    <p class="text-gray-900 dark:text-white text-sm">Why is my LDL cholesterol high despite a healthy diet?</p>
+                                    <p class="text-xs text-gray-500 mt-2">AI Response: Genetics, stress, and hidden saturated fats could be factors. Your HDL is good, but consider increasing soluble fiber intake.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="p-4 bg-gray-50 dark:bg-gray-700/50 rounded-xl">
+                            <div class="flex items-start space-x-3">
+                                <i class="bi bi-question-circle text-blue-500 text-lg mt-1"></i>
+                                <div class="flex-1">
+                                    <p class="text-gray-900 dark:text-white text-sm">Can low ferritin cause chronic fatigue?</p>
+                                    <p class="text-xs text-gray-500 mt-2">AI Response: Yes, low ferritin indicates depleted iron stores, which directly impacts energy levels and cognitive function.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="p-4 bg-gray-50 dark:bg-gray-700/50 rounded-xl">
+                            <div class="flex items-start space-x-3">
+                                <i class="bi bi-question-circle text-blue-500 text-lg mt-1"></i>
+                                <div class="flex-1">
+                                    <p class="text-gray-900 dark:text-white text-sm">Foods to help reduce HbA1c naturally?</p>
+                                    <p class="text-xs text-gray-500 mt-2">AI Response: Focus on leafy greens, berries, whole grains, cinnamon, and apple cider vinegar before meals.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <button class="mt-4 text-sm text-blue-600 hover:text-blue-700 font-medium">View all Q&A →</button>
+                </div>
+            </div>
+
+            <!-- Right Column - Health Articles -->
+            <div class="space-y-6">
+                <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6">
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Latest Health Insights</h3>
+                    <div class="space-y-4">
+                        <div class="group cursor-pointer">
+                            <div class="relative h-32 rounded-xl overflow-hidden mb-3">
+                                <div class="absolute inset-0 bg-gradient-to-br from-blue-500 to-purple-600 opacity-90"></div>
+                                <div class="absolute inset-0 flex items-center justify-center">
+                                    <i class="bi bi-heart text-white text-3xl"></i>
+                                </div>
+                            </div>
+                            <h4 class="font-semibold text-gray-900 dark:text-white group-hover:text-blue-600 transition-colors">Understanding Your Lipid Profile</h4>
+                            <p class="text-xs text-gray-500 mt-1">5 min read • Cardiology</p>
+                        </div>
+                        <div class="group cursor-pointer">
+                            <div class="relative h-32 rounded-xl overflow-hidden mb-3">
+                                <div class="absolute inset-0 bg-gradient-to-br from-green-500 to-teal-600 opacity-90"></div>
+                                <div class="absolute inset-0 flex items-center justify-center">
+                                    <i class="bi bi-brightness-alt-high text-white text-3xl"></i>
+                                </div>
+                            </div>
+                            <h4 class="font-semibold text-gray-900 dark:text-white group-hover:text-blue-600 transition-colors">The Vitamin D Pandemic</h4>
+                            <p class="text-xs text-gray-500 mt-1">8 min read • Nutrition</p>
+                        </div>
+                        <div class="group cursor-pointer">
+                            <div class="relative h-32 rounded-xl overflow-hidden mb-3">
+                                <div class="absolute inset-0 bg-gradient-to-br from-orange-500 to-red-600 opacity-90"></div>
+                                <div class="absolute inset-0 flex items-center justify-center">
+                                    <i class="bi bi-activity text-white text-3xl"></i>
+                                </div>
+                            </div>
+                            <h4 class="font-semibold text-gray-900 dark:text-white group-hover:text-blue-600 transition-colors">HbA1c: What Your Numbers Mean</h4>
+                            <p class="text-xs text-gray-500 mt-1">6 min read • Endocrinology</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Health Trends Chart
+    const ctx1 = document.getElementById('healthTrendsChart').getContext('2d');
+    new Chart(ctx1, {
+        type: 'line',
+        data: {
+            labels: ['Oct', 'Nov', 'Dec', 'Jan', 'Feb', 'Mar'],
+            datasets: [{
+                label: 'Health Score',
+                data: [72, 73, 74, 76, 75, 78],
+                borderColor: 'rgb(59, 130, 246)',
+                backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                tension: 0.4,
+                fill: true
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+                legend: { display: false }
+            }
+        }
+    });
+
+    // Biomarkers Radar Chart
+    const ctx2 = document.getElementById('biomarkersChart').getContext('2d');
+    new Chart(ctx2, {
+        type: 'radar',
+        data: {
+            labels: ['Vitamin D', 'LDL', 'HDL', 'HbA1c', 'Ferritin', 'Glucose'],
+            datasets: [{
+                label: 'Current Levels',
+                data: [28, 145, 52, 6.2, 32, 98],
+                backgroundColor: 'rgba(139, 92, 246, 0.2)',
+                borderColor: 'rgb(139, 92, 246)',
+                pointBackgroundColor: 'rgb(139, 92, 246)'
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            scales: {
+                r: {
+                    beginAtZero: true,
+                    max: 200
+                }
+            }
+        }
+    });
+</script>
+{% endblock %}

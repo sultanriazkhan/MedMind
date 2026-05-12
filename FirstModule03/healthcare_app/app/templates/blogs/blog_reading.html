@@ -1,0 +1,361 @@
+<!-- templates/blogs/blog_reading.html -->
+{% extends "layouts/base.html" %}
+
+{% block title %}The Science of Cholesterol: What Your LDL Levels Really Mean{% endblock %}
+
+{% block extra_css %}
+<style>
+    .reading-progress {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 0%;
+        height: 3px;
+        background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+        z-index: 1000;
+        transition: width 0.3s ease;
+    }
+    .toc-link {
+        transition: all 0.2s ease;
+        cursor: pointer;
+    }
+    .toc-link:hover {
+        color: #3b82f6;
+        transform: translateX(4px);
+    }
+    .toc-link.active {
+        color: #3b82f6;
+        font-weight: 600;
+        border-left: 2px solid #3b82f6;
+        padding-left: 8px;
+    }
+    .insight-box {
+        background: linear-gradient(135deg, rgba(59,130,246,0.05), rgba(139,92,246,0.05));
+        border-left: 4px solid #3b82f6;
+        transition: all 0.3s ease;
+    }
+    .insight-box:hover {
+        transform: translateX(4px);
+    }
+    .stat-card {
+        transition: all 0.3s ease;
+    }
+    .stat-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 10px 25px -12px rgba(0,0,0,0.15);
+    }
+    .share-btn {
+        transition: all 0.2s ease;
+    }
+    .share-btn:hover {
+        transform: scale(1.05);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="reading-progress" id="readingProgress"></div>
+
+<div class="bg-gray-50 dark:bg-gray-900 min-h-screen">
+    <!-- Hero Section -->
+    <div class="relative h-96 bg-gradient-to-r from-blue-600 to-purple-600 overflow-hidden">
+        <div class="absolute inset-0 bg-black/40"></div>
+        <div class="absolute inset-0 flex items-center justify-center">
+            <div class="text-center text-white max-w-4xl px-4">
+                <span class="inline-block px-3 py-1 bg-white/20 backdrop-blur-sm rounded-full text-sm mb-4">Cholesterol • Heart Health</span>
+                <h1 class="text-4xl md:text-5xl font-bold mb-4">The Science of Cholesterol: What Your LDL Levels Really Mean</h1>
+                <div class="flex items-center justify-center space-x-4 mt-6">
+                    <div class="flex items-center space-x-2">
+                        <div class="w-10 h-10 bg-white/20 rounded-full"></div>
+                        <div class="text-left">
+                            <p class="text-sm font-semibold">Dr. Sarah Chen</p>
+                            <p class="text-xs text-white/70">Cardiologist • Updated Mar 15, 2026</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-3 text-sm">
+                        <span><i class="bi bi-clock mr-1"></i>12 min read</span>
+                        <span><i class="bi bi-eye mr-1"></i>2.5k views</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container mx-auto px-4 py-8 max-w-6xl">
+        <!-- Floating Share Toolbar -->
+        <div class="fixed left-4 top-1/2 transform -translate-y-1/2 hidden lg:block">
+            <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-2 space-y-2">
+                <button class="share-btn w-10 h-10 rounded-full hover:bg-gray-100 flex items-center justify-center">
+                    <i class="bi bi-twitter-x text-gray-600"></i>
+                </button>
+                <button class="share-btn w-10 h-10 rounded-full hover:bg-gray-100 flex items-center justify-center">
+                    <i class="bi bi-linkedin text-gray-600"></i>
+                </button>
+                <button class="share-btn w-10 h-10 rounded-full hover:bg-gray-100 flex items-center justify-center">
+                    <i class="bi bi-facebook text-gray-600"></i>
+                </button>
+                <button class="share-btn w-10 h-10 rounded-full hover:bg-gray-100 flex items-center justify-center">
+                    <i class="bi bi-link-45deg text-gray-600"></i>
+                </button>
+            </div>
+        </div>
+
+        <div class="grid lg:grid-cols-4 gap-8">
+            <!-- Main Content -->
+            <div class="lg:col-span-3">
+                <article class="prose prose-lg dark:prose-invert max-w-none">
+                    <!-- Introduction -->
+                    <div class="bg-blue-50 dark:bg-blue-900/20 rounded-xl p-6 mb-8 insight-box">
+                        <p class="text-lg font-semibold text-gray-900 dark:text-white mb-2">Key Takeaways</p>
+                        <ul class="space-y-2 text-gray-700 dark:text-gray-300">
+                            <li><i class="bi bi-check-circle-fill text-green-500 mr-2"></i>LDL cholesterol is a modifiable risk factor for cardiovascular disease</li>
+                            <li><i class="bi bi-check-circle-fill text-green-500 mr-2"></i>Optimal LDL levels are below 100 mg/dL for most adults</li>
+                            <li><i class="bi bi-check-circle-fill text-green-500 mr-2"></i>Diet, exercise, and lifestyle changes can significantly lower LDL</li>
+                        </ul>
+                    </div>
+
+                    <h2 id="what-is-ldl">What Is LDL Cholesterol?</h2>
+                    <p>Low-density lipoprotein (LDL) is one of the primary lipoproteins that transport cholesterol through your bloodstream. Often termed "bad cholesterol," elevated LDL levels contribute to plaque formation in arterial walls—a process known as atherosclerosis.</p>
+                    <p>When LDL particles accumulate in your artery walls, they trigger an inflammatory response. Over time, this can lead to narrowed arteries, reduced blood flow, and increased risk of heart attack or stroke.</p>
+
+                    <!-- Statistic Card -->
+                    <div class="stat-card bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl p-6 text-white my-8">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm opacity-90">The Statistics</p>
+                                <p class="text-3xl font-bold">1 in 3</p>
+                                <p class="text-sm">Adults have elevated LDL levels</p>
+                            </div>
+                            <i class="bi bi-people-fill text-5xl opacity-50"></i>
+                        </div>
+                    </div>
+
+                    <h2 id="causes">Common Causes of Elevated LDL</h2>
+                    <p>Several factors contribute to high LDL cholesterol levels. Understanding these can help identify opportunities for intervention:</p>
+                    <ul>
+                        <li><strong>Dietary factors:</strong> High intake of saturated fats (red meat, butter, full-fat dairy) and trans fats (processed foods, fried foods)</li>
+                        <li><strong>Physical inactivity:</strong> Sedentary lifestyle reduces HDL (good cholesterol) and may increase LDL</li>
+                        <li><strong>Genetics:</strong> Familial hypercholesterolemia affects approximately 1 in 250 individuals</li>
+                        <li><strong>Medical conditions:</strong> Diabetes, hypothyroidism, and kidney disease can raise LDL levels</li>
+                    </ul>
+
+                    <!-- AI Insight Box -->
+                    <div class="insight-box p-4 rounded-xl my-8">
+                        <div class="flex items-start space-x-3">
+                            <i class="bi bi-robot text-purple-500 text-xl"></i>
+                            <div>
+                                <p class="font-semibold text-gray-900 dark:text-white">AI Clinical Insight</p>
+                                <p class="text-sm text-gray-700 dark:text-gray-300">Based on your lipid profile, your LDL of 145 mg/dL falls in the borderline high category. Studies show that a 10% reduction in LDL can lower cardiovascular risk by approximately 20%.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h2 id="diet">Diet & Lifestyle Interventions</h2>
+                    <p>Evidence-based dietary changes can significantly impact LDL levels within 4-6 weeks:</p>
+                    
+                    <div class="grid md:grid-cols-2 gap-4 my-6">
+                        <div class="p-4 bg-green-50 dark:bg-green-900/20 rounded-xl">
+                            <h4 class="font-semibold text-green-700 dark:text-green-400 mb-2"><i class="bi bi-check-circle-fill mr-1"></i> Foods to Increase</h4>
+                            <ul class="text-sm space-y-1">
+                                <li>• Oats and barley (beta-glucans)</li>
+                                <li>• Legumes (beans, lentils, chickpeas)</li>
+                                <li>• Nuts (walnuts, almonds)</li>
+                                <li>• Fatty fish (salmon, mackerel)</li>
+                                <li>• Avocados and olive oil</li>
+                            </ul>
+                        </div>
+                        <div class="p-4 bg-red-50 dark:bg-red-900/20 rounded-xl">
+                            <h4 class="font-semibold text-red-700 dark:text-red-400 mb-2"><i class="bi bi-x-circle-fill mr-1"></i> Foods to Limit</h4>
+                            <ul class="text-sm space-y-1">
+                                <li>• Red and processed meats</li>
+                                <li>• Full-fat dairy products</li>
+                                <li>• Fried and fast foods</li>
+                                <li>• Baked goods (muffins, pastries)</li>
+                                <li>• Tropical oils (coconut, palm)</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <h2 id="exercise">Exercise Recommendations</h2>
+                    <p>The American Heart Association recommends 150 minutes of moderate-intensity aerobic activity weekly for cardiovascular benefit. This approach has been shown to:</p>
+                    <ul>
+                        <li>Increase HDL cholesterol by 5-10%</li>
+                        <li>Modestly reduce LDL by 3-6%</li>
+                        <li>Improve overall cardiovascular fitness</li>
+                    </ul>
+
+                    <!-- Mini Chart Placeholder -->
+                    <div class="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-md my-6">
+                        <p class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">LDL Reduction Timeline with Lifestyle Changes</p>
+                        <div class="h-32 flex items-end space-x-4">
+                            <div class="flex-1 flex flex-col items-center">
+                                <div class="w-full bg-red-500 rounded-t" style="height: 100px"></div>
+                                <span class="text-xs mt-2">Baseline</span>
+                                <span class="text-xs font-bold">145</span>
+                            </div>
+                            <div class="flex-1 flex flex-col items-center">
+                                <div class="w-full bg-orange-500 rounded-t" style="height: 85px"></div>
+                                <span class="text-xs mt-2">Week 4</span>
+                                <span class="text-xs font-bold">~130</span>
+                            </div>
+                            <div class="flex-1 flex flex-col items-center">
+                                <div class="w-full bg-green-500 rounded-t" style="height: 70px"></div>
+                                <span class="text-xs mt-2">Week 12</span>
+                                <span class="text-xs font-bold">~115</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h2 id="medical">Medical Considerations</h2>
+                    <p>For individuals with persistently elevated LDL despite lifestyle modifications, healthcare providers may consider pharmacological interventions:</p>
+                    <ul>
+                        <li><strong>Statins:</strong> First-line therapy, reduce LDL by 30-50%</li>
+                        <li><strong>Ezetimibe:</strong> Reduces cholesterol absorption</li>
+                        <li><strong>PCSK9 inhibitors:</strong> For high-risk or familial hypercholesterolemia</li>
+                    </ul>
+                    <div class="bg-yellow-50 dark:bg-yellow-900/20 rounded-xl p-4 my-6 border-l-4 border-yellow-500">
+                        <p class="text-sm text-yellow-800 dark:text-yellow-200"><i class="bi bi-exclamation-triangle-fill mr-2"></i> Always consult your healthcare provider before starting any medication or supplement regimen.</p>
+                    </div>
+
+                    <h2 id="prevention">Prevention Strategies</h2>
+                    <p>Long-term prevention focuses on sustainable lifestyle habits:</p>
+                    <ol>
+                        <li>Regular cardiovascular screening every 4-6 years for adults 20+</li>
+                        <li>Maintaining healthy BMI (18.5-24.9)</li>
+                        <li>Stress management through mindfulness or meditation</li>
+                        <li>Smoking cessation and limited alcohol intake</li>
+                    </ol>
+                </article>
+
+                <!-- Author Bio -->
+                <div class="border-t border-gray-200 dark:border-gray-700 mt-8 pt-8">
+                    <div class="flex items-start space-x-4">
+                        <div class="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white text-2xl font-bold">
+                            SC
+                        </div>
+                        <div class="flex-1">
+                            <h4 class="font-bold text-gray-900 dark:text-white">Dr. Sarah Chen, MD, FACC</h4>
+                            <p class="text-sm text-gray-600 dark:text-gray-400">Cardiologist and Preventive Medicine Specialist. Dr. Chen has over 15 years of clinical experience in managing cardiovascular risk factors and has published extensively in the field of lipidology.</p>
+                            <div class="flex space-x-2 mt-2">
+                                <a href="#" class="text-blue-600 text-sm">Twitter</a>
+                                <span class="text-gray-300">|</span>
+                                <a href="#" class="text-blue-600 text-sm">LinkedIn</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Comments Section -->
+                <div class="border-t border-gray-200 dark:border-gray-700 mt-8 pt-8">
+                    <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Discussion (24 comments)</h3>
+                    <div class="space-y-4">
+                        <div class="flex space-x-3">
+                            <div class="w-10 h-10 bg-gray-300 rounded-full"></div>
+                            <div class="flex-1">
+                                <p class="font-semibold text-gray-900">Michael Thompson</p>
+                                <p class="text-sm text-gray-600">This was incredibly helpful! My LDL was 158 and I've been looking for evidence-based strategies.</p>
+                                <p class="text-xs text-gray-400 mt-1">2 hours ago</p>
+                            </div>
+                        </div>
+                        <div class="flex space-x-3">
+                            <div class="w-10 h-10 bg-gray-300 rounded-full"></div>
+                            <div class="flex-1">
+                                <p class="font-semibold text-gray-900">Jennifer Lee</p>
+                                <p class="text-sm text-gray-600">The timeline chart really puts things in perspective. Thank you!</p>
+                                <p class="text-xs text-gray-400 mt-1">5 hours ago</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Table of Contents Sidebar -->
+            <div class="hidden lg:block">
+                <div class="sticky top-24">
+                    <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6">
+                        <h3 class="font-bold text-gray-900 dark:text-white mb-4">Table of Contents</h3>
+                        <div class="space-y-2 text-sm">
+                            <div class="toc-link" data-target="what-is-ldl">What Is LDL Cholesterol?</div>
+                            <div class="toc-link" data-target="causes">Common Causes</div>
+                            <div class="toc-link" data-target="diet">Diet & Lifestyle</div>
+                            <div class="toc-link" data-target="exercise">Exercise Recommendations</div>
+                            <div class="toc-link" data-target="medical">Medical Considerations</div>
+                            <div class="toc-link" data-target="prevention">Prevention Strategies</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Related Articles -->
+        <div class="mt-12">
+            <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">Related Articles</h3>
+            <div class="grid md:grid-cols-3 gap-6">
+                <div class="bg-white dark:bg-gray-800 rounded-xl overflow-hidden shadow-lg cursor-pointer hover:shadow-xl transition-all">
+                    <div class="h-32 bg-gradient-to-r from-green-400 to-teal-500"></div>
+                    <div class="p-4">
+                        <span class="text-xs text-blue-600 font-semibold">Nutrition</span>
+                        <h4 class="font-semibold text-gray-900 mt-1">Foods That Support Heart Health</h4>
+                    </div>
+                </div>
+                <div class="bg-white dark:bg-gray-800 rounded-xl overflow-hidden shadow-lg cursor-pointer hover:shadow-xl transition-all">
+                    <div class="h-32 bg-gradient-to-r from-orange-400 to-red-500"></div>
+                    <div class="p-4">
+                        <span class="text-xs text-blue-600 font-semibold">Cholesterol</span>
+                        <h4 class="font-semibold text-gray-900 mt-1">Understanding Triglycerides</h4>
+                    </div>
+                </div>
+                <div class="bg-white dark:bg-gray-800 rounded-xl overflow-hidden shadow-lg cursor-pointer hover:shadow-xl transition-all">
+                    <div class="h-32 bg-gradient-to-r from-purple-400 to-pink-500"></div>
+                    <div class="p-4">
+                        <span class="text-xs text-blue-600 font-semibold">Wellness</span>
+                        <h4 class="font-semibold text-gray-900 mt-1">The Role of Fiber in Cholesterol Reduction</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Reading progress
+    window.addEventListener('scroll', () => {
+        const winScroll = document.documentElement.scrollTop;
+        const height = document.documentElement.scrollHeight - window.innerHeight;
+        const scrolled = (winScroll / height) * 100;
+        document.getElementById('readingProgress').style.width = scrolled + '%';
+    });
+
+    // Table of Contents active section
+    const sections = document.querySelectorAll('h2[id]');
+    const tocLinks = document.querySelectorAll('.toc-link');
+
+    window.addEventListener('scroll', () => {
+        let current = '';
+        sections.forEach(section => {
+            const sectionTop = section.offsetTop;
+            const sectionHeight = section.clientHeight;
+            if (scrollY >= sectionTop - 200) {
+                current = section.getAttribute('id');
+            }
+        });
+
+        tocLinks.forEach(link => {
+            link.classList.remove('active');
+            if (link.dataset.target === current) {
+                link.classList.add('active');
+            }
+        });
+    });
+
+    // Smooth scroll for TOC
+    tocLinks.forEach(link => {
+        link.addEventListener('click', () => {
+            const target = document.getElementById(link.dataset.target);
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth' });
+            }
+        });
+    });
+</script>
+{% endblock %}

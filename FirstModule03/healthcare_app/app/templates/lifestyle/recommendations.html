@@ -1,0 +1,570 @@
+<!-- templates/lifestyle/recommendations.html -->
+{% extends "layouts/base.html" %}
+
+{% block title %}Lifestyle Recommendations{% endblock %}
+
+{% block extra_css %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+    .tab-btn {
+        transition: all 0.3s ease;
+        position: relative;
+    }
+    .tab-btn.active {
+        background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+        color: white;
+        box-shadow: 0 10px 25px -5px rgba(59,130,246,0.3);
+    }
+    .tab-pane {
+        animation: fadeInUp 0.5s ease-out;
+    }
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    .recommendation-card {
+        transition: all 0.3s ease;
+    }
+    .recommendation-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 20px 25px -12px rgba(0,0,0,0.15);
+    }
+    .metric-ring {
+        transition: stroke-dashoffset 0.5s ease;
+    }
+    .habit-card {
+        transition: all 0.2s ease;
+    }
+    .habit-card:hover {
+        transform: translateX(4px);
+    }
+    .regenerate-btn {
+        transition: all 0.3s ease;
+    }
+    .regenerate-btn:hover {
+        transform: rotate(180deg);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="bg-gray-50 dark:bg-gray-900 min-h-screen py-8">
+    <div class="container mx-auto px-4 max-w-7xl">
+        <!-- Header -->
+        <div class="text-center mb-12">
+            <div class="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl shadow-lg mb-4">
+                <i class="bi bi-lightbulb-fill text-white text-3xl"></i>
+            </div>
+            <h1 class="text-4xl font-bold text-gray-900 dark:text-white mb-2">Your Wellness Plan</h1>
+            <p class="text-gray-600 dark:text-gray-400">AI-powered recommendations based on your health profile</p>
+        </div>
+
+        <!-- Metrics Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
+            <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-5 text-center">
+                <div class="inline-flex items-center justify-center w-12 h-12 bg-blue-100 dark:bg-blue-900/30 rounded-full mb-3">
+                    <i class="bi bi-activity text-blue-500 text-xl"></i>
+                </div>
+                <p class="text-2xl font-bold text-gray-900 dark:text-white">82<span class="text-sm">%</span></p>
+                <p class="text-xs text-gray-500 mt-1">Wellness Score</p>
+            </div>
+            <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-5 text-center">
+                <div class="inline-flex items-center justify-center w-12 h-12 bg-green-100 dark:bg-green-900/30 rounded-full mb-3">
+                    <i class="bi bi-exclamation-triangle text-green-500 text-xl"></i>
+                </div>
+                <p class="text-2xl font-bold text-gray-900 dark:text-white">Moderate</p>
+                <p class="text-xs text-gray-500 mt-1">Lifestyle Risk</p>
+            </div>
+            <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-5 text-center">
+                <div class="inline-flex items-center justify-center w-12 h-12 bg-purple-100 dark:bg-purple-900/30 rounded-full mb-3">
+                    <i class="bi bi-apple text-purple-500 text-xl"></i>
+                </div>
+                <p class="text-2xl font-bold text-gray-900 dark:text-white">75<span class="text-sm">%</span></p>
+                <p class="text-xs text-gray-500 mt-1">Diet Compliance</p>
+            </div>
+            <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-5 text-center">
+                <div class="inline-flex items-center justify-center w-12 h-12 bg-orange-100 dark:bg-orange-900/30 rounded-full mb-3">
+                    <i class="bi bi-bicycle text-orange-500 text-xl"></i>
+                </div>
+                <p class="text-2xl font-bold text-gray-900 dark:text-white">High</p>
+                <p class="text-xs text-gray-500 mt-1">Fitness Readiness</p>
+            </div>
+            <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-5 text-center">
+                <div class="inline-flex items-center justify-center w-12 h-12 bg-yellow-100 dark:bg-yellow-900/30 rounded-full mb-3">
+                    <i class="bi bi-moon text-yellow-500 text-xl"></i>
+                </div>
+                <p class="text-2xl font-bold text-gray-900 dark:text-white">74<span class="text-sm">%</span></p>
+                <p class="text-xs text-gray-500 mt-1">Sleep Quality</p>
+            </div>
+        </div>
+
+        <!-- Tab Navigation -->
+        <div class="flex justify-center space-x-4 mb-8">
+            <button class="tab-btn active px-8 py-3 rounded-xl font-semibold transition-all" data-tab="diet">
+                <i class="bi bi-egg-fried mr-2"></i>Diet
+            </button>
+            <button class="tab-btn px-8 py-3 rounded-xl font-semibold transition-all" data-tab="exercise">
+                <i class="bi bi-bicycle mr-2"></i>Exercise
+            </button>
+            <button class="tab-btn px-8 py-3 rounded-xl font-semibold transition-all" data-tab="lifestyle">
+                <i class="bi bi-flower mr-2"></i>Lifestyle
+            </button>
+        </div>
+
+        <!-- Diet Tab -->
+        <div class="tab-pane active" data-tab-pane="diet">
+            <div class="grid lg:grid-cols-3 gap-6">
+                <div class="lg:col-span-2 space-y-6">
+                    <!-- Nutrition Recommendations -->
+                    <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4 flex items-center">
+                            <i class="bi bi-robot text-purple-500 mr-2"></i>
+                            AI Nutrition Recommendations
+                        </h3>
+                        <div class="grid md:grid-cols-2 gap-4">
+                            <div class="p-4 bg-green-50 dark:bg-green-900/20 rounded-xl">
+                                <h4 class="font-semibold text-gray-900 dark:text-white mb-2 flex items-center">
+                                    <i class="bi bi-arrow-up-circle text-green-500 mr-2"></i>Foods to Increase
+                                </h4>
+                                <ul class="space-y-1 text-sm text-gray-600 dark:text-gray-400">
+                                    <li>• Omega-3 rich fish (salmon, sardines, mackerel)</li>
+                                    <li>• Leafy greens (spinach, kale, arugula)</li>
+                                    <li>• Legumes and lentils for iron</li>
+                                    <li>• Vitamin D fortified foods</li>
+                                    <li>• Nuts and seeds (walnuts, flax seeds)</li>
+                                </ul>
+                            </div>
+                            <div class="p-4 bg-red-50 dark:bg-red-900/20 rounded-xl">
+                                <h4 class="font-semibold text-gray-900 dark:text-white mb-2 flex items-center">
+                                    <i class="bi bi-arrow-down-circle text-red-500 mr-2"></i>Foods to Reduce
+                                </h4>
+                                <ul class="space-y-1 text-sm text-gray-600 dark:text-gray-400">
+                                    <li>• Processed sugars and sweets</li>
+                                    <li>• Saturated fats (red meat, butter)</li>
+                                    <li>• Refined carbohydrates (white bread, pasta)</li>
+                                    <li>• Fried and fast foods</li>
+                                    <li>• Sugary beverages</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Meal Suggestions -->
+                    <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Personalized Meal Ideas</h3>
+                        <div class="space-y-4">
+                            <div class="p-4 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 rounded-xl">
+                                <div class="flex items-start justify-between">
+                                    <div>
+                                        <h4 class="font-semibold text-gray-900 dark:text-white">Breakfast</h4>
+                                        <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">Oatmeal with berries, walnuts, and chia seeds + Greek yogurt</p>
+                                        <div class="flex space-x-2 mt-2">
+                                            <span class="text-xs px-2 py-1 bg-green-100 text-green-700 rounded-full">High Fiber</span>
+                                            <span class="text-xs px-2 py-1 bg-blue-100 text-blue-700 rounded-full">Omega-3</span>
+                                        </div>
+                                    </div>
+                                    <i class="bi bi-sun text-2xl text-yellow-500"></i>
+                                </div>
+                            </div>
+                            <div class="p-4 bg-gradient-to-r from-green-50 to-teal-50 dark:from-green-900/20 dark:to-teal-900/20 rounded-xl">
+                                <div class="flex items-start justify-between">
+                                    <div>
+                                        <h4 class="font-semibold text-gray-900 dark:text-white">Lunch</h4>
+                                        <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">Grilled salmon salad with quinoa, avocado, and lemon vinaigrette</p>
+                                        <div class="flex space-x-2 mt-2">
+                                            <span class="text-xs px-2 py-1 bg-red-100 text-red-700 rounded-full">High Protein</span>
+                                            <span class="text-xs px-2 py-1 bg-yellow-100 text-yellow-700 rounded-full">Healthy Fats</span>
+                                        </div>
+                                    </div>
+                                    <i class="bi bi-brightness-high text-2xl text-orange-500"></i>
+                                </div>
+                            </div>
+                            <div class="p-4 bg-gradient-to-r from-orange-50 to-red-50 dark:from-orange-900/20 dark:to-red-900/20 rounded-xl">
+                                <div class="flex items-start justify-between">
+                                    <div>
+                                        <h4 class="font-semibold text-gray-900 dark:text-white">Dinner</h4>
+                                        <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">Lentil soup with whole grain bread and roasted vegetables</p>
+                                        <div class="flex space-x-2 mt-2">
+                                            <span class="text-xs px-2 py-1 bg-purple-100 text-purple-700 rounded-full">Plant-Based</span>
+                                            <span class="text-xs px-2 py-1 bg-green-100 text-green-700 rounded-full">High Iron</span>
+                                        </div>
+                                    </div>
+                                    <i class="bi bi-moon text-2xl text-indigo-500"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sidebar - Nutrition Analytics -->
+                <div class="space-y-6">
+                    <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6">
+                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Nutrient Deficiencies</h3>
+                        <div class="space-y-3">
+                            <div>
+                                <div class="flex justify-between text-sm mb-1">
+                                    <span>Vitamin D</span>
+                                    <span class="text-orange-500">Low</span>
+                                </div>
+                                <div class="w-full bg-gray-200 rounded-full h-2">
+                                    <div class="bg-orange-500 h-2 rounded-full" style="width: 35%"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="flex justify-between text-sm mb-1">
+                                    <span>Iron (Ferritin)</span>
+                                    <span class="text-orange-500">Low</span>
+                                </div>
+                                <div class="w-full bg-gray-200 rounded-full h-2">
+                                    <div class="bg-orange-500 h-2 rounded-full" style="width: 42%"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="flex justify-between text-sm mb-1">
+                                    <span>Omega-3</span>
+                                    <span class="text-yellow-500">Suboptimal</span>
+                                </div>
+                                <div class="w-full bg-gray-200 rounded-full h-2">
+                                    <div class="bg-yellow-500 h-2 rounded-full" style="width: 58%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6">
+                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Hydration Goal</h3>
+                        <div class="text-center">
+                            <div class="relative inline-block">
+                                <canvas id="hydrationChart" width="150" height="150"></canvas>
+                                <div class="absolute inset-0 flex items-center justify-center">
+                                    <div class="text-center">
+                                        <p class="text-2xl font-bold text-gray-900 dark:text-white">2.1</p>
+                                        <p class="text-xs text-gray-500">of 3L</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <p class="text-sm text-gray-600 mt-4">Daily target: 3 liters</p>
+                            <div class="mt-3 flex justify-center space-x-1">
+                                <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center">1</div>
+                                <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center">2</div>
+                                <div class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center">3</div>
+                                <div class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center">4</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Exercise Tab -->
+        <div class="tab-pane hidden" data-tab-pane="exercise">
+            <div class="grid lg:grid-cols-3 gap-6">
+                <div class="lg:col-span-2 space-y-6">
+                    <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Weekly Workout Plan</h3>
+                        <div class="space-y-3">
+                            <div class="flex items-center justify-between p-3 bg-blue-50 dark:bg-blue-900/20 rounded-xl">
+                                <div class="flex items-center space-x-3">
+                                    <div class="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center">
+                                        <i class="bi bi-calendar-day text-white"></i>
+                                    </div>
+                                    <div>
+                                        <p class="font-semibold text-gray-900 dark:text-white">Monday</p>
+                                        <p class="text-sm text-gray-500">30 min brisk walking + light resistance training</p>
+                                    </div>
+                                </div>
+                                <span class="text-xs text-blue-600 font-medium">Cardio</span>
+                            </div>
+                            <div class="flex items-center justify-between p-3 bg-green-50 dark:bg-green-900/20 rounded-xl">
+                                <div class="flex items-center space-x-3">
+                                    <div class="w-10 h-10 bg-green-500 rounded-lg flex items-center justify-center">
+                                        <i class="bi bi-calendar-day text-white"></i>
+                                    </div>
+                                    <div>
+                                        <p class="font-semibold text-gray-900 dark:text-white">Wednesday</p>
+                                        <p class="text-sm text-gray-500">45 min cycling + stretching session</p>
+                                    </div>
+                                </div>
+                                <span class="text-xs text-green-600 font-medium">Endurance</span>
+                            </div>
+                            <div class="flex items-center justify-between p-3 bg-purple-50 dark:bg-purple-900/20 rounded-xl">
+                                <div class="flex items-center space-x-3">
+                                    <div class="w-10 h-10 bg-purple-500 rounded-lg flex items-center justify-center">
+                                        <i class="bi bi-calendar-day text-white"></i>
+                                    </div>
+                                    <div>
+                                        <p class="font-semibold text-gray-900 dark:text-white">Friday</p>
+                                        <p class="text-sm text-gray-500">30 min moderate cardio + core workout</p>
+                                    </div>
+                                </div>
+                                <span class="text-xs text-purple-600 font-medium">Strength</span>
+                            </div>
+                            <div class="flex items-center justify-between p-3 bg-orange-50 dark:bg-orange-900/20 rounded-xl">
+                                <div class="flex items-center space-x-3">
+                                    <div class="w-10 h-10 bg-orange-500 rounded-lg flex items-center justify-center">
+                                        <i class="bi bi-calendar-week text-white"></i>
+                                    </div>
+                                    <div>
+                                        <p class="font-semibold text-gray-900 dark:text-white">Weekend Active Recovery</p>
+                                        <p class="text-sm text-gray-500">Yoga, stretching, or leisurely walk</p>
+                                    </div>
+                                </div>
+                                <span class="text-xs text-orange-600 font-medium">Recovery</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Workout Analytics</h3>
+                        <canvas id="workoutChart" height="200"></canvas>
+                    </div>
+                </div>
+
+                <div class="space-y-6">
+                    <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6">
+                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Weekly Activity Target</h3>
+                        <div class="text-center">
+                            <div class="relative inline-block">
+                                <canvas id="activityChart" width="150" height="150"></canvas>
+                                <div class="absolute inset-0 flex items-center justify-center">
+                                    <div class="text-center">
+                                        <p class="text-2xl font-bold text-gray-900 dark:text-white">65</p>
+                                        <p class="text-xs text-gray-500">of 150 min</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <p class="text-sm text-gray-600 mt-4">Weekly cardio goal: 150 minutes</p>
+                        </div>
+                    </div>
+
+                    <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6">
+                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-3">Recovery Tips</h3>
+                        <ul class="space-y-2 text-sm text-gray-600 dark:text-gray-400">
+                            <li><i class="bi bi-check-circle text-green-500 mr-2"></i>Take rest days between intense sessions</li>
+                            <li><i class="bi bi-check-circle text-green-500 mr-2"></i>Stretch for 10 min after each workout</li>
+                            <li><i class="bi bi-check-circle text-green-500 mr-2"></i>Stay hydrated before/during/after exercise</li>
+                            <li><i class="bi bi-check-circle text-green-500 mr-2"></i>Prioritize sleep on training days</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Lifestyle Tab -->
+        <div class="tab-pane hidden" data-tab-pane="lifestyle">
+            <div class="grid lg:grid-cols-3 gap-6">
+                <div class="lg:col-span-2 space-y-6">
+                    <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Lifestyle Optimization</h3>
+                        <div class="space-y-4">
+                            <div class="habit-card p-4 bg-indigo-50 dark:bg-indigo-900/20 rounded-xl">
+                                <div class="flex items-start justify-between">
+                                    <div>
+                                        <h4 class="font-semibold text-gray-900 dark:text-white flex items-center">
+                                            <i class="bi bi-moon text-indigo-500 mr-2"></i>Sleep Optimization
+                                        </h4>
+                                        <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">Maintain consistent sleep-wake schedule (10PM - 6AM)</p>
+                                        <p class="text-xs text-gray-500 mt-2">Reduce screen exposure 1 hour before bed</p>
+                                    </div>
+                                    <span class="text-xs text-indigo-600">In Progress</span>
+                                </div>
+                            </div>
+                            <div class="habit-card p-4 bg-green-50 dark:bg-green-900/20 rounded-xl">
+                                <div class="flex items-start justify-between">
+                                    <div>
+                                        <h4 class="font-semibold text-gray-900 dark:text-white flex items-center">
+                                            <i class="bi bi-flower text-green-500 mr-2"></i>Stress Management
+                                        </h4>
+                                        <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">10 min daily meditation or deep breathing</p>
+                                        <p class="text-xs text-gray-500 mt-2">Try mindfulness apps or nature walks</p>
+                                    </div>
+                                    <span class="text-xs text-green-600">Recommended</span>
+                                </div>
+                            </div>
+                            <div class="habit-card p-4 bg-yellow-50 dark:bg-yellow-900/20 rounded-xl">
+                                <div class="flex items-start justify-between">
+                                    <div>
+                                        <h4 class="font-semibold text-gray-900 dark:text-white flex items-center">
+                                            <i class="bi bi-sun text-yellow-500 mr-2"></i>Sunlight Exposure
+                                        </h4>
+                                        <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">15-20 min morning sunlight for Vitamin D</p>
+                                        <p class="text-xs text-gray-500 mt-2">Best before 10AM for circadian rhythm</p>
+                                    </div>
+                                    <span class="text-xs text-yellow-600">Priority</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Sleep Quality Analytics</h3>
+                        <canvas id="sleepChart" height="200"></canvas>
+                    </div>
+                </div>
+
+                <div class="space-y-6">
+                    <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6">
+                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Habit Tracking</h3>
+                        <div class="space-y-3">
+                            <div class="flex justify-between items-center">
+                                <span class="text-sm text-gray-600">Meditation</span>
+                                <div class="flex space-x-1">
+                                    <div class="w-8 h-8 rounded-full bg-green-500 flex items-center justify-center text-white text-xs">M</div>
+                                    <div class="w-8 h-8 rounded-full bg-green-500 flex items-center justify-center text-white text-xs">T</div>
+                                    <div class="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center text-gray-600 text-xs">W</div>
+                                    <div class="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center text-gray-600 text-xs">T</div>
+                                    <div class="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center text-gray-600 text-xs">F</div>
+                                </div>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-sm text-gray-600">Hydration</span>
+                                <div class="flex space-x-1">
+                                    <div class="w-8 h-8 rounded-full bg-green-500 flex items-center justify-center text-white text-xs">M</div>
+                                    <div class="w-8 h-8 rounded-full bg-green-500 flex items-center justify-center text-white text-xs">T</div>
+                                    <div class="w-8 h-8 rounded-full bg-green-500 flex items-center justify-center text-white text-xs">W</div>
+                                    <div class="w-8 h-8 rounded-full bg-yellow-500 flex items-center justify-center text-white text-xs">T</div>
+                                    <div class="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center text-gray-600 text-xs">F</div>
+                                </div>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-sm text-gray-600">Sleep Goal</span>
+                                <div class="flex space-x-1">
+                                    <div class="w-8 h-8 rounded-full bg-green-500 flex items-center justify-center text-white text-xs">M</div>
+                                    <div class="w-8 h-8 rounded-full bg-green-500 flex items-center justify-center text-white text-xs">T</div>
+                                    <div class="w-8 h-8 rounded-full bg-green-500 flex items-center justify-center text-white text-xs">W</div>
+                                    <div class="w-8 h-8 rounded-full bg-green-500 flex items-center justify-center text-white text-xs">T</div>
+                                    <div class="w-8 h-8 rounded-full bg-yellow-500 flex items-center justify-center text-white text-xs">F</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl shadow-lg p-6 text-white">
+                        <i class="bi bi-robot text-4xl mb-3 block"></i>
+                        <h3 class="text-xl font-bold mb-2">AI Insight</h3>
+                        <p class="text-sm text-blue-100">Your sleep inconsistency may be affecting recovery. Try setting a fixed bedtime routine.</p>
+                        <button class="mt-4 text-sm bg-white/20 px-4 py-2 rounded-lg hover:bg-white/30 transition-all">
+                            View Details <i class="bi bi-arrow-right ml-1"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Regenerate Recommendations Section -->
+        <div class="mt-8 text-center">
+            <button id="regenerateBtn" class="regenerate-btn inline-flex items-center space-x-2 px-6 py-3 bg-gray-200 dark:bg-gray-700 rounded-xl hover:bg-gray-300 dark:hover:bg-gray-600 transition-all">
+                <i class="bi bi-arrow-repeat"></i>
+                <span>Regenerate Recommendations</span>
+            </button>
+            <p class="text-xs text-gray-500 mt-3">Last updated using latest lab data · 2 hours ago</p>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Tab switching
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const tab = btn.dataset.tab;
+            
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            
+            document.querySelectorAll('.tab-pane').forEach(pane => pane.classList.add('hidden'));
+            document.querySelector(`[data-tab-pane="${tab}"]`).classList.remove('hidden');
+        });
+    });
+    
+    // Regenerate button
+    document.getElementById('regenerateBtn')?.addEventListener('click', () => {
+        showToast('Refreshing AI recommendations...', 'info');
+        showLoader();
+        setTimeout(() => {
+            hideLoader();
+            showToast('Recommendations updated successfully!', 'success');
+        }, 1500);
+    });
+    
+    // Charts
+    const hydrationCtx = document.getElementById('hydrationChart')?.getContext('2d');
+    if (hydrationCtx) {
+        new Chart(hydrationCtx, {
+            type: 'doughnut',
+            data: {
+                datasets: [{
+                    data: [70, 30],
+                    backgroundColor: ['#3b82f6', '#e5e7eb'],
+                    borderWidth: 0
+                }]
+            },
+            options: { cutout: '70%', responsive: true, maintainAspectRatio: true, plugins: { legend: { display: false } } }
+        });
+    }
+    
+    const workoutCtx = document.getElementById('workoutChart')?.getContext('2d');
+    if (workoutCtx) {
+        new Chart(workoutCtx, {
+            type: 'line',
+            data: {
+                labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
+                datasets: [{
+                    label: 'Minutes per week',
+                    data: [85, 95, 110, 65],
+                    borderColor: 'rgb(59, 130, 246)',
+                    tension: 0.4,
+                    fill: true,
+                    backgroundColor: 'rgba(59, 130, 246, 0.1)'
+                }]
+            },
+            options: { 
+                responsive: true, 
+                maintainAspectRatio: true, 
+                plugins: { legend: { position: 'top' } } 
+            }
+        });
+    }
+    
+    const activityCtx = document.getElementById('activityChart')?.getContext('2d');
+    if (activityCtx) {
+        new Chart(activityCtx, {
+            type: 'doughnut',
+            data: {
+                datasets: [{
+                    data: [43, 57],
+                    backgroundColor: ['#10b981', '#e5e7eb'],
+                    borderWidth: 0
+                }]
+            },
+            options: { cutout: '70%', responsive: true, maintainAspectRatio: true, plugins: { legend: { display: false } } }
+        });
+    }
+    
+    const sleepCtx = document.getElementById('sleepChart')?.getContext('2d');
+    if (sleepCtx) {
+        new Chart(sleepCtx, {
+            type: 'bar',
+            data: {
+                labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                datasets: [{
+                    label: 'Sleep Hours',
+                    data: [7.2, 6.8, 7.5, 6.5, 7.0, 8.0, 7.8],
+                    backgroundColor: 'rgba(139, 92, 246, 0.6)',
+                    borderRadius: 8
+                }]
+            },
+            options: { 
+                responsive: true, 
+                maintainAspectRatio: true, 
+                plugins: { legend: { position: 'top' } } 
+            }
+        });
+    }
+</script>
+{% endblock %}
