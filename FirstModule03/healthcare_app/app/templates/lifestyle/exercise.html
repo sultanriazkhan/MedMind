@@ -1,0 +1,439 @@
+<!-- templates/lifestyle/exercise_recommendation.html -->
+{% extends "layouts/base.html" %}
+
+{% block title %}Exercise Recommendation{% endblock %}
+
+{% block extra_css %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+    .metric-card {
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .metric-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 20px 25px -12px rgba(0,0,0,0.15);
+    }
+    .workout-card {
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+    .workout-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 20px 25px -12px rgba(59,130,246,0.3);
+    }
+    .exercise-card {
+        transition: all 0.2s ease;
+    }
+    .exercise-card:hover {
+        transform: translateX(4px);
+    }
+    .intensity-low { background: #10b981; }
+    .intensity-moderate { background: #f59e0b; }
+    .intensity-high { background: #ef4444; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="bg-gray-50 dark:bg-gray-900 min-h-screen py-8">
+    <div class="container mx-auto px-4 max-w-7xl">
+        <!-- Header -->
+        <div class="text-center mb-12">
+            <div class="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-orange-500 to-red-600 rounded-2xl shadow-lg mb-4">
+                <i class="bi bi-bicycle text-white text-3xl"></i>
+            </div>
+            <h1 class="text-4xl font-bold text-gray-900 dark:text-white mb-2">AI Exercise Plan</h1>
+            <p class="text-gray-600 dark:text-gray-400">Personalized workout recommendations based on your health profile</p>
+        </div>
+
+        <!-- Metrics Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
+            <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-5 metric-card text-center">
+                <div class="inline-flex items-center justify-center w-12 h-12 bg-blue-100 dark:bg-blue-900/30 rounded-full mb-3">
+                    <i class="bi bi-activity text-blue-500 text-xl"></i>
+                </div>
+                <p class="text-2xl font-bold text-gray-900 dark:text-white">78<span class="text-sm">%</span></p>
+                <p class="text-xs text-gray-500 mt-1">Fitness Score</p>
+            </div>
+            <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-5 metric-card text-center">
+                <div class="inline-flex items-center justify-center w-12 h-12 bg-green-100 dark:bg-green-900/30 rounded-full mb-3">
+                    <i class="bi bi-heart-pulse text-green-500 text-xl"></i>
+                </div>
+                <p class="text-2xl font-bold text-gray-900 dark:text-white">Moderate</p>
+                <p class="text-xs text-gray-500 mt-1">Cardio Risk</p>
+            </div>
+            <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-5 metric-card text-center">
+                <div class="inline-flex items-center justify-center w-12 h-12 bg-purple-100 dark:bg-purple-900/30 rounded-full mb-3">
+                    <i class="bi bi-arrow-repeat text-purple-500 text-xl"></i>
+                </div>
+                <p class="text-2xl font-bold text-gray-900 dark:text-white">72<span class="text-sm">%</span></p>
+                <p class="text-xs text-gray-500 mt-1">Recovery Index</p>
+            </div>
+            <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-5 metric-card text-center">
+                <div class="inline-flex items-center justify-center w-12 h-12 bg-orange-100 dark:bg-orange-900/30 rounded-full mb-3">
+                    <i class="bi bi-fire text-orange-500 text-xl"></i>
+                </div>
+                <p class="text-2xl font-bold text-gray-900 dark:text-white">1,850</p>
+                <p class="text-xs text-gray-500 mt-1">Est. Weekly Burn</p>
+            </div>
+            <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-5 metric-card text-center">
+                <div class="inline-flex items-center justify-center w-12 h-12 bg-yellow-100 dark:bg-yellow-900/30 rounded-full mb-3">
+                    <i class="bi bi-flag text-yellow-500 text-xl"></i>
+                </div>
+                <p class="text-2xl font-bold text-gray-900 dark:text-white">150</p>
+                <p class="text-xs text-gray-500 mt-1">Goal (mins)</p>
+            </div>
+        </div>
+
+        <!-- Weekly Schedule -->
+        <div class="mb-8">
+            <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">Weekly Exercise Schedule</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                <!-- Monday -->
+                <div class="workout-card bg-white dark:bg-gray-800 rounded-2xl shadow-lg overflow-hidden">
+                    <div class="bg-gradient-to-r from-blue-500 to-blue-600 p-3">
+                        <h3 class="text-white font-bold">Monday</h3>
+                    </div>
+                    <div class="p-4">
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-sm font-semibold text-gray-900 dark:text-white">Brisk Walking</span>
+                            <span class="intensity-moderate text-white text-xs px-2 py-1 rounded-full">Moderate</span>
+                        </div>
+                        <p class="text-xs text-gray-500">Duration: 35 minutes</p>
+                        <p class="text-xs text-gray-500">Calories: ~210 kcal</p>
+                        <div class="mt-3 p-2 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+                            <p class="text-xs text-blue-600"><i class="bi bi-info-circle"></i> Start with light warm-up</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tuesday -->
+                <div class="workout-card bg-white dark:bg-gray-800 rounded-2xl shadow-lg overflow-hidden">
+                    <div class="bg-gradient-to-r from-green-500 to-green-600 p-3">
+                        <h3 class="text-white font-bold">Tuesday</h3>
+                    </div>
+                    <div class="p-4">
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-sm font-semibold text-gray-900 dark:text-white">Light Strength</span>
+                            <span class="intensity-moderate text-white text-xs px-2 py-1 rounded-full">Moderate</span>
+                        </div>
+                        <p class="text-xs text-gray-500">Duration: 40 minutes</p>
+                        <p class="text-xs text-gray-500">Calories: ~180 kcal</p>
+                        <div class="mt-3 p-2 bg-green-50 dark:bg-green-900/20 rounded-lg">
+                            <p class="text-xs text-green-600"><i class="bi bi-info-circle"></i> Focus on form, not weight</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Wednesday -->
+                <div class="workout-card bg-white dark:bg-gray-800 rounded-2xl shadow-lg overflow-hidden">
+                    <div class="bg-gradient-to-r from-purple-500 to-purple-600 p-3">
+                        <h3 class="text-white font-bold">Wednesday</h3>
+                    </div>
+                    <div class="p-4">
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-sm font-semibold text-gray-900 dark:text-white">Yoga & Mobility</span>
+                            <span class="intensity-low text-white text-xs px-2 py-1 rounded-full">Low</span>
+                        </div>
+                        <p class="text-xs text-gray-500">Duration: 30 minutes</p>
+                        <p class="text-xs text-gray-500">Calories: ~120 kcal</p>
+                        <div class="mt-3 p-2 bg-purple-50 dark:bg-purple-900/20 rounded-lg">
+                            <p class="text-xs text-purple-600"><i class="bi bi-info-circle"></i> Active recovery day</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Thursday -->
+                <div class="workout-card bg-white dark:bg-gray-800 rounded-2xl shadow-lg overflow-hidden">
+                    <div class="bg-gradient-to-r from-orange-500 to-orange-600 p-3">
+                        <h3 class="text-white font-bold">Thursday</h3>
+                    </div>
+                    <div class="p-4">
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-sm font-semibold text-gray-900 dark:text-white">Cycling</span>
+                            <span class="intensity-moderate text-white text-xs px-2 py-1 rounded-full">Moderate</span>
+                        </div>
+                        <p class="text-xs text-gray-500">Duration: 45 minutes</p>
+                        <p class="text-xs text-gray-500">Calories: ~280 kcal</p>
+                        <div class="mt-3 p-2 bg-orange-50 dark:bg-orange-900/20 rounded-lg">
+                            <p class="text-xs text-orange-600"><i class="bi bi-info-circle"></i> Maintain steady pace</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Friday -->
+                <div class="workout-card bg-white dark:bg-gray-800 rounded-2xl shadow-lg overflow-hidden">
+                    <div class="bg-gradient-to-r from-red-500 to-red-600 p-3">
+                        <h3 class="text-white font-bold">Friday</h3>
+                    </div>
+                    <div class="p-4">
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-sm font-semibold text-gray-900 dark:text-white">Resistance Bands</span>
+                            <span class="intensity-moderate text-white text-xs px-2 py-1 rounded-full">Moderate</span>
+                        </div>
+                        <p class="text-xs text-gray-500">Duration: 35 minutes</p>
+                        <p class="text-xs text-gray-500">Calories: ~160 kcal</p>
+                        <div class="mt-3 p-2 bg-red-50 dark:bg-red-900/20 rounded-lg">
+                            <p class="text-xs text-red-600"><i class="bi bi-info-circle"></i> Full body workout</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Saturday -->
+                <div class="workout-card bg-white dark:bg-gray-800 rounded-2xl shadow-lg overflow-hidden">
+                    <div class="bg-gradient-to-r from-pink-500 to-pink-600 p-3">
+                        <h3 class="text-white font-bold">Saturday</h3>
+                    </div>
+                    <div class="p-4">
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-sm font-semibold text-gray-900 dark:text-white">Recovery Walk</span>
+                            <span class="intensity-low text-white text-xs px-2 py-1 rounded-full">Low</span>
+                        </div>
+                        <p class="text-xs text-gray-500">Duration: 25 minutes</p>
+                        <p class="text-xs text-gray-500">Calories: ~90 kcal</p>
+                        <div class="mt-3 p-2 bg-pink-50 dark:bg-pink-900/20 rounded-lg">
+                            <p class="text-xs text-pink-600"><i class="bi bi-info-circle"></i> Light active recovery</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sunday -->
+                <div class="workout-card bg-white dark:bg-gray-800 rounded-2xl shadow-lg overflow-hidden">
+                    <div class="bg-gradient-to-r from-teal-500 to-teal-600 p-3">
+                        <h3 class="text-white font-bold">Sunday</h3>
+                    </div>
+                    <div class="p-4">
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-sm font-semibold text-gray-900 dark:text-white">Stretching</span>
+                            <span class="intensity-low text-white text-xs px-2 py-1 rounded-full">Low</span>
+                        </div>
+                        <p class="text-xs text-gray-500">Duration: 20 minutes</p>
+                        <p class="text-xs text-gray-500">Calories: ~60 kcal</p>
+                        <div class="mt-3 p-2 bg-teal-50 dark:bg-teal-900/20 rounded-lg">
+                            <p class="text-xs text-teal-600"><i class="bi bi-info-circle"></i> Rest & prepare for week</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Exercise Library -->
+        <div class="mb-8">
+            <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">Exercise Library</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div class="exercise-card bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-4">
+                    <div class="flex items-start space-x-3">
+                        <div class="w-12 h-12 bg-blue-100 dark:bg-blue-900/30 rounded-xl flex items-center justify-center">
+                            <i class="bi bi-person-walking text-blue-500 text-xl"></i>
+                        </div>
+                        <div class="flex-1">
+                            <h4 class="font-semibold text-gray-900 dark:text-white">Incline Walking</h4>
+                            <p class="text-xs text-gray-500 mt-1">Low-impact cardio, heart healthy</p>
+                            <div class="flex items-center space-x-2 mt-2">
+                                <span class="intensity-moderate text-white text-xs px-2 py-0.5 rounded-full">Moderate</span>
+                                <span class="text-xs text-gray-500">Legs • Cardio</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="exercise-card bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-4">
+                    <div class="flex items-start space-x-3">
+                        <div class="w-12 h-12 bg-green-100 dark:bg-green-900/30 rounded-xl flex items-center justify-center">
+                            <i class="bi bi-bicycle text-green-500 text-xl"></i>
+                        </div>
+                        <div class="flex-1">
+                            <h4 class="font-semibold text-gray-900 dark:text-white">Stationary Cycling</h4>
+                            <p class="text-xs text-gray-500 mt-1">Joint-friendly endurance training</p>
+                            <div class="flex items-center space-x-2 mt-2">
+                                <span class="intensity-moderate text-white text-xs px-2 py-0.5 rounded-full">Moderate</span>
+                                <span class="text-xs text-gray-500">Legs • Cardio</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="exercise-card bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-4">
+                    <div class="flex items-start space-x-3">
+                        <div class="w-12 h-12 bg-purple-100 dark:bg-purple-900/30 rounded-xl flex items-center justify-center">
+                            <i class="bi bi-person-arms-up text-purple-500 text-xl"></i>
+                        </div>
+                        <div class="flex-1">
+                            <h4 class="font-semibold text-gray-900 dark:text-white">Resistance Band Rows</h4>
+                            <p class="text-xs text-gray-500 mt-1">Improves posture, upper back strength</p>
+                            <div class="flex items-center space-x-2 mt-2">
+                                <span class="intensity-low text-white text-xs px-2 py-0.5 rounded-full">Low</span>
+                                <span class="text-xs text-gray-500">Back • Arms</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="exercise-card bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-4">
+                    <div class="flex items-start space-x-3">
+                        <div class="w-12 h-12 bg-yellow-100 dark:bg-yellow-900/30 rounded-xl flex items-center justify-center">
+                            <i class="bi bi-arrow-down-up text-yellow-500 text-xl"></i>
+                        </div>
+                        <div class="flex-1">
+                            <h4 class="font-semibold text-gray-900 dark:text-white">Bodyweight Squats</h4>
+                            <p class="text-xs text-gray-500 mt-1">Functional lower body strength</p>
+                            <div class="flex items-center space-x-2 mt-2">
+                                <span class="intensity-moderate text-white text-xs px-2 py-0.5 rounded-full">Moderate</span>
+                                <span class="text-xs text-gray-500">Legs • Core</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="exercise-card bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-4">
+                    <div class="flex items-start space-x-3">
+                        <div class="w-12 h-12 bg-indigo-100 dark:bg-indigo-900/30 rounded-xl flex items-center justify-center">
+                            <i class="bi bi-flower2 text-indigo-500 text-xl"></i>
+                        </div>
+                        <div class="flex-1">
+                            <h4 class="font-semibold text-gray-900 dark:text-white">Yoga Flow</h4>
+                            <p class="text-xs text-gray-500 mt-1">Flexibility & stress reduction</p>
+                            <div class="flex items-center space-x-2 mt-2">
+                                <span class="intensity-low text-white text-xs px-2 py-0.5 rounded-full">Low</span>
+                                <span class="text-xs text-gray-500">Full Body</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="exercise-card bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-4">
+                    <div class="flex items-start space-x-3">
+                        <div class="w-12 h-12 bg-red-100 dark:bg-red-900/30 rounded-xl flex items-center justify-center">
+                            <i class="bi bi-heart-pulse text-red-500 text-xl"></i>
+                        </div>
+                        <div class="flex-1">
+                            <h4 class="font-semibold text-gray-900 dark:text-white">Mobility Drills</h4>
+                            <p class="text-xs text-gray-500 mt-1">Joint health, injury prevention</p>
+                            <div class="flex items-center space-x-2 mt-2">
+                                <span class="intensity-low text-white text-xs px-2 py-0.5 rounded-full">Low</span>
+                                <span class="text-xs text-gray-500">Full Body</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Fitness Analytics -->
+        <div class="grid lg:grid-cols-2 gap-6 mb-8">
+            <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6">
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Weekly Activity Completion</h3>
+                <canvas id="activityChart" height="200"></canvas>
+            </div>
+            <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6">
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Calories Burned Trend</h3>
+                <canvas id="caloriesChart" height="200"></canvas>
+            </div>
+        </div>
+
+        <!-- Medical Safety Insights -->
+        <div class="bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl shadow-xl p-8 mb-8 text-white">
+            <div class="flex items-start space-x-4">
+                <i class="bi bi-shield-check text-4xl"></i>
+                <div>
+                    <h3 class="text-2xl font-bold mb-2">Medical Safety Insights</h3>
+                    <p class="text-blue-100 mb-4">Based on your health profile (LDL: 145 mg/dL, HbA1c: 6.2%), here are important considerations:</p>
+                    <ul class="space-y-2 text-sm">
+                        <li><i class="bi bi-check-circle mr-2"></i> Avoid high-intensity intervals - focus on moderate, steady-state cardio</li>
+                        <li><i class="bi bi-check-circle mr-2"></i> Monitor heart rate during exercise, stay in 50-70% max HR zone</li>
+                        <li><i class="bi bi-check-circle mr-2"></i> Prioritize warm-up and cool-down to support cardiovascular health</li>
+                        <li><i class="bi bi-check-circle mr-2"></i> Schedule rest days for recovery and blood glucose regulation</li>
+                        <li><i class="bi bi-check-circle mr-2"></i> Stay hydrated - aim for 250ml water every 20 min during exercise</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recovery & Wellness Section -->
+        <div class="grid lg:grid-cols-2 gap-6">
+            <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6">
+                <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4 flex items-center">
+                    <i class="bi bi-arrow-repeat text-green-500 mr-2"></i>Recovery Tips
+                </h3>
+                <ul class="space-y-3">
+                    <li><i class="bi bi-check-circle text-green-500 mr-2"></i> Get 7-8 hours of quality sleep for muscle repair</li>
+                    <li><i class="bi bi-check-circle text-green-500 mr-2"></i> Stretch for 10 minutes post-workout</li>
+                    <li><i class="bi bi-check-circle text-green-500 mr-2"></i> Consider foam rolling for sore muscles</li>
+                    <li><i class="bi bi-check-circle text-green-500 mr-2"></i> Active recovery days (walking, light stretching)</li>
+                    <li><i class="bi bi-check-circle text-green-500 mr-2"></i> Protein intake within 30 min post-exercise</li>
+                </ul>
+            </div>
+            <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6">
+                <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4 flex items-center">
+                    <i class="bi bi-droplet text-blue-500 mr-2"></i>Hydration Reminder
+                </h3>
+                <div class="text-center">
+                    <div class="relative inline-block">
+                        <canvas id="recoveryHydrationChart" width="150" height="150"></canvas>
+                        <div class="absolute inset-0 flex items-center justify-center">
+                            <p class="text-2xl font-bold text-gray-900 dark:text-white">65<span class="text-sm">%</span></p>
+                        </div>
+                    </div>
+                    <p class="text-sm text-gray-600 mt-4">Daily hydration progress</p>
+                    <div class="mt-4 flex justify-center space-x-2">
+                        <button class="px-3 py-1 bg-blue-100 text-blue-600 rounded-lg text-sm">+250ml</button>
+                        <button class="px-3 py-1 bg-blue-100 text-blue-600 rounded-lg text-sm">Reset</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Activity Chart
+    const activityCtx = document.getElementById('activityChart').getContext('2d');
+    new Chart(activityCtx, {
+        type: 'bar',
+        data: {
+            labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+            datasets: [{
+                label: 'Minutes Completed',
+                data: [35, 40, 30, 45, 35, 25, 20],
+                backgroundColor: 'rgba(59, 130, 246, 0.6)',
+                borderRadius: 8
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: { legend: { position: 'top' } }
+        }
+    });
+
+    // Calories Chart
+    const caloriesCtx = document.getElementById('caloriesChart').getContext('2d');
+    new Chart(caloriesCtx, {
+        type: 'line',
+        data: {
+            labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
+            datasets: [{
+                label: 'Weekly Calories',
+                data: [1650, 1720, 1800, 1850],
+                borderColor: 'rgb(239, 68, 68)',
+                tension: 0.4,
+                fill: true,
+                backgroundColor: 'rgba(239, 68, 68, 0.1)'
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: { legend: { position: 'top' } }
+        }
+    });
+
+    // Recovery Hydration Chart
+    const recoveryHydrationCtx = document.getElementById('recoveryHydrationChart').getContext('2d');
+    new Chart(recoveryHydrationCtx, {
+        type: 'doughnut',
+        data: {
+            datasets: [{
+                data: [65, 35],
+                backgroundColor: ['#3b82f6', '#e5e7eb'],
+                borderWidth: 0
+            }]
+        },
+        options: { cutout: '70%', responsive: true, maintainAspectRatio: true, plugins: { legend: { display: false } } }
+    });
+</script>
+{% endblock %}

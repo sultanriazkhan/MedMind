@@ -1,0 +1,333 @@
+<!-- templates/reports/processing.html -->
+{% extends "layouts/base.html" %}
+
+{% block title %}Processing Report{% endblock %}
+
+{% block extra_css %}
+<style>
+    .ai-orb {
+        width: 200px;
+        height: 200px;
+        background: radial-gradient(circle, rgba(59,130,246,0.3) 0%, rgba(139,92,246,0.1) 100%);
+        border-radius: 50%;
+        animation: pulseGlow 2s ease-in-out infinite;
+    }
+    @keyframes pulseGlow {
+        0%, 100% { transform: scale(1); opacity: 0.5; }
+        50% { transform: scale(1.1); opacity: 0.8; }
+    }
+    .scan-line {
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: linear-gradient(45deg, transparent, rgba(59,130,246,0.3), transparent);
+        animation: scan 3s linear infinite;
+    }
+    @keyframes scan {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+    .log-entry {
+        animation: fadeInSlide 0.3s ease-out;
+    }
+    @keyframes fadeInSlide {
+        from {
+            opacity: 0;
+            transform: translateX(-20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+    .stage-complete {
+        animation: stageComplete 0.5s ease-out;
+    }
+    @keyframes stageComplete {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.05); background: #10b981; }
+        100% { transform: scale(1); }
+    }
+    .neural-network {
+        background-image: radial-gradient(circle at 20% 30%, rgba(59,130,246,0.1) 1px, transparent 1px);
+        background-size: 20px 20px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gradient-to-br from-gray-900 via-blue-900 to-purple-900 py-12 overflow-hidden">
+    <div class="container mx-auto px-4">
+        <!-- Header -->
+        <div class="text-center mb-12">
+            <h1 class="text-4xl font-bold text-white mb-2">AI Analysis in Progress</h1>
+            <p class="text-blue-200">Our AI is analyzing your lab reports</p>
+        </div>
+
+        <div class="max-w-4xl mx-auto">
+            <!-- AI Orb & Processing Visualization -->
+            <div class="relative flex justify-center mb-12">
+                <div class="ai-orb relative flex items-center justify-center">
+                    <div class="scan-line"></div>
+                    <div class="absolute inset-0 flex items-center justify-center">
+                        <i class="bi bi-robot text-white text-5xl animate-pulse"></i>
+                    </div>
+                </div>
+                <div class="absolute -bottom-8 left-1/2 transform -translate-x-1/2 whitespace-nowrap">
+                    <p class="text-blue-300 text-sm font-mono" id="processingMessage">Initializing AI models...</p>
+                </div>
+            </div>
+
+            <!-- Processing Pipeline -->
+            <div class="bg-white/10 backdrop-blur-lg rounded-2xl p-8 shadow-2xl mb-8">
+                <h3 class="text-white font-semibold mb-6 flex items-center">
+                    <i class="bi bi-diagram-3 mr-2"></i>
+                    Analysis Pipeline
+                </h3>
+                
+                <div class="space-y-4">
+                    <!-- Stage 1 -->
+                    <div class="flex items-center space-x-4">
+                        <div class="w-8 h-8 rounded-full bg-gray-600 flex items-center justify-center text-white text-sm font-bold" id="stage1-icon">1</div>
+                        <div class="flex-1">
+                            <div class="flex justify-between mb-1">
+                                <span class="text-white text-sm">Parsing document</span>
+                                <span class="text-blue-300 text-sm" id="stage1-time">0s</span>
+                            </div>
+                            <div class="w-full bg-gray-700 rounded-full h-2 overflow-hidden">
+                                <div class="bg-gradient-to-r from-blue-500 to-purple-600 h-2 rounded-full transition-all duration-500" id="stage1-bar" style="width: 0%"></div>
+                            </div>
+                        </div>
+                        <div id="stage1-status" class="w-6 h-6"></div>
+                    </div>
+
+                    <!-- Stage 2 -->
+                    <div class="flex items-center space-x-4">
+                        <div class="w-8 h-8 rounded-full bg-gray-600 flex items-center justify-center text-white text-sm font-bold" id="stage2-icon">2</div>
+                        <div class="flex-1">
+                            <div class="flex justify-between mb-1">
+                                <span class="text-white text-sm">Extracting biomarkers</span>
+                                <span class="text-blue-300 text-sm" id="stage2-time">0s</span>
+                            </div>
+                            <div class="w-full bg-gray-700 rounded-full h-2 overflow-hidden">
+                                <div class="bg-gradient-to-r from-blue-500 to-purple-600 h-2 rounded-full transition-all duration-500" id="stage2-bar" style="width: 0%"></div>
+                            </div>
+                        </div>
+                        <div id="stage2-status" class="w-6 h-6"></div>
+                    </div>
+
+                    <!-- Stage 3 -->
+                    <div class="flex items-center space-x-4">
+                        <div class="w-8 h-8 rounded-full bg-gray-600 flex items-center justify-center text-white text-sm font-bold" id="stage3-icon">3</div>
+                        <div class="flex-1">
+                            <div class="flex justify-between mb-1">
+                                <span class="text-white text-sm">Matching medical ranges</span>
+                                <span class="text-blue-300 text-sm" id="stage3-time">0s</span>
+                            </div>
+                            <div class="w-full bg-gray-700 rounded-full h-2 overflow-hidden">
+                                <div class="bg-gradient-to-r from-blue-500 to-purple-600 h-2 rounded-full transition-all duration-500" id="stage3-bar" style="width: 0%"></div>
+                            </div>
+                        </div>
+                        <div id="stage3-status" class="w-6 h-6"></div>
+                    </div>
+
+                    <!-- Stage 4 -->
+                    <div class="flex items-center space-x-4">
+                        <div class="w-8 h-8 rounded-full bg-gray-600 flex items-center justify-center text-white text-sm font-bold" id="stage4-icon">4</div>
+                        <div class="flex-1">
+                            <div class="flex justify-between mb-1">
+                                <span class="text-white text-sm">Detecting abnormalities</span>
+                                <span class="text-blue-300 text-sm" id="stage4-time">0s</span>
+                            </div>
+                            <div class="w-full bg-gray-700 rounded-full h-2 overflow-hidden">
+                                <div class="bg-gradient-to-r from-blue-500 to-purple-600 h-2 rounded-full transition-all duration-500" id="stage4-bar" style="width: 0%"></div>
+                            </div>
+                        </div>
+                        <div id="stage4-status" class="w-6 h-6"></div>
+                    </div>
+
+                    <!-- Stage 5 -->
+                    <div class="flex items-center space-x-4">
+                        <div class="w-8 h-8 rounded-full bg-gray-600 flex items-center justify-center text-white text-sm font-bold" id="stage5-icon">5</div>
+                        <div class="flex-1">
+                            <div class="flex justify-between mb-1">
+                                <span class="text-white text-sm">Generating recommendations</span>
+                                <span class="text-blue-300 text-sm" id="stage5-time">0s</span>
+                            </div>
+                            <div class="w-full bg-gray-700 rounded-full h-2 overflow-hidden">
+                                <div class="bg-gradient-to-r from-blue-500 to-purple-600 h-2 rounded-full transition-all duration-500" id="stage5-bar" style="width: 0%"></div>
+                            </div>
+                        </div>
+                        <div id="stage5-status" class="w-6 h-6"></div>
+                    </div>
+
+                    <!-- Stage 6 -->
+                    <div class="flex items-center space-x-4">
+                        <div class="w-8 h-8 rounded-full bg-gray-600 flex items-center justify-center text-white text-sm font-bold" id="stage6-icon">6</div>
+                        <div class="flex-1">
+                            <div class="flex justify-between mb-1">
+                                <span class="text-white text-sm">Creating simplified explanations</span>
+                                <span class="text-blue-300 text-sm" id="stage6-time">0s</span>
+                            </div>
+                            <div class="w-full bg-gray-700 rounded-full h-2 overflow-hidden">
+                                <div class="bg-gradient-to-r from-blue-500 to-purple-600 h-2 rounded-full transition-all duration-500" id="stage6-bar" style="width: 0%"></div>
+                            </div>
+                        </div>
+                        <div id="stage6-status" class="w-6 h-6"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dynamic Logs -->
+            <div class="bg-black/30 backdrop-blur-sm rounded-2xl p-6 font-mono text-sm">
+                <div class="flex items-center space-x-2 mb-4">
+                    <i class="bi bi-terminal text-green-400"></i>
+                    <span class="text-green-400 font-semibold">Processing Logs</span>
+                </div>
+                <div id="logsContainer" class="space-y-1 h-48 overflow-y-auto">
+                    <div class="log-entry text-gray-400">[INIT] Starting AI analysis pipeline...</div>
+                </div>
+            </div>
+
+            <!-- Progress Stats -->
+            <div class="grid grid-cols-3 gap-4 mt-8">
+                <div class="bg-white/10 backdrop-blur rounded-xl p-4 text-center">
+                    <p class="text-2xl font-bold text-white" id="progressPercent">0%</p>
+                    <p class="text-xs text-blue-200 mt-1">Overall Progress</p>
+                </div>
+                <div class="bg-white/10 backdrop-blur rounded-xl p-4 text-center">
+                    <p class="text-2xl font-bold text-white" id="timeRemaining">~8s</p>
+                    <p class="text-xs text-blue-200 mt-1">Est. Remaining</p>
+                </div>
+                <div class="bg-white/10 backdrop-blur rounded-xl p-4 text-center">
+                    <p class="text-2xl font-bold text-white" id="biomarkersFound">0</p>
+                    <p class="text-xs text-blue-200 mt-1">Biomarkers Found</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const stages = [
+        { id: 1, name: 'Parsing document', duration: 2000, logs: ['Loading PDF document...', 'OCR processing started...', 'Text extraction complete'] },
+        { id: 2, name: 'Extracting biomarkers', duration: 2500, logs: ['Scanning for medical terms...', 'Found 45 potential biomarkers...', 'Filtering relevant markers...'] },
+        { id: 3, name: 'Matching medical ranges', duration: 2000, logs: ['Loading medical reference database...', 'Comparing against standard ranges...', 'Calculating deviations...'] },
+        { id: 4, name: 'Detecting abnormalities', duration: 2500, logs: ['Detected elevated LDL cholesterol...', 'Hemoglobin within normal range...', 'Vitamin D deficiency identified...', 'Ferritin levels suboptimal...'] },
+        { id: 5, name: 'Generating recommendations', duration: 2000, logs: ['Analyzing abnormal markers...', 'Cross-referencing medical guidelines...', 'Generating personalized suggestions...'] },
+        { id: 6, name: 'Creating simplified explanations', duration: 1500, logs: ['Preparing patient-friendly insights...', 'Adding visual representations...', 'Finalizing analysis report...'] }
+    ];
+
+    let currentStage = 0;
+    const biomarkersList = ['Hemoglobin', 'WBC', 'RBC', 'LDL', 'HDL', 'Vitamin D', 'Ferritin', 'HbA1c', 'Glucose', 'Creatinine'];
+    let biomarkersIndex = 0;
+
+    function updateStage(stageId, complete) {
+        const icon = document.getElementById(`stage${stageId}-icon`);
+        const status = document.getElementById(`stage${stageId}-status`);
+        
+        if (complete) {
+            icon.classList.add('stage-complete');
+            icon.style.background = '#10b981';
+            status.innerHTML = '<i class="bi bi-check-circle-fill text-green-500 text-lg"></i>';
+        } else {
+            icon.style.background = 'linear-gradient(135deg, #3b82f6, #8b5cf6)';
+            status.innerHTML = '<i class="bi bi-arrow-repeat text-blue-500 animate-spin"></i>';
+        }
+    }
+
+    function addLog(message, type = 'info') {
+        const container = document.getElementById('logsContainer');
+        const logDiv = document.createElement('div');
+        logDiv.className = 'log-entry';
+        const colors = {
+            info: 'text-gray-400',
+            success: 'text-green-400',
+            warning: 'text-yellow-400',
+            error: 'text-red-400'
+        };
+        logDiv.innerHTML = `<span class="${colors[type]}">[${new Date().toLocaleTimeString()}] ${message}</span>`;
+        container.appendChild(logDiv);
+        container.scrollTop = container.scrollHeight;
+    }
+
+    function updateProcessingMessage() {
+        const messages = [
+            'Analyzing medical data...',
+            'Processing biomarkers...',
+            'Almost there...',
+            'Finalizing insights...'
+        ];
+        const msgElement = document.getElementById('processingMessage');
+        let idx = 0;
+        setInterval(() => {
+            if (currentStage < stages.length - 1) {
+                msgElement.textContent = messages[idx % messages.length];
+                idx++;
+            }
+        }, 2000);
+    }
+
+    async function runPipeline() {
+        let totalProgress = 0;
+        const totalDuration = stages.reduce((sum, s) => sum + s.duration, 0);
+        
+        for (let i = 0; i < stages.length; i++) {
+            const stage = stages[i];
+            currentStage = i;
+            
+            // Update status to processing
+            updateStage(stage.id, false);
+            addLog(`[${stage.name}] Started...`, 'info');
+            
+            // Simulate stage processing with progress
+            const steps = 20;
+            for (let step = 1; step <= steps; step++) {
+                await new Promise(resolve => setTimeout(resolve, stage.duration / steps));
+                const percent = (step / steps) * 100;
+                document.getElementById(`stage${stage.id}-bar`).style.width = `${percent}%`;
+                document.getElementById(`stage${stage.id}-time`).textContent = `${Math.floor(step * (stage.duration / steps) / 1000)}s`;
+                
+                // Update overall progress
+                const stageProgress = (i + (step / steps)) / stages.length * 100;
+                document.getElementById('progressPercent').textContent = `${Math.floor(stageProgress)}%`;
+                document.getElementById('timeRemaining').textContent = `~${Math.floor((totalDuration - (stageProgress / 100 * totalDuration)) / 1000)}s`;
+            }
+            
+            // Add stage-specific logs
+            stage.logs.forEach(log => {
+                setTimeout(() => addLog(log, i === 3 ? 'warning' : 'success'), 100);
+            });
+            
+            // Add biomarkers during stage 2
+            if (i === 1) {
+                const interval = setInterval(() => {
+                    if (biomarkersIndex < biomarkersList.length) {
+                        document.getElementById('biomarkersFound').textContent = biomarkersIndex + 1;
+                        addLog(`Found biomarker: ${biomarkersList[biomarkersIndex]}`, 'success');
+                        biomarkersIndex++;
+                    } else {
+                        clearInterval(interval);
+                    }
+                }, 200);
+            }
+            
+            updateStage(stage.id, true);
+            addLog(`[${stage.name}] Completed!`, 'success');
+        }
+        
+        // All stages complete
+        addLog('✅ Analysis complete! Redirecting to results...', 'success');
+        document.getElementById('processingMessage').textContent = 'Analysis complete!';
+        
+        setTimeout(() => {
+            window.location.href = "{{ url_for('reports.analysis_overview') }}";
+        }, 2000);
+    }
+
+    runPipeline();
+    updateProcessingMessage();
+</script>
+{% endblock %}

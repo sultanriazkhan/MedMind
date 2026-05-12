@@ -1,0 +1,300 @@
+<!-- templates/reports/upload_report.html -->
+{% extends "layouts/base.html" %}
+
+{% block title %}Upload Report{% endblock %}
+
+{% block extra_css %}
+<style>
+    .drop-zone {
+        border: 2px dashed #cbd5e1;
+        transition: all 0.3s ease;
+    }
+    .drop-zone.drag-over {
+        border-color: #3b82f6;
+        background: rgba(59, 130, 246, 0.05);
+        transform: scale(1.02);
+    }
+    .file-preview {
+        animation: slideIn 0.4s ease-out;
+    }
+    @keyframes slideIn {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    .pulse-animation {
+        animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.7; }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800 py-12">
+    <div class="container mx-auto px-4">
+        <!-- Header -->
+        <div class="text-center mb-12">
+            <div class="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl shadow-lg mb-4">
+                <i class="bi bi-cloud-upload-fill text-white text-3xl"></i>
+            </div>
+            <h1 class="text-4xl font-bold text-gray-900 dark:text-white mb-2">Upload Lab Report</h1>
+            <p class="text-gray-600 dark:text-gray-400">AI-powered analysis for instant health insights</p>
+        </div>
+
+        <div class="grid lg:grid-cols-2 gap-8 max-w-6xl mx-auto">
+            <!-- Upload Section -->
+            <div class="space-y-6">
+                <!-- Drag & Drop Zone -->
+                <div id="dropZone" class="drop-zone relative bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8 text-center cursor-pointer transition-all">
+                    <input type="file" id="fileInput" class="hidden" accept=".pdf,.docx,.txt,.jpg,.png" multiple>
+                    <div class="space-y-4">
+                        <div class="w-24 h-24 mx-auto bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg pulse-animation">
+                            <i class="bi bi-cloud-arrow-up text-white text-4xl"></i>
+                        </div>
+                        <div>
+                            <p class="text-xl font-semibold text-gray-900 dark:text-white">Drop your report here</p>
+                            <p class="text-gray-500 dark:text-gray-400 mt-2">or click to browse</p>
+                        </div>
+                        <div class="flex justify-center space-x-4 text-sm text-gray-500">
+                            <span><i class="bi bi-file-pdf text-red-500"></i> PDF</span>
+                            <span><i class="bi bi-file-word text-blue-500"></i> DOCX</span>
+                            <span><i class="bi bi-file-text text-gray-500"></i> TXT</span>
+                            <span><i class="bi bi-file-image text-green-500"></i> JPG/PNG</span>
+                        </div>
+                        <p class="text-xs text-gray-400">Max file size: 16MB • Secure & encrypted</p>
+                    </div>
+                </div>
+
+                <!-- AI Scan Readiness Indicator -->
+                <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="font-semibold text-gray-900 dark:text-white">AI Scan Readiness</h3>
+                        <i class="bi bi-robot text-purple-500 text-xl"></i>
+                    </div>
+                    <div class="space-y-3">
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-600 dark:text-gray-400">OCR Processing</span>
+                            <span class="text-green-600">Ready</span>
+                        </div>
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-600 dark:text-gray-400">Biomarker Detection</span>
+                            <span class="text-green-600">Ready</span>
+                        </div>
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-600 dark:text-gray-400">Abnormality Analysis</span>
+                            <span class="text-green-600">Ready</span>
+                        </div>
+                        <div class="mt-4 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-xl">
+                            <p class="text-xs text-blue-700 dark:text-blue-400">
+                                <i class="bi bi-info-circle mr-1"></i> Our AI supports 50+ lab test formats with 95% accuracy
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- File Preview Section -->
+            <div>
+                <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-6 sticky top-24">
+                    <h3 class="font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
+                        <i class="bi bi-files mr-2 text-blue-500"></i>
+                        Selected Files
+                        <span id="fileCount" class="ml-2 text-sm text-gray-500">(0)</span>
+                    </h3>
+                    
+                    <div id="fileList" class="space-y-3 max-h-96 overflow-y-auto">
+                        <div class="text-center text-gray-400 py-8">
+                            <i class="bi bi-inbox text-4xl mb-2 block"></i>
+                            <p class="text-sm">No files selected yet</p>
+                        </div>
+                    </div>
+
+                    <!-- Analyze Button -->
+                    <button id="analyzeBtn" disabled class="mt-6 w-full py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold rounded-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-lg transform hover:scale-[1.02]">
+                        <i class="bi bi-graph-up mr-2"></i>
+                        Analyze Reports
+                    </button>
+
+                    <p class="text-xs text-center text-gray-500 mt-4">
+                        <i class="bi bi-shield-check"></i> HIPAA Compliant • End-to-end encrypted
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Floating Animated Medical Icons -->
+        <div class="fixed pointer-events-none">
+            <div class="animate-float-slow absolute top-20 left-10 opacity-20">
+                <i class="bi bi-heart-pulse text-6xl text-blue-500"></i>
+            </div>
+            <div class="animate-float-mid absolute bottom-40 right-20 opacity-20">
+                <i class="bi bi-capsule text-6xl text-purple-500"></i>
+            </div>
+            <div class="animate-float-fast absolute top-1/3 right-10 opacity-10">
+                <i class="bi bi-droplet text-8xl text-blue-400"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Dummy file data
+    const dummyFiles = [
+        { name: 'blood_test_march_2026.pdf', size: '2.4 MB', type: 'Complete Blood Count', scanReady: 98, date: 'Mar 15, 2026' },
+        { name: 'lipid_profile_latest.pdf', size: '1.8 MB', type: 'Lipid Profile', scanReady: 95, date: 'Mar 15, 2026' },
+        { name: 'annual_health_checkup.docx', size: '3.1 MB', type: 'Annual Physical', scanReady: 92, date: 'Feb 28, 2026' }
+    ];
+
+    const dropZone = document.getElementById('dropZone');
+    const fileInput = document.getElementById('fileInput');
+    const fileList = document.getElementById('fileList');
+    const analyzeBtn = document.getElementById('analyzeBtn');
+    const fileCountSpan = document.getElementById('fileCount');
+    let selectedFiles = [];
+
+    // Load dummy files on page load
+    function loadDummyFiles() {
+        selectedFiles = [...dummyFiles];
+        updateFileList();
+    }
+
+    function updateFileList() {
+        if (selectedFiles.length === 0) {
+            fileList.innerHTML = `
+                <div class="text-center text-gray-400 py-8">
+                    <i class="bi bi-inbox text-4xl mb-2 block"></i>
+                    <p class="text-sm">No files selected yet</p>
+                </div>
+            `;
+            analyzeBtn.disabled = true;
+            fileCountSpan.textContent = '(0)';
+            return;
+        }
+
+        fileCountSpan.textContent = `(${selectedFiles.length})`;
+        analyzeBtn.disabled = false;
+        
+        fileList.innerHTML = selectedFiles.map((file, index) => `
+            <div class="file-preview bg-gray-50 dark:bg-gray-700/50 rounded-xl p-3 flex items-center justify-between hover:shadow-md transition-all">
+                <div class="flex items-center space-x-3 flex-1">
+                    <div class="w-10 h-10 ${getFileColor(file.name)} rounded-lg flex items-center justify-center">
+                        <i class="bi ${getFileIcon(file.name)} text-white"></i>
+                    </div>
+                    <div class="flex-1">
+                        <p class="text-sm font-medium text-gray-900 dark:text-white">${file.name}</p>
+                        <div class="flex items-center space-x-3 text-xs text-gray-500">
+                            <span>${file.size || '2.4 MB'}</span>
+                            <span>•</span>
+                            <span>${file.type}</span>
+                            <span>•</span>
+                            <span>Scan Ready: ${file.scanReady}%</span>
+                        </div>
+                    </div>
+                </div>
+                <button onclick="removeFile(${index})" class="text-red-500 hover:text-red-700 transition-colors">
+                    <i class="bi bi-x-lg"></i>
+                </button>
+            </div>
+        `).join('');
+    }
+
+    function getFileIcon(filename) {
+        if (filename.endsWith('.pdf')) return 'bi-file-pdf';
+        if (filename.endsWith('.docx')) return 'bi-file-word';
+        if (filename.match(/\.(jpg|jpeg|png)$/)) return 'bi-file-image';
+        return 'bi-file-text';
+    }
+
+    function getFileColor(filename) {
+        if (filename.endsWith('.pdf')) return 'bg-red-500';
+        if (filename.endsWith('.docx')) return 'bg-blue-500';
+        if (filename.match(/\.(jpg|jpeg|png)$/)) return 'bg-green-500';
+        return 'bg-gray-500';
+    }
+
+    function removeFile(index) {
+        selectedFiles.splice(index, 1);
+        updateFileList();
+    }
+
+    // Drag & Drop handlers
+    dropZone.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        dropZone.classList.add('drag-over');
+    });
+
+    dropZone.addEventListener('dragleave', () => {
+        dropZone.classList.remove('drag-over');
+    });
+
+    dropZone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dropZone.classList.remove('drag-over');
+        const files = Array.from(e.dataTransfer.files);
+        addFiles(files);
+    });
+
+    dropZone.addEventListener('click', () => {
+        fileInput.click();
+    });
+
+    fileInput.addEventListener('change', (e) => {
+        addFiles(Array.from(e.target.files));
+    });
+
+    function addFiles(files) {
+        files.forEach(file => {
+            if (file.size <= 16 * 1024 * 1024) {
+                selectedFiles.push({
+                    name: file.name,
+                    size: (file.size / (1024 * 1024)).toFixed(1) + ' MB',
+                    type: 'Lab Report',
+                    scanReady: Math.floor(Math.random() * 20) + 80
+                });
+            }
+        });
+        updateFileList();
+    }
+
+    // Analyze button handler
+    analyzeBtn.addEventListener('click', () => {
+        if (selectedFiles.length > 0) {
+            showLoader();
+            setTimeout(() => {
+                window.location.href = "{{ url_for('reports.processing') }}";
+            }, 1500);
+        }
+    });
+
+    loadDummyFiles();
+
+    // Animation styles
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes float-slow {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-30px) rotate(5deg); }
+        }
+        @keyframes float-mid {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(-5deg); }
+        }
+        @keyframes float-fast {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-15px) rotate(3deg); }
+        }
+        .animate-float-slow { animation: float-slow 8s ease-in-out infinite; }
+        .animate-float-mid { animation: float-mid 6s ease-in-out infinite; }
+        .animate-float-fast { animation: float-fast 5s ease-in-out infinite; }
+    `;
+    document.head.appendChild(style);
+</script>
+{% endblock %}

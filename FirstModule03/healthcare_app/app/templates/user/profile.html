@@ -1,0 +1,423 @@
+<!-- templates/user/profile.html -->
+{% extends "layouts/base.html" %}
+
+{% block title %}My Profile{% endblock %}
+
+{% block extra_css %}
+<style>
+    .profile-avatar {
+        transition: all 0.3s ease;
+    }
+    .profile-avatar:hover {
+        transform: scale(1.05);
+        box-shadow: 0 0 0 4px rgba(59,130,246,0.3), 0 0 0 8px rgba(139,92,246,0.15);
+    }
+    .stat-card {
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .stat-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 20px 25px -12px rgba(0,0,0,0.15);
+    }
+    .timeline-item {
+        position: relative;
+        transition: all 0.3s ease;
+    }
+    .timeline-item::before {
+        content: '';
+        position: absolute;
+        left: -20px;
+        top: 12px;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        background: #3b82f6;
+        border: 2px solid white;
+    }
+    .timeline-item::after {
+        content: '';
+        position: absolute;
+        left: -14px;
+        top: 24px;
+        width: 2px;
+        height: calc(100% + 8px);
+        background: linear-gradient(to bottom, #3b82f6, #8b5cf6);
+    }
+    .timeline-item:last-child::after {
+        display: none;
+    }
+    .insight-card {
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+    .insight-card:hover {
+        transform: translateX(4px);
+        background: linear-gradient(135deg, rgba(59,130,246,0.1), rgba(139,92,246,0.1));
+    }
+    .counter {
+        animation: countUp 1.5s ease-out;
+    }
+    @keyframes countUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    .profile-ring {
+        animation: pulse 3s infinite;
+    }
+    @keyframes pulse {
+        0%, 100% { box-shadow: 0 0 0 0 rgba(59,130,246,0.4); }
+        50% { box-shadow: 0 0 0 10px rgba(59,130,246,0); }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="bg-gray-50 dark:bg-gray-900 min-h-screen py-8">
+    <div class="container mx-auto px-4 max-w-6xl">
+        <!-- Profile Hero Section -->
+        <div class="relative mb-8">
+            <div class="absolute inset-0 bg-gradient-to-r from-blue-600 to-purple-600 rounded-3xl opacity-10 blur-2xl"></div>
+            <div class="relative bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-3xl shadow-2xl p-8">
+                <div class="flex flex-col md:flex-row items-center md:items-start space-y-6 md:space-y-0 md:space-x-8">
+                    <!-- Avatar Section -->
+                    <div class="relative">
+                        <div class="profile-ring absolute inset-0 rounded-full"></div>
+                        <div class="profile-avatar w-32 h-32 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white text-5xl font-bold cursor-pointer">
+                            MS
+                        </div>
+                        <button class="absolute bottom-0 right-0 w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white hover:scale-110 transition-all">
+                            <i class="bi bi-camera-fill text-sm"></i>
+                        </button>
+                    </div>
+                    
+                    <!-- User Info -->
+                    <div class="flex-1 text-center md:text-left">
+                        <div class="flex flex-col md:flex-row md:items-center md:justify-between">
+                            <div>
+                                <h1 class="text-3xl font-bold text-gray-900 dark:text-white">Muhammad Sultan</h1>
+                                <p class="text-gray-600 dark:text-gray-400 mt-1">sultan.health@example.com</p>
+                                <div class="flex flex-wrap gap-2 mt-3 justify-center md:justify-start">
+                                    <span class="px-3 py-1 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 text-xs rounded-full flex items-center">
+                                        <i class="bi bi-shield-check mr-1"></i>Verified Member
+                                    </span>
+                                    <span class="px-3 py-1 bg-gradient-to-r from-blue-500 to-purple-600 text-white text-xs rounded-full">
+                                        AI Wellness Pro
+                                    </span>
+                                </div>
+                            </div>
+                            <button class="mt-4 md:mt-0 px-6 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-700 transition-all">
+                                <i class="bi bi-pencil mr-2"></i>Edit Profile
+                            </button>
+                        </div>
+                        
+                        <!-- Profile Completion -->
+                        <div class="mt-6">
+                            <div class="flex justify-between text-sm mb-2">
+                                <span class="text-gray-600 dark:text-gray-400">Profile Completion</span>
+                                <span class="text-blue-600 font-semibold">85%</span>
+                            </div>
+                            <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                                <div class="bg-gradient-to-r from-blue-500 to-purple-600 h-2 rounded-full" style="width: 85%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Profile Summary Cards -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+            <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-4 text-center stat-card">
+                <i class="bi bi-calendar-heart text-blue-500 text-2xl mb-2 block"></i>
+                <p class="text-2xl font-bold text-gray-900 dark:text-white">27</p>
+                <p class="text-xs text-gray-500">Years</p>
+            </div>
+            <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-4 text-center stat-card">
+                <i class="bi bi-rulers text-green-500 text-2xl mb-2 block"></i>
+                <p class="text-2xl font-bold text-gray-900 dark:text-white">5'10"</p>
+                <p class="text-xs text-gray-500">Height</p>
+            </div>
+            <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-4 text-center stat-card">
+                <i class="bi bi-droplet-half text-blue-500 text-2xl mb-2 block"></i>
+                <p class="text-2xl font-bold text-gray-900 dark:text-white">O+</p>
+                <p class="text-xs text-gray-500">Blood Group</p>
+            </div>
+            <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-4 text-center stat-card">
+                <i class="bi bi-activity text-purple-500 text-2xl mb-2 block"></i>
+                <p class="text-2xl font-bold text-gray-900 dark:text-white">Moderate</p>
+                <p class="text-xs text-gray-500">Activity Level</p>
+            </div>
+        </div>
+
+        <!-- Statistics Section -->
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+            <div class="bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl shadow-lg p-6 text-white stat-card">
+                <div class="flex items-center justify-between mb-4">
+                    <i class="bi bi-folder2-open text-3xl opacity-80"></i>
+                    <span class="text-xs bg-white/20 px-2 py-1 rounded-full">+4 this year</span>
+                </div>
+                <p class="text-3xl font-bold counter" id="reportsCount">24</p>
+                <p class="text-sm opacity-90 mt-1">Reports Uploaded</p>
+                <div class="mt-3 flex items-center text-xs">
+                    <i class="bi bi-arrow-up-short"></i>
+                    <span>12% increase</span>
+                </div>
+            </div>
+            <div class="bg-gradient-to-br from-emerald-500 to-teal-600 rounded-2xl shadow-lg p-6 text-white stat-card">
+                <div class="flex items-center justify-between mb-4">
+                    <i class="bi bi-robot text-3xl opacity-80"></i>
+                    <span class="text-xs bg-white/20 px-2 py-1 rounded-full">Active</span>
+                </div>
+                <p class="text-3xl font-bold counter" id="aiSessionsCount">138</p>
+                <p class="text-sm opacity-90 mt-1">AI Chat Sessions</p>
+                <div class="mt-3 flex items-center text-xs">
+                    <i class="bi bi-arrow-up-short"></i>
+                    <span>8 this week</span>
+                </div>
+            </div>
+            <div class="bg-gradient-to-br from-orange-500 to-red-600 rounded-2xl shadow-lg p-6 text-white stat-card">
+                <div class="flex items-center justify-between mb-4">
+                    <i class="bi bi-newspaper text-3xl opacity-80"></i>
+                    <span class="text-xs bg-white/20 px-2 py-1 rounded-full">Engaged</span>
+                </div>
+                <p class="text-3xl font-bold counter" id="blogsCount">52</p>
+                <p class="text-sm opacity-90 mt-1">Blog Articles Read</p>
+                <div class="mt-3 flex items-center text-xs">
+                    <i class="bi bi-arrow-up-short"></i>
+                    <span>5 this month</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid lg:grid-cols-3 gap-8">
+            <!-- Left Column - Health Profile & Timeline -->
+            <div class="lg:col-span-2 space-y-6">
+                <!-- Health Profile Details -->
+                <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6">
+                    <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4 flex items-center">
+                        <i class="bi bi-person-badge text-blue-500 mr-2"></i>Health Profile
+                    </h3>
+                    <div class="grid md:grid-cols-2 gap-4">
+                        <div>
+                            <p class="text-sm text-gray-500">Weight</p>
+                            <p class="text-lg font-semibold text-gray-900 dark:text-white">78 kg <span class="text-sm text-green-600">(-2 kg)</span></p>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-500">Primary Goal</p>
+                            <p class="text-lg font-semibold text-gray-900 dark:text-white">Improve Cardiovascular Health</p>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-500">Sleep Average</p>
+                            <p class="text-lg font-semibold text-gray-900 dark:text-white">7.2 hours <span class="text-sm text-orange-600">(-0.3)</span></p>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-500">Dietary Preference</p>
+                            <p class="text-lg font-semibold text-gray-900 dark:text-white">Mediterranean</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Health Timeline -->
+                <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6">
+                    <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-6 flex items-center">
+                        <i class="bi bi-clock-history text-purple-500 mr-2"></i>Recent Activity
+                    </h3>
+                    <div class="space-y-6 pl-4">
+                        <div class="timeline-item relative pb-6">
+                            <div class="flex items-start space-x-3">
+                                <div class="w-10 h-10 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex items-center justify-center">
+                                    <i class="bi bi-file-pdf text-blue-500"></i>
+                                </div>
+                                <div>
+                                    <p class="font-semibold text-gray-900 dark:text-white">Uploaded Lipid Profile Report</p>
+                                    <p class="text-sm text-gray-500">March 15, 2026 • 2 days ago</p>
+                                    <p class="text-xs text-green-600 mt-1">Analysis complete</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="timeline-item relative pb-6">
+                            <div class="flex items-start space-x-3">
+                                <div class="w-10 h-10 bg-purple-100 dark:bg-purple-900/30 rounded-lg flex items-center justify-center">
+                                    <i class="bi bi-robot text-purple-500"></i>
+                                </div>
+                                <div>
+                                    <p class="font-semibold text-gray-900 dark:text-white">AI Generated Wellness Recommendations</p>
+                                    <p class="text-sm text-gray-500">March 14, 2026 • 3 days ago</p>
+                                    <p class="text-xs text-green-600 mt-1">Personalized plan ready</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="timeline-item relative pb-6">
+                            <div class="flex items-start space-x-3">
+                                <div class="w-10 h-10 bg-green-100 dark:bg-green-900/30 rounded-lg flex items-center justify-center">
+                                    <i class="bi bi-droplet text-green-500"></i>
+                                </div>
+                                <div>
+                                    <p class="font-semibold text-gray-900 dark:text-white">Completed Hydration Goal (3.2L)</p>
+                                    <p class="text-sm text-gray-500">March 13, 2026 • 4 days ago</p>
+                                    <p class="text-xs text-green-600 mt-1">5-day streak</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="timeline-item relative">
+                            <div class="flex items-start space-x-3">
+                                <div class="w-10 h-10 bg-yellow-100 dark:bg-yellow-900/30 rounded-lg flex items-center justify-center">
+                                    <i class="bi bi-moon text-yellow-500"></i>
+                                </div>
+                                <div>
+                                    <p class="font-semibold text-gray-900 dark:text-white">Sleep Consistency Improved</p>
+                                    <p class="text-sm text-gray-500">March 10, 2026 • 1 week ago</p>
+                                    <p class="text-xs text-green-600 mt-1">+15% consistency</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column - AI Insights & Stats -->
+            <div class="space-y-6">
+                <!-- Wellness Score -->
+                <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6 text-center">
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Wellness Score</h3>
+                    <div class="relative inline-block">
+                        <canvas id="wellnessChart" width="150" height="150"></canvas>
+                        <div class="absolute inset-0 flex items-center justify-center">
+                            <div class="text-center">
+                                <p class="text-3xl font-bold text-gray-900 dark:text-white">82</p>
+                                <p class="text-xs text-gray-500">out of 100</p>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="text-sm text-green-600 mt-3"><i class="bi bi-arrow-up-short"></i> +8% this month</p>
+                </div>
+
+                <!-- AI Health Insights -->
+                <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6">
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
+                        <i class="bi bi-robot text-purple-500 mr-2"></i>AI Health Insights
+                    </h3>
+                    <div class="space-y-3">
+                        <div class="insight-card p-3 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 rounded-xl">
+                            <i class="bi bi-graph-up text-blue-500 mr-2"></i>
+                            <span class="text-sm text-gray-700 dark:text-gray-300">Your wellness score improved by 8% this month</span>
+                        </div>
+                        <div class="insight-card p-3 bg-gradient-to-r from-green-50 to-teal-50 dark:from-green-900/20 dark:to-teal-900/20 rounded-xl">
+                            <i class="bi bi-moon text-green-500 mr-2"></i>
+                            <span class="text-sm text-gray-700 dark:text-gray-300">Sleep consistency is positively affecting recovery</span>
+                        </div>
+                        <div class="insight-card p-3 bg-gradient-to-r from-orange-50 to-red-50 dark:from-orange-900/20 dark:to-red-900/20 rounded-xl">
+                            <i class="bi bi-droplet text-orange-500 mr-2"></i>
+                            <span class="text-sm text-gray-700 dark:text-gray-300">Hydration goals achieved 5 days consecutively</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recommendations Followed -->
+                <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6">
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Health Impact</h3>
+                    <div class="space-y-3">
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-600">Recommendations Followed</span>
+                            <span class="font-semibold text-green-600">67%</span>
+                        </div>
+                        <div class="w-full bg-gray-200 rounded-full h-2">
+                            <div class="bg-green-500 h-2 rounded-full" style="width: 67%"></div>
+                        </div>
+                        <div class="flex justify-between text-sm mt-3">
+                            <span class="text-gray-600">Improvement Rate</span>
+                            <span class="font-semibold text-blue-600">+14%</span>
+                        </div>
+                        <div class="w-full bg-gray-200 rounded-full h-2">
+                            <div class="bg-blue-500 h-2 rounded-full" style="width: 14%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Edit Profile Modal (Hidden initially) -->
+        <div id="editModal" class="fixed inset-0 bg-black/50 z-50 hidden items-center justify-center">
+            <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-md w-full mx-4 p-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-xl font-bold text-gray-900 dark:text-white">Edit Profile</h3>
+                    <button id="closeModal" class="text-gray-400 hover:text-gray-600">
+                        <i class="bi bi-x-lg"></i>
+                    </button>
+                </div>
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Full Name</label>
+                        <input type="text" value="Muhammad Sultan" class="w-full px-4 py-2 border rounded-xl focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Email</label>
+                        <input type="email" value="sultan.health@example.com" class="w-full px-4 py-2 border rounded-xl focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Phone Number</label>
+                        <input type="tel" value="+92 300 1234567" class="w-full px-4 py-2 border rounded-xl focus:ring-2 focus:ring-blue-500">
+                    </div>
+                </div>
+                <div class="flex space-x-3 mt-6">
+                    <button class="flex-1 px-4 py-2 bg-gray-200 text-gray-700 rounded-xl">Cancel</button>
+                    <button class="flex-1 px-4 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl">Save Changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Animated counters
+    function animateCounter(element, target) {
+        let current = 0;
+        const increment = target / 50;
+        const timer = setInterval(() => {
+            current += increment;
+            if (current >= target) {
+                element.textContent = target;
+                clearInterval(timer);
+            } else {
+                element.textContent = Math.floor(current);
+            }
+        }, 30);
+    }
+
+    animateCounter(document.getElementById('reportsCount'), 24);
+    animateCounter(document.getElementById('aiSessionsCount'), 138);
+    animateCounter(document.getElementById('blogsCount'), 52);
+
+    // Wellness Chart
+    const ctx = document.getElementById('wellnessChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            datasets: [{
+                data: [82, 18],
+                backgroundColor: ['#3b82f6', '#e5e7eb'],
+                borderWidth: 0
+            }]
+        },
+        options: { cutout: '70%', responsive: true, maintainAspectRatio: true, plugins: { legend: { display: false } } }
+    });
+
+    // Edit profile modal
+    document.querySelectorAll('[onclick*="editModal"]').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.getElementById('editModal').classList.add('flex');
+            document.getElementById('editModal').classList.remove('hidden');
+        });
+    });
+    document.getElementById('closeModal')?.addEventListener('click', () => {
+        document.getElementById('editModal').classList.remove('flex');
+        document.getElementById('editModal').classList.add('hidden');
+    });
+</script>
+{% endblock %}

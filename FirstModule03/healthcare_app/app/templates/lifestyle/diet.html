@@ -1,0 +1,476 @@
+<!-- templates/lifestyle/diet_recommendation.html -->
+{% extends "layouts/base.html" %}
+
+{% block title %}Diet Recommendation{% endblock %}
+
+{% block extra_css %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+    .metric-card {
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .metric-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 20px 25px -12px rgba(0,0,0,0.15);
+    }
+    .day-card {
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+    .day-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 20px 25px -12px rgba(59,130,246,0.3);
+    }
+    .food-card {
+        transition: all 0.2s ease;
+    }
+    .food-card:hover {
+        transform: translateX(4px);
+    }
+    .meal-time {
+        border-left: 3px solid;
+        transition: all 0.2s ease;
+    }
+    .meal-time:hover {
+        transform: translateX(4px);
+    }
+    .recommend-card {
+        transition: all 0.3s ease;
+    }
+    .recommend-card:hover {
+        transform: scale(1.02);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="bg-gray-50 dark:bg-gray-900 min-h-screen py-8">
+    <div class="container mx-auto px-4 max-w-7xl">
+        <!-- Header -->
+        <div class="text-center mb-12">
+            <div class="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-green-500 to-emerald-600 rounded-2xl shadow-lg mb-4">
+                <i class="bi bi-apple text-white text-3xl"></i>
+            </div>
+            <h1 class="text-4xl font-bold text-gray-900 dark:text-white mb-2">AI Diet Recommendation</h1>
+            <p class="text-gray-600 dark:text-gray-400">Personalized nutrition plan based on your health profile</p>
+        </div>
+
+        <!-- Metrics Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
+            <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-5 metric-card text-center">
+                <div class="inline-flex items-center justify-center w-12 h-12 bg-green-100 dark:bg-green-900/30 rounded-full mb-3">
+                    <i class="bi bi-activity text-green-500 text-xl"></i>
+                </div>
+                <p class="text-2xl font-bold text-gray-900 dark:text-white">84<span class="text-sm">%</span></p>
+                <p class="text-xs text-gray-500 mt-1">Nutrition Score</p>
+            </div>
+            <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-5 metric-card text-center">
+                <div class="inline-flex items-center justify-center w-12 h-12 bg-orange-100 dark:bg-orange-900/30 rounded-full mb-3">
+                    <i class="bi bi-fire text-orange-500 text-xl"></i>
+                </div>
+                <p class="text-2xl font-bold text-gray-900 dark:text-white">2,100</p>
+                <p class="text-xs text-gray-500 mt-1">Daily Calories</p>
+            </div>
+            <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-5 metric-card text-center">
+                <div class="inline-flex items-center justify-center w-12 h-12 bg-blue-100 dark:bg-blue-900/30 rounded-full mb-3">
+                    <i class="bi bi-droplet text-blue-500 text-xl"></i>
+                </div>
+                <p class="text-2xl font-bold text-gray-900 dark:text-white">3.2<span class="text-sm">L</span></p>
+                <p class="text-xs text-gray-500 mt-1">Hydration Goal</p>
+            </div>
+            <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-5 metric-card text-center">
+                <div class="inline-flex items-center justify-center w-12 h-12 bg-purple-100 dark:bg-purple-900/30 rounded-full mb-3">
+                    <i class="bi bi-check-circle text-purple-500 text-xl"></i>
+                </div>
+                <p class="text-2xl font-bold text-gray-900 dark:text-white">76<span class="text-sm">%</span></p>
+                <p class="text-xs text-gray-500 mt-1">Compliance Rate</p>
+            </div>
+            <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-5 metric-card text-center">
+                <div class="inline-flex items-center justify-center w-12 h-12 bg-yellow-100 dark:bg-yellow-900/30 rounded-full mb-3">
+                    <i class="bi bi-clock text-yellow-500 text-xl"></i>
+                </div>
+                <p class="text-2xl font-bold text-gray-900 dark:text-white">Today</p>
+                <p class="text-xs text-gray-500 mt-1">Last Updated</p>
+            </div>
+        </div>
+
+        <!-- Macro Breakdown -->
+        <div class="grid lg:grid-cols-2 gap-6 mb-8">
+            <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6">
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Macro Distribution</h3>
+                <canvas id="macroChart" height="200"></canvas>
+                <div class="grid grid-cols-3 gap-4 mt-4 text-center">
+                    <div>
+                        <p class="text-2xl font-bold text-blue-500">135g</p>
+                        <p class="text-xs text-gray-500">Protein</p>
+                    </div>
+                    <div>
+                        <p class="text-2xl font-bold text-green-500">220g</p>
+                        <p class="text-xs text-gray-500">Carbs</p>
+                    </div>
+                    <div>
+                        <p class="text-2xl font-bold text-yellow-500">65g</p>
+                        <p class="text-xs text-gray-500">Fats</p>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6">
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Hydration Tracker</h3>
+                <div class="relative inline-block mx-auto block text-center">
+                    <canvas id="hydrationChart" width="200" height="200"></canvas>
+                    <div class="absolute inset-0 flex items-center justify-center">
+                        <div class="text-center">
+                            <p class="text-3xl font-bold text-gray-900 dark:text-white">2.1</p>
+                            <p class="text-xs text-gray-500">of 3.2L</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex justify-center space-x-2 mt-4">
+                    <button class="px-3 py-1 bg-blue-100 text-blue-600 rounded-lg text-sm">+250ml</button>
+                    <button class="px-3 py-1 bg-blue-100 text-blue-600 rounded-lg text-sm">+500ml</button>
+                    <button class="px-3 py-1 bg-blue-100 text-blue-600 rounded-lg text-sm">Reset</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Foods to Eat & Avoid -->
+        <div class="grid lg:grid-cols-2 gap-6 mb-8">
+            <div class="bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 rounded-2xl shadow-lg p-6">
+                <h3 class="text-xl font-bold text-green-700 dark:text-green-400 mb-4 flex items-center">
+                    <i class="bi bi-check-circle-fill mr-2"></i>Foods to Eat
+                </h3>
+                <div class="grid grid-cols-2 gap-3">
+                    <div class="food-card flex items-center space-x-2 p-2 bg-white/50 dark:bg-gray-800/50 rounded-lg">
+                        <i class="bi bi-fish text-blue-500"></i>
+                        <span class="text-sm">Salmon (Omega-3)</span>
+                    </div>
+                    <div class="food-card flex items-center space-x-2 p-2 bg-white/50 dark:bg-gray-800/50 rounded-lg">
+                        <i class="bi bi-leaf text-green-500"></i>
+                        <span class="text-sm">Spinach</span>
+                    </div>
+                    <div class="food-card flex items-center space-x-2 p-2 bg-white/50 dark:bg-gray-800/50 rounded-lg">
+                        <i class="bi bi-cup-straw text-purple-500"></i>
+                        <span class="text-sm">Oats</span>
+                    </div>
+                    <div class="food-card flex items-center space-x-2 p-2 bg-white/50 dark:bg-gray-800/50 rounded-lg">
+                        <i class="bi bi-egg-fried text-yellow-500"></i>
+                        <span class="text-sm">Legumes</span>
+                    </div>
+                    <div class="food-card flex items-center space-x-2 p-2 bg-white/50 dark:bg-gray-800/50 rounded-lg">
+                        <i class="bi bi-flower2 text-pink-500"></i>
+                        <span class="text-sm">Berries</span>
+                    </div>
+                    <div class="food-card flex items-center space-x-2 p-2 bg-white/50 dark:bg-gray-800/50 rounded-lg">
+                        <i class="bi bi-droplet text-blue-500"></i>
+                        <span class="text-sm">Avocado</span>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-gradient-to-br from-red-50 to-rose-50 dark:from-red-900/20 dark:to-rose-900/20 rounded-2xl shadow-lg p-6">
+                <h3 class="text-xl font-bold text-red-700 dark:text-red-400 mb-4 flex items-center">
+                    <i class="bi bi-x-circle-fill mr-2"></i>Foods to Avoid
+                </h3>
+                <div class="grid grid-cols-2 gap-3">
+                    <div class="food-card flex items-center space-x-2 p-2 bg-white/50 dark:bg-gray-800/50 rounded-lg">
+                        <i class="bi bi-cup-straw text-gray-500"></i>
+                        <span class="text-sm">Sugary Drinks</span>
+                    </div>
+                    <div class="food-card flex items-center space-x-2 p-2 bg-white/50 dark:bg-gray-800/50 rounded-lg">
+                        <i class="bi bi-basket text-gray-500"></i>
+                        <span class="text-sm">Processed Meats</span>
+                    </div>
+                    <div class="food-card flex items-center space-x-2 p-2 bg-white/50 dark:bg-gray-800/50 rounded-lg">
+                        <i class="bi bi-egg-fried text-gray-500"></i>
+                        <span class="text-sm">Fried Foods</span>
+                    </div>
+                    <div class="food-card flex items-center space-x-2 p-2 bg-white/50 dark:bg-gray-800/50 rounded-lg">
+                        <i class="bi bi-bread text-gray-500"></i>
+                        <span class="text-sm">White Bread</span>
+                    </div>
+                    <div class="food-card flex items-center space-x-2 p-2 bg-white/50 dark:bg-gray-800/50 rounded-lg">
+                        <i class="bi bi-cake text-gray-500"></i>
+                        <span class="text-sm">Pastries</span>
+                    </div>
+                    <div class="food-card flex items-center space-x-2 p-2 bg-white/50 dark:bg-gray-800/50 rounded-lg">
+                        <i class="bi bi-cup text-gray-500"></i>
+                        <span class="text-sm">High Sodium</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Weekly Meal Plan -->
+        <div class="mb-8">
+            <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">7-Day Meal Plan</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                <!-- Monday -->
+                <div class="day-card bg-white dark:bg-gray-800 rounded-2xl shadow-lg overflow-hidden">
+                    <div class="bg-gradient-to-r from-blue-500 to-blue-600 p-3">
+                        <h3 class="text-white font-bold">Monday</h3>
+                    </div>
+                    <div class="p-4 space-y-3">
+                        <div class="meal-time border-blue-500 pl-2">
+                            <p class="text-xs text-blue-500 font-semibold">BREAKFAST</p>
+                            <p class="text-sm text-gray-700 dark:text-gray-300">Oatmeal with berries, walnuts, and chia seeds</p>
+                        </div>
+                        <div class="meal-time border-green-500 pl-2">
+                            <p class="text-xs text-green-500 font-semibold">LUNCH</p>
+                            <p class="text-sm text-gray-700 dark:text-gray-300">Grilled salmon salad with quinoa and avocado</p>
+                        </div>
+                        <div class="meal-time border-orange-500 pl-2">
+                            <p class="text-xs text-orange-500 font-semibold">DINNER</p>
+                            <p class="text-sm text-gray-700 dark:text-gray-300">Lentil soup with whole grain bread</p>
+                        </div>
+                        <div class="meal-time border-purple-500 pl-2">
+                            <p class="text-xs text-purple-500 font-semibold">SNACKS</p>
+                            <p class="text-sm text-gray-700 dark:text-gray-300">Greek yogurt, mixed nuts</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tuesday -->
+                <div class="day-card bg-white dark:bg-gray-800 rounded-2xl shadow-lg overflow-hidden">
+                    <div class="bg-gradient-to-r from-green-500 to-green-600 p-3">
+                        <h3 class="text-white font-bold">Tuesday</h3>
+                    </div>
+                    <div class="p-4 space-y-3">
+                        <div class="meal-time border-blue-500 pl-2">
+                            <p class="text-xs text-blue-500 font-semibold">BREAKFAST</p>
+                            <p class="text-sm text-gray-700 dark:text-gray-300">Spinach and mushroom omelette with whole grain toast</p>
+                        </div>
+                        <div class="meal-time border-green-500 pl-2">
+                            <p class="text-xs text-green-500 font-semibold">LUNCH</p>
+                            <p class="text-sm text-gray-700 dark:text-gray-300">Chickpea and quinoa bowl with tahini dressing</p>
+                        </div>
+                        <div class="meal-time border-orange-500 pl-2">
+                            <p class="text-xs text-orange-500 font-semibold">DINNER</p>
+                            <p class="text-sm text-gray-700 dark:text-gray-300">Baked cod with roasted sweet potatoes and broccoli</p>
+                        </div>
+                        <div class="meal-time border-purple-500 pl-2">
+                            <p class="text-xs text-purple-500 font-semibold">SNACKS</p>
+                            <p class="text-sm text-gray-700 dark:text-gray-300">Apple slices with almond butter</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Wednesday -->
+                <div class="day-card bg-white dark:bg-gray-800 rounded-2xl shadow-lg overflow-hidden">
+                    <div class="bg-gradient-to-r from-purple-500 to-purple-600 p-3">
+                        <h3 class="text-white font-bold">Wednesday</h3>
+                    </div>
+                    <div class="p-4 space-y-3">
+                        <div class="meal-time border-blue-500 pl-2">
+                            <p class="text-xs text-blue-500 font-semibold">BREAKFAST</p>
+                            <p class="text-sm text-gray-700 dark:text-gray-300">Green smoothie (spinach, banana, flax seeds, almond milk)</p>
+                        </div>
+                        <div class="meal-time border-green-500 pl-2">
+                            <p class="text-xs text-green-500 font-semibold">LUNCH</p>
+                            <p class="text-sm text-gray-700 dark:text-gray-300">Turkey and avocado wrap with mixed greens</p>
+                        </div>
+                        <div class="meal-time border-orange-500 pl-2">
+                            <p class="text-xs text-orange-500 font-semibold">DINNER</p>
+                            <p class="text-sm text-gray-700 dark:text-gray-300">Vegetable stir-fry with tofu and brown rice</p>
+                        </div>
+                        <div class="meal-time border-purple-500 pl-2">
+                            <p class="text-xs text-purple-500 font-semibold">SNACKS</p>
+                            <p class="text-sm text-gray-700 dark:text-gray-300">Hummus with carrot sticks</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Thursday -->
+                <div class="day-card bg-white dark:bg-gray-800 rounded-2xl shadow-lg overflow-hidden">
+                    <div class="bg-gradient-to-r from-orange-500 to-orange-600 p-3">
+                        <h3 class="text-white font-bold">Thursday</h3>
+                    </div>
+                    <div class="p-4 space-y-3">
+                        <div class="meal-time border-blue-500 pl-2">
+                            <p class="text-xs text-blue-500 font-semibold">BREAKFAST</p>
+                            <p class="text-sm text-gray-700 dark:text-gray-300">Chia seed pudding with berries and coconut</p>
+                        </div>
+                        <div class="meal-time border-green-500 pl-2">
+                            <p class="text-xs text-green-500 font-semibold">LUNCH</p>
+                            <p class="text-sm text-gray-700 dark:text-gray-300">Mediterranean chickpea salad with feta and olives</p>
+                        </div>
+                        <div class="meal-time border-orange-500 pl-2">
+                            <p class="text-xs text-orange-500 font-semibold">DINNER</p>
+                            <p class="text-sm text-gray-700 dark:text-gray-300">Grilled chicken breast with quinoa and asparagus</p>
+                        </div>
+                        <div class="meal-time border-purple-500 pl-2">
+                            <p class="text-xs text-purple-500 font-semibold">SNACKS</p>
+                            <p class="text-sm text-gray-700 dark:text-gray-300">Protein smoothie</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Friday -->
+                <div class="day-card bg-white dark:bg-gray-800 rounded-2xl shadow-lg overflow-hidden">
+                    <div class="bg-gradient-to-r from-red-500 to-red-600 p-3">
+                        <h3 class="text-white font-bold">Friday</h3>
+                    </div>
+                    <div class="p-4 space-y-3">
+                        <div class="meal-time border-blue-500 pl-2">
+                            <p class="text-xs text-blue-500 font-semibold">BREAKFAST</p>
+                            <p class="text-sm text-gray-700 dark:text-gray-300">Egg white scramble with vegetables and avocado</p>
+                        </div>
+                        <div class="meal-time border-green-500 pl-2">
+                            <p class="text-xs text-green-500 font-semibold">LUNCH</p>
+                            <p class="text-sm text-gray-700 dark:text-gray-300">Tuna salad wrap with lettuce and tomato</p>
+                        </div>
+                        <div class="meal-time border-orange-500 pl-2">
+                            <p class="text-xs text-orange-500 font-semibold">DINNER</p>
+                            <p class="text-sm text-gray-700 dark:text-gray-300">Shrimp and vegetable skewers with brown rice</p>
+                        </div>
+                        <div class="meal-time border-purple-500 pl-2">
+                            <p class="text-xs text-purple-500 font-semibold">SNACKS</p>
+                            <p class="text-sm text-gray-700 dark:text-gray-300">Dark chocolate (85%) and almonds</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Saturday -->
+                <div class="day-card bg-white dark:bg-gray-800 rounded-2xl shadow-lg overflow-hidden">
+                    <div class="bg-gradient-to-r from-pink-500 to-pink-600 p-3">
+                        <h3 class="text-white font-bold">Saturday</h3>
+                    </div>
+                    <div class="p-4 space-y-3">
+                        <div class="meal-time border-blue-500 pl-2">
+                            <p class="text-xs text-blue-500 font-semibold">BREAKFAST</p>
+                            <p class="text-sm text-gray-700 dark:text-gray-300">Protein pancakes with berries and Greek yogurt</p>
+                        </div>
+                        <div class="meal-time border-green-500 pl-2">
+                            <p class="text-xs text-green-500 font-semibold">LUNCH</p>
+                            <p class="text-sm text-gray-700 dark:text-gray-300">Leftover salmon salad</p>
+                        </div>
+                        <div class="meal-time border-orange-500 pl-2">
+                            <p class="text-xs text-orange-500 font-semibold">DINNER</p>
+                            <p class="text-sm text-gray-700 dark:text-gray-300">Homemade vegetable soup with lentils</p>
+                        </div>
+                        <div class="meal-time border-purple-500 pl-2">
+                            <p class="text-xs text-purple-500 font-semibold">SNACKS</p>
+                            <p class="text-sm text-gray-700 dark:text-gray-300">Fruit smoothie</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sunday -->
+                <div class="day-card bg-white dark:bg-gray-800 rounded-2xl shadow-lg overflow-hidden">
+                    <div class="bg-gradient-to-r from-teal-500 to-teal-600 p-3">
+                        <h3 class="text-white font-bold">Sunday</h3>
+                    </div>
+                    <div class="p-4 space-y-3">
+                        <div class="meal-time border-blue-500 pl-2">
+                            <p class="text-xs text-blue-500 font-semibold">BREAKFAST</p>
+                            <p class="text-sm text-gray-700 dark:text-gray-300">Avocado toast with poached eggs</p>
+                        </div>
+                        <div class="meal-time border-green-500 pl-2">
+                            <p class="text-xs text-green-500 font-semibold">LUNCH</p>
+                            <p class="text-sm text-gray-700 dark:text-gray-300">Meal prep bowls: chicken, quinoa, roasted vegetables</p>
+                        </div>
+                        <div class="meal-time border-orange-500 pl-2">
+                            <p class="text-xs text-orange-500 font-semibold">DINNER</p>
+                            <p class="text-sm text-gray-700 dark:text-gray-300">Light dinner: miso soup with tofu and seaweed</p>
+                        </div>
+                        <div class="meal-time border-purple-500 pl-2">
+                            <p class="text-xs text-purple-500 font-semibold">SNACKS</p>
+                            <p class="text-sm text-gray-700 dark:text-gray-300">Herbal tea, handful of walnuts</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- AI Nutritional Rationale -->
+        <div class="bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl shadow-xl p-8 mb-8 text-white">
+            <div class="flex items-start space-x-4">
+                <i class="bi bi-robot text-4xl"></i>
+                <div>
+                    <h3 class="text-2xl font-bold mb-2">AI Nutritional Rationale</h3>
+                    <p class="text-blue-100 mb-4">Based on your lab results and health profile, here's why these recommendations matter:</p>
+                    <ul class="space-y-2 text-sm">
+                        <li><i class="bi bi-check-circle mr-2"></i> High-fiber foods recommended to support LDL cholesterol reduction from 145 mg/dL</li>
+                        <li><i class="bi bi-check-circle mr-2"></i> Iron-rich foods included to address ferritin level of 32 ng/mL</li>
+                        <li><i class="bi bi-check-circle mr-2"></i> Low glycemic meals selected due to elevated HbA1c (6.2%)</li>
+                        <li><i class="bi bi-check-circle mr-2"></i> Omega-3 rich foods added for cardiovascular and cognitive support</li>
+                        <li><i class="bi bi-check-circle mr-2"></i> Vitamin D fortified foods suggested for deficiency correction</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Shopping List & Download -->
+        <div class="grid lg:grid-cols-2 gap-6">
+            <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6">
+                <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4 flex items-center">
+                    <i class="bi bi-cart4 text-green-500 mr-2"></i>Weekly Shopping List
+                </h3>
+                <div class="grid grid-cols-2 gap-2 text-sm">
+                    <div><i class="bi bi-check-square text-green-500 mr-2"></i>Salmon fillets</div>
+                    <div><i class="bi bi-check-square text-green-500 mr-2"></i>Chicken breast</div>
+                    <div><i class="bi bi-check-square text-green-500 mr-2"></i>Spinach & kale</div>
+                    <div><i class="bi bi-check-square text-green-500 mr-2"></i>Avocados</div>
+                    <div><i class="bi bi-check-square text-green-500 mr-2"></i>Quinoa & oats</div>
+                    <div><i class="bi bi-check-square text-green-500 mr-2"></i>Greek yogurt</div>
+                    <div><i class="bi bi-check-square text-green-500 mr-2"></i>Berries (fresh/frozen)</div>
+                    <div><i class="bi bi-check-square text-green-500 mr-2"></i>Nuts & seeds</div>
+                    <div><i class="bi bi-check-square text-green-500 mr-2"></i>Sweet potatoes</div>
+                    <div><i class="bi bi-check-square text-green-500 mr-2"></i>Lemons</div>
+                </div>
+            </div>
+            <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6 text-center">
+                <i class="bi bi-file-pdf text-red-500 text-5xl mb-3 block"></i>
+                <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2">Download Meal Plan</h3>
+                <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">Get your personalized meal plan as a PDF</p>
+                <button id="downloadPdf" class="px-6 py-3 bg-gradient-to-r from-red-500 to-pink-500 text-white rounded-xl font-semibold hover:shadow-lg transition-all">
+                    <i class="bi bi-download mr-2"></i>Download PDF
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Macro Chart
+    const macroCtx = document.getElementById('macroChart').getContext('2d');
+    new Chart(macroCtx, {
+        type: 'doughnut',
+        data: {
+            labels: ['Protein (135g)', 'Carbs (220g)', 'Fats (65g)'],
+            datasets: [{
+                data: [135, 220, 65],
+                backgroundColor: ['#3b82f6', '#10b981', '#f59e0b'],
+                borderWidth: 0
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: { legend: { position: 'bottom' } }
+        }
+    });
+
+    // Hydration Chart
+    const hydrationCtx = document.getElementById('hydrationChart').getContext('2d');
+    new Chart(hydrationCtx, {
+        type: 'doughnut',
+        data: {
+            datasets: [{
+                data: [66, 34],
+                backgroundColor: ['#3b82f6', '#e5e7eb'],
+                borderWidth: 0
+            }]
+        },
+        options: { cutout: '75%', responsive: true, maintainAspectRatio: true, plugins: { legend: { display: false } } }
+    });
+
+    // Download PDF
+    document.getElementById('downloadPdf')?.addEventListener('click', () => {
+        showToast('Preparing your meal plan PDF...', 'info');
+        showLoader();
+        setTimeout(() => {
+            hideLoader();
+            showToast('Meal plan downloaded successfully!', 'success');
+        }, 2000);
+    });
+</script>
+{% endblock %}

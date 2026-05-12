@@ -1,0 +1,424 @@
+<!-- templates/auth/signup.html -->
+{% extends "layouts/base.html" %}
+
+{% block title %}Create Account{% endblock %}
+
+{% block content %}
+<div class="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+    <div class="grid lg:grid-cols-2 gap-12 max-w-7xl w-full items-center">
+        
+        <!-- Left Side: Branding -->
+        <div class="hidden lg:block space-y-8">
+            <div class="relative">
+                <div class="absolute inset-0 bg-gradient-to-br from-purple-500/20 to-pink-600/20 rounded-3xl blur-3xl"></div>
+                
+                <div class="relative space-y-6">
+                    <div class="animate-float-slow">
+                        <div class="glass rounded-2xl p-6 backdrop-blur-xl bg-white/30 dark:bg-gray-800/30 border border-white/20">
+                            <div class="flex items-center space-x-4">
+                                <div class="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-600 rounded-xl flex items-center justify-center">
+                                    <i class="bi bi-person-plus-fill text-white text-xl"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <p class="text-sm font-semibold text-gray-900 dark:text-white">Join 50,000+ Users</p>
+                                    <p class="text-xs text-gray-600 dark:text-gray-300">Start your health journey today</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="animate-float-mid ml-12">
+                        <div class="glass rounded-2xl p-6 backdrop-blur-xl bg-white/30 dark:bg-gray-800/30 border border-white/20">
+                            <div class="flex items-center space-x-4">
+                                <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-cyan-600 rounded-xl flex items-center justify-center">
+                                    <i class="bi bi-graph-up text-white text-xl"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <p class="text-sm font-semibold text-gray-900 dark:text-white">AI-Powered Insights</p>
+                                    <p class="text-xs text-gray-600 dark:text-gray-300">Personalized health recommendations</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="animate-float-fast -ml-12">
+                        <div class="glass rounded-2xl p-6 backdrop-blur-xl bg-white/30 dark:bg-gray-800/30 border border-white/20">
+                            <div class="flex items-center space-x-4">
+                                <div class="w-12 h-12 bg-gradient-to-br from-green-500 to-teal-600 rounded-xl flex items-center justify-center">
+                                    <i class="bi bi-shield-lock-fill text-white text-xl"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <p class="text-sm font-semibold text-gray-900 dark:text-white">Bank-Level Security</p>
+                                    <p class="text-xs text-gray-600 dark:text-gray-300">Your data is protected</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mt-12 bg-gradient-to-r from-blue-500/10 to-purple-500/10 rounded-2xl p-6 backdrop-blur-sm">
+                    <p class="text-sm text-gray-700 dark:text-gray-300 italic text-center">
+                        "HealthAI has transformed how I manage my health. The insights are incredible!"
+                    </p>
+                    <p class="text-xs text-center text-gray-500 mt-2">- Sarah Johnson, Verified User</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Right Side: Premium Signup Card -->
+        <div class="w-full max-w-md mx-auto lg:mx-0 lg:ml-auto">
+            <div class="glass rounded-3xl shadow-2xl p-8 md:p-10 backdrop-blur-xl bg-white/90 dark:bg-gray-900/90 border border-gray-200 dark:border-gray-700">
+                <div class="text-center mb-8">
+                    <div class="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-600 rounded-2xl shadow-lg mb-4">
+                        <i class="bi bi-person-badge text-white text-3xl"></i>
+                    </div>
+                    <h2 class="text-3xl font-bold text-gray-900 dark:text-white mb-2">Create account</h2>
+                    <p class="text-gray-600 dark:text-gray-400">Start your free trial today</p>
+                </div>
+                
+                <form method="POST" action="{{ url_for('auth.signup') }}" class="space-y-5" id="signup-form">
+                    <!-- Full Name -->
+                    <div class="space-y-2">
+                        <label class="text-sm font-semibold text-gray-700 dark:text-gray-300 flex items-center space-x-2">
+                            <i class="bi bi-person-fill text-blue-500"></i>
+                            <span>Full Name</span>
+                        </label>
+                        <input type="text" 
+                               name="name" 
+                               id="fullname"
+                               required
+                               class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 transition-all duration-300 outline-none"
+                               placeholder="John Doe">
+                    </div>
+                    
+                    <!-- Email -->
+                    <div class="space-y-2">
+                        <label class="text-sm font-semibold text-gray-700 dark:text-gray-300 flex items-center space-x-2">
+                            <i class="bi bi-envelope-fill text-blue-500"></i>
+                            <span>Email Address</span>
+                        </label>
+                        <input type="email" 
+                               name="email" 
+                               id="email"
+                               required
+                               class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 transition-all duration-300 outline-none"
+                               placeholder="you@example.com">
+                        <div class="email-status text-xs hidden"></div>
+                    </div>
+                    
+                    <!-- Password -->
+                    <div class="space-y-2">
+                        <label class="text-sm font-semibold text-gray-700 dark:text-gray-300 flex items-center space-x-2">
+                            <i class="bi bi-lock-fill text-purple-500"></i>
+                            <span>Password</span>
+                        </label>
+                        <div class="relative">
+                            <input type="password" 
+                                   name="password" 
+                                   id="password"
+                                   required
+                                   class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 transition-all duration-300 outline-none"
+                                   placeholder="Create a strong password">
+                            <button type="button" 
+                                    onclick="togglePassword('password', 'togglePassIcon')"
+                                    class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors">
+                                <i class="bi bi-eye-fill" id="togglePassIcon"></i>
+                            </button>
+                        </div>
+                        <!-- Password Strength Meter -->
+                        <div class="mt-2">
+                            <div class="flex space-x-1 h-1">
+                                <div class="flex-1 rounded-full bg-gray-200 dark:bg-gray-700" id="strength-bar-1"></div>
+                                <div class="flex-1 rounded-full bg-gray-200 dark:bg-gray-700" id="strength-bar-2"></div>
+                                <div class="flex-1 rounded-full bg-gray-200 dark:bg-gray-700" id="strength-bar-3"></div>
+                                <div class="flex-1 rounded-full bg-gray-200 dark:bg-gray-700" id="strength-bar-4"></div>
+                            </div>
+                            <p class="text-xs mt-1" id="strength-text"></p>
+                        </div>
+                    </div>
+                    
+                    <!-- Confirm Password -->
+                    <div class="space-y-2">
+                        <label class="text-sm font-semibold text-gray-700 dark:text-gray-300 flex items-center space-x-2">
+                            <i class="bi bi-shield-lock-fill text-green-500"></i>
+                            <span>Confirm Password</span>
+                        </label>
+                        <div class="relative">
+                            <input type="password" 
+                                   id="confirm-password"
+                                   required
+                                   class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 transition-all duration-300 outline-none"
+                                   placeholder="Confirm your password">
+                            <button type="button" 
+                                    onclick="togglePassword('confirm-password', 'toggleConfirmIcon')"
+                                    class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors">
+                                <i class="bi bi-eye-fill" id="toggleConfirmIcon"></i>
+                            </button>
+                        </div>
+                        <div class="password-match text-xs hidden"></div>
+                    </div>
+                    
+                    <!-- Terms Checkbox -->
+                    <label class="flex items-start space-x-3 cursor-pointer">
+                        <input type="checkbox" 
+                               id="terms"
+                               required
+                               class="mt-1 w-4 h-4 rounded border-gray-300 text-purple-600 focus:ring-purple-500">
+                        <span class="text-sm text-gray-600 dark:text-gray-400">
+                            I agree to the 
+                            <a href="#" class="text-purple-600 hover:text-purple-700">Terms of Service</a> 
+                            and 
+                            <a href="#" class="text-purple-600 hover:text-purple-700">Privacy Policy</a>
+                        </span>
+                    </label>
+                    
+                    <!-- Submit Button -->
+                    <button type="submit" 
+                            id="submit-btn"
+                            disabled
+                            class="w-full py-3 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-semibold rounded-xl transition-all duration-300 transform hover:scale-[1.02] shadow-lg hover:shadow-xl btn-hover disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100">
+                        Create Account
+                    </button>
+                </form>
+                
+                <!-- Social Signup -->
+                <div class="mt-8">
+                    <div class="relative">
+                        <div class="absolute inset-0 flex items-center">
+                            <div class="w-full border-t border-gray-200 dark:border-gray-700"></div>
+                        </div>
+                        <div class="relative flex justify-center text-sm">
+                            <span class="px-4 bg-white dark:bg-gray-900 text-gray-500">Or sign up with</span>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-6 grid grid-cols-2 gap-3">
+                        <button onclick="showToast('Google signup coming soon!', 'info')"
+                                class="flex items-center justify-center px-4 py-2 border-2 border-gray-200 dark:border-gray-700 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-800 transition-all duration-300">
+                            <i class="bi bi-google text-red-500 mr-2"></i>
+                            <span class="text-sm font-medium">Google</span>
+                        </button>
+                        <button onclick="showToast('Apple signup coming soon!', 'info')"
+                                class="flex items-center justify-center px-4 py-2 border-2 border-gray-200 dark:border-gray-700 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-800 transition-all duration-300">
+                            <i class="bi bi-apple text-gray-900 dark:text-white mr-2"></i>
+                            <span class="text-sm font-medium">Apple</span>
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Login Redirect -->
+                <p class="text-center mt-8 text-gray-600 dark:text-gray-400">
+                    Already have an account?
+                    <a href="{{ url_for('auth.login') }}" class="text-purple-600 hover:text-purple-700 font-semibold transition-colors">
+                        Sign in
+                    </a>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Password Strength Meter
+    const passwordInput = document.getElementById('password');
+    const confirmPassword = document.getElementById('confirm-password');
+    const strengthBars = [
+        document.getElementById('strength-bar-1'),
+        document.getElementById('strength-bar-2'),
+        document.getElementById('strength-bar-3'),
+        document.getElementById('strength-bar-4')
+    ];
+    const strengthText = document.getElementById('strength-text');
+    
+    function checkPasswordStrength(password) {
+        let strength = 0;
+        
+        if (password.length >= 8) strength++;
+        if (password.match(/[a-z]/) && password.match(/[A-Z]/)) strength++;
+        if (password.match(/[0-9]/)) strength++;
+        if (password.match(/[^a-zA-Z0-9]/)) strength++;
+        
+        return strength;
+    }
+    
+    function updateStrengthMeter() {
+        const password = passwordInput.value;
+        const strength = checkPasswordStrength(password);
+        
+        // Reset bars
+        strengthBars.forEach(bar => {
+            bar.className = 'flex-1 rounded-full bg-gray-200 dark:bg-gray-700';
+        });
+        
+        if (password.length === 0) {
+            strengthText.textContent = '';
+            return;
+        }
+        
+        // Update colors based on strength
+        const colors = ['bg-red-500', 'bg-orange-500', 'bg-yellow-500', 'bg-green-500'];
+        const messages = ['Weak', 'Fair', 'Good', 'Strong'];
+        
+        for (let i = 0; i < strength; i++) {
+            strengthBars[i].className = `flex-1 rounded-full ${colors[strength - 1]}`;
+        }
+        
+        strengthText.textContent = messages[strength - 1];
+        strengthText.className = `text-xs mt-1 text-${strength === 4 ? 'green' : strength === 3 ? 'yellow' : 'orange'}-600`;
+    }
+    
+    // Password match validation
+    function checkPasswordMatch() {
+        const password = passwordInput.value;
+        const confirm = confirmPassword.value;
+        const matchDiv = document.querySelector('.password-match');
+        
+        if (confirm.length === 0) {
+            matchDiv.classList.add('hidden');
+            return;
+        }
+        
+        if (password === confirm) {
+            matchDiv.textContent = '✓ Passwords match';
+            matchDiv.className = 'password-match text-xs mt-1 text-green-600';
+            matchDiv.classList.remove('hidden');
+        } else {
+            matchDiv.textContent = '✗ Passwords do not match';
+            matchDiv.className = 'password-match text-xs mt-1 text-red-600';
+            matchDiv.classList.remove('hidden');
+        }
+        
+        validateForm();
+    }
+    
+    // Email validation
+    const emailInput = document.getElementById('email');
+    const emailStatus = document.querySelector('.email-status');
+    
+    function validateEmail(email) {
+        const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return re.test(email);
+    }
+    
+    function checkEmailAvailability() {
+        const email = emailInput.value;
+        
+        if (email.length === 0) {
+            emailStatus.classList.add('hidden');
+            return;
+        }
+        
+        if (!validateEmail(email)) {
+            emailStatus.textContent = 'Please enter a valid email address';
+            emailStatus.className = 'email-status text-xs mt-1 text-red-600';
+            emailStatus.classList.remove('hidden');
+        } else {
+            emailStatus.textContent = '✓ Email looks good!';
+            emailStatus.className = 'email-status text-xs mt-1 text-green-600';
+            emailStatus.classList.remove('hidden');
+        }
+        
+        validateForm();
+    }
+    
+    // Form validation for submit button
+    const termsCheckbox = document.getElementById('terms');
+    const submitBtn = document.getElementById('submit-btn');
+    
+    function validateForm() {
+        const name = document.getElementById('fullname').value;
+        const email = emailInput.value;
+        const password = passwordInput.value;
+        const confirm = confirmPassword.value;
+        const termsChecked = termsCheckbox.checked;
+        
+        const isValid = name.length > 0 &&
+                       validateEmail(email) &&
+                       password.length >= 8 &&
+                       password === confirm &&
+                       termsChecked;
+        
+        submitBtn.disabled = !isValid;
+    }
+    
+    // Event listeners
+    passwordInput.addEventListener('input', () => {
+        updateStrengthMeter();
+        checkPasswordMatch();
+        validateForm();
+    });
+    
+    confirmPassword.addEventListener('input', () => {
+        checkPasswordMatch();
+        validateForm();
+    });
+    
+    emailInput.addEventListener('input', () => {
+        checkEmailAvailability();
+        validateForm();
+    });
+    
+    document.getElementById('fullname').addEventListener('input', validateForm);
+    termsCheckbox.addEventListener('change', validateForm);
+    
+    function togglePassword(fieldId, iconId) {
+        const field = document.getElementById(fieldId);
+        const icon = document.getElementById(iconId);
+        
+        if (field.type === 'password') {
+            field.type = 'text';
+            icon.classList.remove('bi-eye-fill');
+            icon.classList.add('bi-eye-slash-fill');
+        } else {
+            field.type = 'password';
+            icon.classList.remove('bi-eye-slash-fill');
+            icon.classList.add('bi-eye-fill');
+        }
+    }
+    
+    // Form submission
+    document.getElementById('signup-form')?.addEventListener('submit', function(e) {
+        if (submitBtn.disabled) {
+            e.preventDefault();
+            showToast('Please fill all fields correctly', 'error');
+        } else {
+            showToast('Account created successfully! Redirecting...', 'success');
+            showLoader();
+        }
+    });
+    
+    // Demo hint
+    setTimeout(() => {
+        showToast('Demo: Create account with any details', 'info');
+    }, 1000);
+</script>
+
+<style>
+    @keyframes float-slow {
+        0%, 100% { transform: translateY(0px); }
+        50% { transform: translateY(-20px); }
+    }
+    
+    @keyframes float-mid {
+        0%, 100% { transform: translateY(0px); }
+        50% { transform: translateY(-15px); }
+    }
+    
+    @keyframes float-fast {
+        0%, 100% { transform: translateY(0px); }
+        50% { transform: translateY(-10px); }
+    }
+    
+    .animate-float-slow {
+        animation: float-slow 6s ease-in-out infinite;
+    }
+    
+    .animate-float-mid {
+        animation: float-mid 5s ease-in-out infinite;
+    }
+    
+    .animate-float-fast {
+        animation: float-fast 4s ease-in-out infinite;
+    }
+</style>
+{% endblock %}
