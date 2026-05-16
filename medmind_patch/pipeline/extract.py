@@ -933,6 +933,14 @@ def parse_line(line: str) -> Optional[Dict[str, Any]]:
     m = _COLON_ROW_RE.match(line)
     if m:
         raw_alias = m.group("test_name")
+        raw_alias_clean = clean_alias(raw_alias)
+
+        if _looks_like_narrative_alias(raw_alias_clean.lower()):
+            return None
+
+        canonical_check, _ = resolve_test(raw_alias_clean)
+        if not canonical_check:
+            return None
         value = float(m.group("value"))
         rest = m.group("unit") or ""
 
