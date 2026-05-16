@@ -1160,7 +1160,6 @@ def extract_csv(text: str) -> List[Dict[str, Any]]:
 # ---------------------------------------------------------------------------
 # Result builder
 # ---------------------------------------------------------------------------
-
 def build_result(
     raw_alias: str,
     value: float,
@@ -1170,7 +1169,13 @@ def build_result(
     ref_high: Optional[float] = None,
     regex_matched_full_row: bool = False,
 ) -> Optional[Dict[str, Any]]:
-    canonical, meta = resolve_test(raw_alias)
+
+    raw_alias_clean = clean_alias(raw_alias)
+
+    if _looks_like_narrative_alias(raw_alias_clean.lower()):
+        return None
+
+    canonical, meta = resolve_test(raw_alias_clean)
 
     if not canonical:
         return None
