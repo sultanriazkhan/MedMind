@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MedMind Lab Report Analyzer</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f4f7fb;
+      color: #1f2937;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 30px 20px;
+    }
+
+    .hero {
+      background: linear-gradient(135deg, #2563eb, #0f766e);
+      color: white;
+      padding: 30px;
+      border-radius: 18px;
+      margin-bottom: 25px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+    }
+
+    .hero h1 {
+      margin: 0 0 10px;
+      font-size: 32px;
+    }
+
+    .hero p {
+      margin: 0;
+      font-size: 16px;
+      opacity: 0.95;
+    }
+
+    .card {
+      background: white;
+      border-radius: 16px;
+      padding: 22px;
+      margin-bottom: 18px;
+      box-shadow: 0 6px 18px rgba(15, 23, 42, 0.08);
+      border-left: 6px solid #2563eb;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 220px;
+      padding: 15px;
+      border: 1px solid #cbd5e1;
+      border-radius: 12px;
+      font-size: 15px;
+      resize: vertical;
+      outline: none;
+    }
+
+    textarea:focus {
+      border-color: #2563eb;
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+    }
+
+    .actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 15px;
+    }
+
+    button {
+      border: none;
+      border-radius: 10px;
+      padding: 12px 18px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .btn-primary {
+      background: #2563eb;
+      color: white;
+    }
+
+    .btn-secondary {
+      background: #e5e7eb;
+      color: #111827;
+    }
+
+    button:hover {
+      opacity: 0.92;
+    }
+
+    .summary-card {
+      border-left-color: #0f766e;
+      background: #ecfdf5;
+    }
+
+    .result-card.none {
+      border-left-color: #16a34a;
+    }
+
+    .result-card.mild_to_moderate {
+      border-left-color: #f59e0b;
+    }
+
+    .result-card.review {
+      border-left-color: #6366f1;
+    }
+
+    .result-card.urgent {
+      border-left-color: #dc2626;
+    }
+
+    .result-card.unknown {
+      border-left-color: #64748b;
+    }
+
+    .result-header {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .result-header h3 {
+      margin: 0;
+      font-size: 22px;
+    }
+
+    .status-badge {
+      display: inline-block;
+      padding: 6px 12px;
+      border-radius: 999px;
+      background: #e0f2fe;
+      color: #075985;
+      font-weight: 700;
+      font-size: 13px;
+      white-space: nowrap;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      margin: 12px 0;
+    }
+
+    .info-box {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 12px;
+    }
+
+    .info-box b {
+      display: block;
+      margin-bottom: 5px;
+      color: #334155;
+    }
+
+    details {
+      margin-top: 12px;
+      background: #f8fafc;
+      border-radius: 10px;
+      padding: 10px 12px;
+    }
+
+    summary {
+      cursor: pointer;
+      font-weight: 700;
+    }
+
+    .error {
+      background: #fee2e2;
+      color: #991b1b;
+      border-left-color: #dc2626;
+    }
+
+    .muted {
+      color: #64748b;
+      font-size: 14px;
+    }
+
+    .disclaimer {
+      margin-top: 15px;
+      padding: 12px;
+      border-radius: 10px;
+      background: #fff7ed;
+      color: #9a3412;
+      font-size: 14px;
+    }
+
+    .loader {
+      font-weight: 700;
+      color: #2563eb;
+    }
+
+    @media (max-width: 700px) {
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .result-header {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .hero h1 {
+        font-size: 26px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <section class="hero">
+      <h1>MedMind Lab Report Analyzer</h1>
+      <p>Paste a lab report and get extracted results with patient-friendly explanations.</p>
+    </section>
+
+    <section class="card">
+      <h2>Paste Lab Report</h2>
+      <p class="muted">
+        Example: Hemoglobin, RBC, WBC, Platelets, Glucose, Creatinine, ALT, TSH, etc.
+      </p>
+
+      <form id="reportForm">
+        <textarea id="textInput" name="text_input" placeholder="Paste your lab report here..."></textarea>
+
+        <div class="actions">
+          <button type="submit" class="btn-primary">Analyze Report</button>
+          <button type="button" class="btn-secondary" id="loadSampleBtn">Load Sample</button>
+          <button type="button" class="btn-secondary" id="clearBtn">Clear</button>
+        </div>
+      </form>
+    </section>
+
+    <section id="results"></section>
+  </div>
+
+  <script>
+    const form = document.getElementById("reportForm");
+    const textInput = document.getElementById("textInput");
+    const resultsDiv = document.getElementById("results");
+    const loadSampleBtn = document.getElementById("loadSampleBtn");
+    const clearBtn = document.getElementById("clearBtn");
+
+    loadSampleBtn.addEventListener("click", function () {
+      textInput.value =
+`Hemoglobin (Hb) 13.8 g/dL 13.0 – 17.0
+RBC Count 5.1 million/µL 4.5 – 5.9
+WBC Count 7.4 thousand/µL 4.0 – 11.0
+Platelets 250 thousand/µL 150 – 450
+Hematocrit (HCT) 41.2 % 40 – 50`;
+    });
+
+    clearBtn.addEventListener("click", function () {
+      textInput.value = "";
+      resultsDiv.innerHTML = "";
+    });
+
+    form.addEventListener("submit", async function (e) {
+      e.preventDefault();
+
+      const inputText = textInput.value.trim();
+
+      if (!inputText) {
+        resultsDiv.innerHTML = `
+          <div class="card error">
+            <h3>No input provided</h3>
+            <p>Please paste a lab report before analyzing.</p>
+          </div>
+        `;
+        return;
+      }
+
+      resultsDiv.innerHTML = `
+        <div class="card">
+          <p class="loader">Processing report...</p>
+        </div>
+      `;
+
+      const formData = new FormData();
+      formData.append("text_input", inputText);
+
+      try {
+        const response = await fetch("/process", {
+          method: "POST",
+          body: formData
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          resultsDiv.innerHTML = `
+            <div class="card error">
+              <h3>Processing failed</h3>
+              <p>${data.detail || "Unknown backend error."}</p>
+            </div>
+          `;
+          return;
+        }
+
+        renderResults(data);
+
+      } catch (error) {
+        resultsDiv.innerHTML = `
+          <div class="card error">
+            <h3>Network error</h3>
+            <p>${error.message}</p>
+          </div>
+        `;
+      }
+    });
+
+    function safe(value, fallback = "N/A") {
+      if (value === null || value === undefined || value === "") {
+        return fallback;
+      }
+      return value;
+    }
+
+    function renderResults(data) {
+      resultsDiv.innerHTML = "";
+
+      if (!data.tests || data.tests.length === 0) {
+        resultsDiv.innerHTML = `
+          <div class="card">
+            <h3>No tests extracted</h3>
+            <p>Please check the report format and try again.</p>
+            <p class="muted">Tip: Put each test on a separate line for best results.</p>
+          </div>
+        `;
+        return;
+      }
+
+      if (data.patient_summary) {
+        renderPatientSummary(data.patient_summary);
+      } else if (data.summary && data.summary.patient_summary) {
+        renderPatientSummary(data.summary.patient_summary);
+      }
+
+      data.tests.forEach(test => {
+        const exp = test.patient_explanation || {};
+
+        const testName =
+          exp.display_name ||
+          test.raw_alias ||
+          test.canonical_name ||
+          "Unknown Test";
+
+        const valueText =
+          exp.value_text ||
+          `${test.value ?? ""} ${test.unit ?? ""}`.trim() ||
+          "N/A";
+
+        const status =
+          exp.status ||
+          test.status ||
+          test.flag ||
+          "Unknown";
+
+        const referenceRange =
+          exp.reference_range ||
+          test.reference_range ||
+          "Reference range not available";
+
+        const whatItIs =
+          exp.what_it_is ||
+          "This is a laboratory test parameter.";
+
+        const whyItMatters =
+          exp.why_it_matters ||
+          "This result should be interpreted with the full report and clinical history.";
+
+        const meaning =
+          exp.what_your_result_means ||
+          exp.clinical_meaning ||
+          exp.what_it_means ||
+          test.explanation ||
+          "No explanation available.";
+
+        const recommendation =
+          exp.recommendation ||
+          exp.advice ||
+          "Discuss this result with a healthcare professional if you have symptoms or concerns.";
+
+        const severity =
+          exp.severity ||
+          "unknown";
+
+        const disclaimer =
+          exp.disclaimer ||
+          "This explanation is for educational support only and is not a medical diagnosis.";
+
+        resultsDiv.innerHTML += `
+          <div class="card result-card ${severity}">
+            <div class="result-header">
+              <h3>${testName}</h3>
+              <span class="status-badge">${status}</span>
+            </div>
+
+            <div class="grid">
+              <div class="info-box">
+                <b>Value</b>
+                ${valueText}
+              </div>
+
+              <div class="info-box">
+                <b>Reference Range</b>
+                ${referenceRange}
+              </div>
+            </div>
+
+            <p><b>What it is:</b> ${whatItIs}</p>
+            <p><b>Why it matters:</b> ${whyItMatters}</p>
+            <p><b>Meaning:</b> ${meaning}</p>
+            <p><b>Recommendation:</b> ${recommendation}</p>
+
+            <details>
+              <summary>Technical details</summary>
+              <p><b>Canonical Name:</b> ${safe(test.canonical_name)}</p>
+              <p><b>Raw Alias:</b> ${safe(test.raw_alias)}</p>
+              <p><b>LOINC:</b> ${safe(test.loinc)}</p>
+              <p><b>Category:</b> ${safe(test.category)}</p>
+              <p><b>Flag:</b> ${safe(test.flag)}</p>
+              <p><b>Confidence:</b> ${safe(test.confidence)}</p>
+              <p><b>Reasons:</b> ${(test.reasons || []).join(", ") || "N/A"}</p>
+            </details>
+
+            <div class="disclaimer">
+              ${disclaimer}
+            </div>
+          </div>
+        `;
+      });
+    }
+
+    function renderPatientSummary(summary) {
+      resultsDiv.innerHTML += `
+        <div class="card summary-card">
+          <h2>Overall Summary</h2>
+          <p>${summary.overall_message || "Summary not available."}</p>
+
+          <div class="grid">
+            <div class="info-box">
+              <b>Total Tests</b>
+              ${summary.total_tests ?? 0}
+            </div>
+
+            <div class="info-box">
+              <b>Normal</b>
+              ${summary.normal_count ?? 0}
+            </div>
+
+            <div class="info-box">
+              <b>Need Attention</b>
+              ${summary.attention_count ?? 0}
+            </div>
+
+            <div class="info-box">
+              <b>Need Review</b>
+              ${summary.review_count ?? 0}
+            </div>
+
+            <div class="info-box">
+              <b>Urgent</b>
+              ${summary.urgent_count ?? 0}
+            </div>
+          </div>
+        </div>
+      `;
+    }
+  </script>
+</body>
+</html>

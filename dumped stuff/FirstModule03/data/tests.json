@@ -1,0 +1,2379 @@
+{
+  "hemoglobin": {
+    "canonical_name": "Hemoglobin",
+    "aliases": [
+      "hb",
+      "hgb",
+      "hemoglobin",
+      "haemoglobin",
+      "hb%",
+      "h8",
+      "hgb.",
+      "hemog",
+      "haemog",
+      "hb level"
+    ],
+    "loinc": "718-7",
+    "expected_units": [
+      "g/dL",
+      "gm/dL",
+      "g/dl",
+      "gm/dl"
+    ],
+    "min_value": 1,
+    "max_value": 25,
+    "category": "CBC"
+  },
+  "wbc": {
+    "canonical_name": "WBC",
+    "aliases": [
+      "wbc",
+      "white blood cells",
+      "white blood count",
+      "leukocyte count",
+      "tlc",
+      "total leukocyte count",
+      "wbcc",
+      "wbc count",
+      "leucocytes",
+      "leuco count"
+    ],
+    "loinc": "6690-2",
+    "expected_units": [
+      "/uL",
+      "cells/uL",
+      "/cumm",
+      "10^3/uL",
+      "x10^3/uL",
+      "k/uL"
+    ],
+    "min_value": 100,
+    "max_value": 100000,
+    "category": "CBC"
+  },
+  "rbc": {
+    "canonical_name": "RBC",
+    "aliases": [
+      "rbc",
+      "red blood cells",
+      "red blood count",
+      "erythrocyte count",
+      "rbc count",
+      "red cell count",
+      "r8c",
+      "rbcc",
+      "red cells",
+      "erythrocytes"
+    ],
+    "loinc": "789-8",
+    "expected_units": [
+      "10^6/uL",
+      "mill/uL",
+      "x10^6/uL",
+      "M/uL",
+      "10^12/L"
+    ],
+    "min_value": 0.5,
+    "max_value": 9,
+    "category": "CBC"
+  },
+  "hematocrit": {
+    "canonical_name": "Hematocrit",
+    "aliases": [
+      "hct",
+      "pcv",
+      "packed cell volume",
+      "hematocrit",
+      "haematocrit",
+      "ht",
+      "h.c.t",
+      "p.c.v",
+      "crit",
+      "hct%"
+    ],
+    "loinc": "4544-3",
+    "expected_units": [
+      "%",
+      "L/L",
+      "proportion"
+    ],
+    "min_value": 5,
+    "max_value": 70,
+    "category": "CBC"
+  },
+  "mcv": {
+    "canonical_name": "MCV",
+    "aliases": [
+      "mcv",
+      "mean corpuscular volume",
+      "mean cell volume",
+      "m.c.v",
+      "mean corp vol",
+      "erythrocyte mcv",
+      "mcv index",
+      "cell vol",
+      "mean red cell vol",
+      "mcv."
+    ],
+    "loinc": "787-2",
+    "expected_units": [
+      "fL",
+      "fl",
+      "femtoliters"
+    ],
+    "min_value": 40,
+    "max_value": 130,
+    "category": "CBC"
+  },
+  "mch": {
+    "canonical_name": "MCH",
+    "aliases": [
+      "mch",
+      "mean corpuscular hemoglobin",
+      "mean cell hemoglobin",
+      "m.c.h",
+      "mean corp hb",
+      "mch index",
+      "mean cell hgb",
+      "corp hgb",
+      "mch.",
+      "erythrocyte mch"
+    ],
+    "loinc": "785-6",
+    "expected_units": [
+      "pg",
+      "picograms"
+    ],
+    "min_value": 10,
+    "max_value": 50,
+    "category": "CBC"
+  },
+  "mchc": {
+    "canonical_name": "MCHC",
+    "aliases": [
+      "mchc",
+      "mean corpuscular hemoglobin concentration",
+      "mean cell hgb conc",
+      "m.c.h.c",
+      "mchc index",
+      "corp hgb conc",
+      "mchc.",
+      "mean cell haemoglobin concentration",
+      "erythrocyte mchc",
+      "hgb conc"
+    ],
+    "loinc": "786-4",
+    "expected_units": [
+      "g/dL",
+      "gm/dL",
+      "%"
+    ],
+    "min_value": 20,
+    "max_value": 45,
+    "category": "CBC"
+  },
+  "platelets": {
+    "canonical_name": "Platelets",
+    "aliases": [
+      "plt",
+      "platelets",
+      "platelet count",
+      "thrombocytes",
+      "thrombocyte count",
+      "plts",
+      "plt count",
+      "pl count",
+      "p1t",
+      "blood platelets"
+    ],
+    "loinc": "777-3",
+    "expected_units": [
+      "/uL",
+      "10^3/uL",
+      "x10^3/uL",
+      "k/uL",
+      "thou/uL"
+    ],
+    "min_value": 1000,
+    "max_value": 1500000,
+    "category": "CBC"
+  },
+  "neutrophils": {
+    "canonical_name": "Neutrophils",
+    "aliases": [
+      "neutrophils",
+      "neutrophil count",
+      "neut",
+      "polys",
+      "polymorphs",
+      "pmn",
+      "seg neut",
+      "absolute neutrophils",
+      "neutrophil%",
+      "gran"
+    ],
+    "loinc": "751-8",
+    "expected_units": [
+      "%",
+      "/uL",
+      "10^3/uL"
+    ],
+    "min_value": 0,
+    "max_value": 95,
+    "category": "CBC"
+  },
+  "lymphocytes": {
+    "canonical_name": "Lymphocytes",
+    "aliases": [
+      "lymphocytes",
+      "lymph",
+      "lymphocyte count",
+      "lymph count",
+      "lymp",
+      "lymphs",
+      "lymphocyte%",
+      "abs lymphocytes",
+      "lymph%",
+      "l ymph"
+    ],
+    "loinc": "731-0",
+    "expected_units": [
+      "%",
+      "/uL",
+      "10^3/uL"
+    ],
+    "min_value": 0,
+    "max_value": 95,
+    "category": "CBC"
+  },
+  "monocytes": {
+    "canonical_name": "Monocytes",
+    "aliases": [
+      "monocytes",
+      "mono",
+      "monocyte count",
+      "monocyte%",
+      "mono%",
+      "abs monocytes",
+      "monos",
+      "m0nocytes",
+      "monocyt",
+      "monocyte"
+    ],
+    "loinc": "742-7",
+    "expected_units": [
+      "%",
+      "/uL",
+      "10^3/uL"
+    ],
+    "min_value": 0,
+    "max_value": 30,
+    "category": "CBC"
+  },
+  "eosinophils": {
+    "canonical_name": "Eosinophils",
+    "aliases": [
+      "eosinophils",
+      "eos",
+      "eosinophil count",
+      "eosinophil%",
+      "eos%",
+      "abs eosinophils",
+      "eosino",
+      "eosi",
+      "eosinophils%",
+      "eosin"
+    ],
+    "loinc": "711-2",
+    "expected_units": [
+      "%",
+      "/uL",
+      "10^3/uL"
+    ],
+    "min_value": 0,
+    "max_value": 60,
+    "category": "CBC"
+  },
+  "basophils": {
+    "canonical_name": "Basophils",
+    "aliases": [
+      "basophils",
+      "baso",
+      "basophil count",
+      "basophil%",
+      "baso%",
+      "abs basophils",
+      "basos",
+      "basoph",
+      "bas0phils",
+      "basophyle"
+    ],
+    "loinc": "704-7",
+    "expected_units": [
+      "%",
+      "/uL",
+      "10^3/uL"
+    ],
+    "min_value": 0,
+    "max_value": 10,
+    "category": "CBC"
+  },
+  "esr": {
+    "canonical_name": "ESR",
+    "aliases": [
+      "esr",
+      "erythrocyte sedimentation rate",
+      "sedimentation rate",
+      "sed rate",
+      "e.s.r",
+      "blood sed rate",
+      "erythrocyte sed rate",
+      "westergren esr",
+      "esr rate",
+      "sedimentation"
+    ],
+    "loinc": "30341-2",
+    "expected_units": [
+      "mm/hr",
+      "mm/h",
+      "mm/1hr"
+    ],
+    "min_value": 0,
+    "max_value": 150,
+    "category": "CBC"
+  },
+  "bilirubin_total": {
+    "canonical_name": "Bilirubin Total",
+    "aliases": [
+      "total bilirubin",
+      "t. bili",
+      "tbili",
+      "t bilirubin",
+      "bilirubin total",
+      "total bil",
+      "tot bilirubin",
+      "tbil",
+      "bil total",
+      "bilirubin t"
+    ],
+    "loinc": "1975-2",
+    "expected_units": [
+      "mg/dL",
+      "mg/dl",
+      "umol/L"
+    ],
+    "min_value": 0,
+    "max_value": 60,
+    "category": "LFT"
+  },
+  "bilirubin_direct": {
+    "canonical_name": "Bilirubin Direct",
+    "aliases": [
+      "direct bilirubin",
+      "d. bili",
+      "dbili",
+      "direct bil",
+      "conjugated bilirubin",
+      "d bilirubin",
+      "bil direct",
+      "direct biliru",
+      "dbil",
+      "conj bili"
+    ],
+    "loinc": "1968-7",
+    "expected_units": [
+      "mg/dL",
+      "mg/dl",
+      "umol/L"
+    ],
+    "min_value": 0,
+    "max_value": 30,
+    "category": "LFT"
+  },
+  "bilirubin_indirect": {
+    "canonical_name": "Bilirubin Indirect",
+    "aliases": [
+      "indirect bilirubin",
+      "i. bili",
+      "ibili",
+      "indirect bil",
+      "unconjugated bilirubin",
+      "i bilirubin",
+      "bil indirect",
+      "unconj bili",
+      "ibil",
+      "indirect biliru"
+    ],
+    "loinc": "1971-1",
+    "expected_units": [
+      "mg/dL",
+      "mg/dl",
+      "umol/L"
+    ],
+    "min_value": 0,
+    "max_value": 30,
+    "category": "LFT"
+  },
+  "alt": {
+    "canonical_name": "ALT",
+    "aliases": [
+      "alt",
+      "sgpt",
+      "alanine aminotransferase",
+      "alanine transaminase",
+      "s.g.p.t",
+      "serum gpt",
+      "gpt",
+      "alt/sgpt",
+      "alanine aminotrans",
+      "a1t"
+    ],
+    "loinc": "1742-6",
+    "expected_units": [
+      "IU/L",
+      "U/L",
+      "iu/l",
+      "u/l"
+    ],
+    "min_value": 0,
+    "max_value": 2000,
+    "category": "LFT"
+  },
+  "ast": {
+    "canonical_name": "AST",
+    "aliases": [
+      "ast",
+      "sgot",
+      "aspartate aminotransferase",
+      "aspartate transaminase",
+      "s.g.o.t",
+      "serum got",
+      "got",
+      "ast/sgot",
+      "aspartate aminotrans",
+      "a5t"
+    ],
+    "loinc": "1920-8",
+    "expected_units": [
+      "IU/L",
+      "U/L",
+      "iu/l",
+      "u/l"
+    ],
+    "min_value": 0,
+    "max_value": 3000,
+    "category": "LFT"
+  },
+  "alkaline_phosphatase": {
+    "canonical_name": "Alkaline Phosphatase",
+    "aliases": [
+      "alp",
+      "alkaline phosphatase",
+      "alk phos",
+      "alkphos",
+      "a.l.p",
+      "alk phosphatase",
+      "serum alp",
+      "alp level",
+      "phosphatase alk",
+      "alkp"
+    ],
+    "loinc": "6768-6",
+    "expected_units": [
+      "IU/L",
+      "U/L",
+      "iu/l",
+      "u/l"
+    ],
+    "min_value": 10,
+    "max_value": 3000,
+    "category": "LFT"
+  },
+  "ggt": {
+    "canonical_name": "GGT",
+    "aliases": [
+      "ggt",
+      "gamma gt",
+      "gamma glutamyl transferase",
+      "gamma-gt",
+      "g.g.t",
+      "gamma glutamyl transpeptidase",
+      "ggtp",
+      "gamma glutamyltransferase",
+      "ggt level",
+      "g-gt"
+    ],
+    "loinc": "2324-2",
+    "expected_units": [
+      "IU/L",
+      "U/L",
+      "iu/l",
+      "u/l"
+    ],
+    "min_value": 0,
+    "max_value": 1000,
+    "category": "LFT"
+  },
+  "total_protein": {
+    "canonical_name": "Total Protein",
+    "aliases": [
+      "total protein",
+      "tot protein",
+      "protein total",
+      "serum protein",
+      "s. protein",
+      "tp",
+      "t. protein",
+      "total prot",
+      "prot total",
+      "serum total protein"
+    ],
+    "loinc": "2885-2",
+    "expected_units": [
+      "g/dL",
+      "gm/dL",
+      "g/dl"
+    ],
+    "min_value": 1,
+    "max_value": 15,
+    "category": "LFT"
+  },
+  "albumin": {
+    "canonical_name": "Albumin",
+    "aliases": [
+      "albumin",
+      "alb",
+      "serum albumin",
+      "s. albumin",
+      "album",
+      "albumin level",
+      "a1bumin",
+      "serum alb",
+      "alb level",
+      "albm"
+    ],
+    "loinc": "1751-7",
+    "expected_units": [
+      "g/dL",
+      "gm/dL",
+      "g/dl"
+    ],
+    "min_value": 0.5,
+    "max_value": 10,
+    "category": "LFT"
+  },
+  "globulin": {
+    "canonical_name": "Globulin",
+    "aliases": [
+      "globulin",
+      "glob",
+      "serum globulin",
+      "total globulin",
+      "globulins",
+      "g1obulin",
+      "serum glob",
+      "glob level",
+      "globulin level",
+      "total glob"
+    ],
+    "loinc": "10834-0",
+    "expected_units": [
+      "g/dL",
+      "gm/dL",
+      "g/dl"
+    ],
+    "min_value": 0.5,
+    "max_value": 10,
+    "category": "LFT"
+  },
+  "ag_ratio": {
+    "canonical_name": "A/G Ratio",
+    "aliases": [
+      "a/g ratio",
+      "ag ratio",
+      "albumin globulin ratio",
+      "a:g ratio",
+      "a-g ratio",
+      "alb/glob",
+      "alb glob ratio",
+      "ag",
+      "albumin/globulin",
+      "a/g"
+    ],
+    "loinc": "1759-0",
+    "expected_units": [
+      "ratio",
+      ""
+    ],
+    "min_value": 0.1,
+    "max_value": 5,
+    "category": "LFT"
+  },
+  "creatinine": {
+    "canonical_name": "Creatinine",
+    "aliases": [
+      "creatinine",
+      "creat",
+      "serum creatinine",
+      "s. creatinine",
+      "crtn",
+      "cr",
+      "crt",
+      "serum creat",
+      "creatinin",
+      "c reatinine"
+    ],
+    "loinc": "2160-0",
+    "expected_units": [
+      "mg/dL",
+      "mg/dl",
+      "umol/L"
+    ],
+    "min_value": 0.1,
+    "max_value": 30,
+    "category": "RFT"
+  },
+  "bun": {
+    "canonical_name": "BUN",
+    "aliases": [
+      "bun",
+      "blood urea nitrogen",
+      "urea nitrogen",
+      "serum bun",
+      "b.u.n",
+      "blood urea n",
+      "urea n",
+      "bun level",
+      "nitrogen urea",
+      "bl urea nitrogen"
+    ],
+    "loinc": "3094-0",
+    "expected_units": [
+      "mg/dL",
+      "mg/dl",
+      "mmol/L"
+    ],
+    "min_value": 1,
+    "max_value": 150,
+    "category": "RFT"
+  },
+  "urea": {
+    "canonical_name": "Urea",
+    "aliases": [
+      "urea",
+      "blood urea",
+      "serum urea",
+      "urea level",
+      "s. urea",
+      "bl urea",
+      "ur",
+      "urea conc",
+      "uremia level",
+      "plasma urea"
+    ],
+    "loinc": "22664-7",
+    "expected_units": [
+      "mg/dL",
+      "mg/dl",
+      "mmol/L"
+    ],
+    "min_value": 5,
+    "max_value": 400,
+    "category": "RFT"
+  },
+  "uric_acid": {
+    "canonical_name": "Uric Acid",
+    "aliases": [
+      "uric acid",
+      "ua",
+      "serum uric acid",
+      "urate",
+      "uric acid level",
+      "s. uric acid",
+      "uric",
+      "hyperuricemia test",
+      "uric ac",
+      "blood uric acid"
+    ],
+    "loinc": "3084-1",
+    "expected_units": [
+      "mg/dL",
+      "mg/dl",
+      "umol/L"
+    ],
+    "min_value": 0.5,
+    "max_value": 20,
+    "category": "RFT"
+  },
+  "gfr": {
+    "canonical_name": "eGFR",
+    "aliases": [
+      "egfr",
+      "gfr",
+      "estimated gfr",
+      "glomerular filtration rate",
+      "e.g.f.r",
+      "calc gfr",
+      "estimated glomerular filtration",
+      "kidney filtration rate",
+      "gfr estimate",
+      "efgr"
+    ],
+    "loinc": "62238-1",
+    "expected_units": [
+      "mL/min/1.73m2",
+      "ml/min",
+      "mL/min"
+    ],
+    "min_value": 1,
+    "max_value": 200,
+    "category": "RFT"
+  },
+  "cholesterol_total": {
+    "canonical_name": "Cholesterol Total",
+    "aliases": [
+      "total cholesterol",
+      "cholesterol",
+      "chol",
+      "tot chol",
+      "serum cholesterol",
+      "tc",
+      "t. chol",
+      "blood cholesterol",
+      "cholesterol total",
+      "total chol"
+    ],
+    "loinc": "2093-3",
+    "expected_units": [
+      "mg/dL",
+      "mg/dl",
+      "mmol/L"
+    ],
+    "min_value": 50,
+    "max_value": 700,
+    "category": "Lipid Profile"
+  },
+  "hdl": {
+    "canonical_name": "HDL Cholesterol",
+    "aliases": [
+      "hdl",
+      "hdl cholesterol",
+      "hdl-c",
+      "hdl chol",
+      "high density lipoprotein",
+      "good cholesterol",
+      "hdl-chol",
+      "hdl level",
+      "h.d.l",
+      "hdlc"
+    ],
+    "loinc": "2085-9",
+    "expected_units": [
+      "mg/dL",
+      "mg/dl",
+      "mmol/L"
+    ],
+    "min_value": 5,
+    "max_value": 150,
+    "category": "Lipid Profile"
+  },
+  "ldl": {
+    "canonical_name": "LDL Cholesterol",
+    "aliases": [
+      "ldl",
+      "ldl cholesterol",
+      "ldl-c",
+      "ldl chol",
+      "low density lipoprotein",
+      "bad cholesterol",
+      "ldl-chol",
+      "ldl level",
+      "l.d.l",
+      "ldlc"
+    ],
+    "loinc": "2089-1",
+    "expected_units": [
+      "mg/dL",
+      "mg/dl",
+      "mmol/L"
+    ],
+    "min_value": 10,
+    "max_value": 500,
+    "category": "Lipid Profile"
+  },
+  "triglycerides": {
+    "canonical_name": "Triglycerides",
+    "aliases": [
+      "triglycerides",
+      "trig",
+      "tg",
+      "trigs",
+      "triglyceride",
+      "serum triglycerides",
+      "tg level",
+      "blood tg",
+      "trigl",
+      "trigly"
+    ],
+    "loinc": "2571-8",
+    "expected_units": [
+      "mg/dL",
+      "mg/dl",
+      "mmol/L"
+    ],
+    "min_value": 20,
+    "max_value": 3000,
+    "category": "Lipid Profile"
+  },
+  "vldl": {
+    "canonical_name": "VLDL Cholesterol",
+    "aliases": [
+      "vldl",
+      "vldl cholesterol",
+      "vldl-c",
+      "vldl chol",
+      "very low density lipoprotein",
+      "vldl level",
+      "v.l.d.l",
+      "vldlc",
+      "vldl-chol",
+      "very ldl"
+    ],
+    "loinc": "13458-5",
+    "expected_units": [
+      "mg/dL",
+      "mg/dl",
+      "mmol/L"
+    ],
+    "min_value": 2,
+    "max_value": 500,
+    "category": "Lipid Profile"
+  },
+  "glucose_fasting": {
+    "canonical_name": "Fasting Blood Glucose",
+    "aliases": [
+      "fasting glucose",
+      "fbg",
+      "fbs",
+      "fasting blood sugar",
+      "fasting blood glucose",
+      "fpg",
+      "fasting sugar",
+      "glucose fasting",
+      "blood glucose fasting",
+      "glucose f"
+    ],
+    "loinc": "1558-6",
+    "expected_units": [
+      "mg/dL",
+      "mg/dl",
+      "mmol/L"
+    ],
+    "min_value": 20,
+    "max_value": 700,
+    "category": "Diabetes"
+  },
+  "glucose_random": {
+    "canonical_name": "Random Blood Glucose",
+    "aliases": [
+      "random glucose",
+      "rbg",
+      "rbs",
+      "random blood sugar",
+      "random blood glucose",
+      "rpg",
+      "random sugar",
+      "glucose random",
+      "blood glucose random",
+      "glucose r"
+    ],
+    "loinc": "2345-7",
+    "expected_units": [
+      "mg/dL",
+      "mg/dl",
+      "mmol/L"
+    ],
+    "min_value": 20,
+    "max_value": 900,
+    "category": "Diabetes"
+  },
+  "glucose_pp": {
+    "canonical_name": "Postprandial Blood Glucose",
+    "aliases": [
+      "pp glucose",
+      "ppbg",
+      "ppbs",
+      "postprandial blood sugar",
+      "2hr pp glucose",
+      "pp blood sugar",
+      "post meal glucose",
+      "2 hr pp",
+      "pp sugar",
+      "2hpp"
+    ],
+    "loinc": "1521-4",
+    "expected_units": [
+      "mg/dL",
+      "mg/dl",
+      "mmol/L"
+    ],
+    "min_value": 20,
+    "max_value": 900,
+    "category": "Diabetes"
+  },
+  "hba1c": {
+    "canonical_name": "HbA1c",
+    "aliases": [
+      "hba1c",
+      "a1c",
+      "glycated hemoglobin",
+      "glycosylated hemoglobin",
+      "hemoglobin a1c",
+      "hgba1c",
+      "ha1c",
+      "hb a1c",
+      "ghb",
+      "glycohemoglobin"
+    ],
+    "loinc": "4548-4",
+    "expected_units": [
+      "%",
+      "mmol/mol"
+    ],
+    "min_value": 2,
+    "max_value": 20,
+    "category": "Diabetes"
+  },
+  "insulin_fasting": {
+    "canonical_name": "Fasting Insulin",
+    "aliases": [
+      "fasting insulin",
+      "insulin fasting",
+      "serum insulin",
+      "insulin level",
+      "f. insulin",
+      "basal insulin",
+      "insulin f",
+      "blood insulin",
+      "ins fasting",
+      "fasting ins"
+    ],
+    "loinc": "20448-7",
+    "expected_units": [
+      "uIU/mL",
+      "mIU/L",
+      "pmol/L"
+    ],
+    "min_value": 0,
+    "max_value": 500,
+    "category": "Diabetes"
+  },
+  "tsh": {
+    "canonical_name": "TSH",
+    "aliases": [
+      "tsh",
+      "thyroid stimulating hormone",
+      "thyrotropin",
+      "t.s.h",
+      "serum tsh",
+      "tsh level",
+      "thyroid stim hormone",
+      "thyroid stim",
+      "tsh3",
+      "ultrasensitive tsh"
+    ],
+    "loinc": "3016-3",
+    "expected_units": [
+      "mIU/L",
+      "uIU/mL",
+      "mlU/L"
+    ],
+    "min_value": 0.001,
+    "max_value": 150,
+    "category": "Thyroid"
+  },
+  "t3": {
+    "canonical_name": "T3 Total",
+    "aliases": [
+      "t3",
+      "triiodothyronine",
+      "total t3",
+      "t3 total",
+      "serum t3",
+      "t-3",
+      "t 3",
+      "tri iodothyronine",
+      "t3 level",
+      "tt3"
+    ],
+    "loinc": "3050-2",
+    "expected_units": [
+      "ng/dL",
+      "nmol/L",
+      "pg/mL"
+    ],
+    "min_value": 10,
+    "max_value": 600,
+    "category": "Thyroid"
+  },
+  "t4": {
+    "canonical_name": "T4 Total",
+    "aliases": [
+      "t4",
+      "thyroxine",
+      "total t4",
+      "t4 total",
+      "serum t4",
+      "t-4",
+      "t 4",
+      "thyroxine total",
+      "t4 level",
+      "tt4"
+    ],
+    "loinc": "3026-2",
+    "expected_units": [
+      "ug/dL",
+      "nmol/L",
+      "mcg/dL"
+    ],
+    "min_value": 1,
+    "max_value": 30,
+    "category": "Thyroid"
+  },
+  "free_t3": {
+    "canonical_name": "Free T3",
+    "aliases": [
+      "free t3",
+      "ft3",
+      "f.t3",
+      "free triiodothyronine",
+      "ft 3",
+      "free t-3",
+      "freeT3",
+      "ft3 level",
+      "free tri iodo",
+      "f t3"
+    ],
+    "loinc": "3051-0",
+    "expected_units": [
+      "pg/mL",
+      "pmol/L",
+      "ng/dL"
+    ],
+    "min_value": 0.5,
+    "max_value": 20,
+    "category": "Thyroid"
+  },
+  "free_t4": {
+    "canonical_name": "Free T4",
+    "aliases": [
+      "free t4",
+      "ft4",
+      "f.t4",
+      "free thyroxine",
+      "ft 4",
+      "free t-4",
+      "freeT4",
+      "ft4 level",
+      "free thyrox",
+      "f t4"
+    ],
+    "loinc": "3024-7",
+    "expected_units": [
+      "ng/dL",
+      "pmol/L",
+      "ng/mL"
+    ],
+    "min_value": 0.1,
+    "max_value": 10,
+    "category": "Thyroid"
+  },
+  "sodium": {
+    "canonical_name": "Sodium",
+    "aliases": [
+      "sodium",
+      "na",
+      "na+",
+      "serum sodium",
+      "s. sodium",
+      "sodium level",
+      "plasma sodium",
+      "na level",
+      "electrolyte sodium",
+      "natrium"
+    ],
+    "loinc": "2951-2",
+    "expected_units": [
+      "mEq/L",
+      "mmol/L",
+      "meq/l"
+    ],
+    "min_value": 80,
+    "max_value": 180,
+    "category": "Electrolytes"
+  },
+  "potassium": {
+    "canonical_name": "Potassium",
+    "aliases": [
+      "potassium",
+      "k",
+      "k+",
+      "serum potassium",
+      "s. potassium",
+      "potassium level",
+      "plasma potassium",
+      "k level",
+      "electrolyte potassium",
+      "kalium"
+    ],
+    "loinc": "2823-3",
+    "expected_units": [
+      "mEq/L",
+      "mmol/L",
+      "meq/l"
+    ],
+    "min_value": 1,
+    "max_value": 10,
+    "category": "Electrolytes"
+  },
+  "chloride": {
+    "canonical_name": "Chloride",
+    "aliases": [
+      "chloride",
+      "cl",
+      "cl-",
+      "serum chloride",
+      "s. chloride",
+      "chloride level",
+      "plasma chloride",
+      "cl level",
+      "electrolyte chloride",
+      "chlor"
+    ],
+    "loinc": "2075-0",
+    "expected_units": [
+      "mEq/L",
+      "mmol/L",
+      "meq/l"
+    ],
+    "min_value": 60,
+    "max_value": 160,
+    "category": "Electrolytes"
+  },
+  "bicarbonate": {
+    "canonical_name": "Bicarbonate",
+    "aliases": [
+      "bicarbonate",
+      "hco3",
+      "hco3-",
+      "serum bicarbonate",
+      "bicarb",
+      "co2 content",
+      "total co2",
+      "hco3 level",
+      "plasma bicarb",
+      "bicarbonate level"
+    ],
+    "loinc": "1963-8",
+    "expected_units": [
+      "mEq/L",
+      "mmol/L",
+      "meq/l"
+    ],
+    "min_value": 5,
+    "max_value": 50,
+    "category": "Electrolytes"
+  },
+  "calcium": {
+    "canonical_name": "Calcium",
+    "aliases": [
+      "calcium",
+      "ca",
+      "ca2+",
+      "serum calcium",
+      "s. calcium",
+      "calcium level",
+      "total calcium",
+      "ca level",
+      "electrolyte calcium",
+      "blood calcium"
+    ],
+    "loinc": "17861-6",
+    "expected_units": [
+      "mg/dL",
+      "mmol/L",
+      "mEq/L"
+    ],
+    "min_value": 3,
+    "max_value": 20,
+    "category": "Electrolytes"
+  },
+  "phosphorus": {
+    "canonical_name": "Phosphorus",
+    "aliases": [
+      "phosphorus",
+      "phosphate",
+      "phos",
+      "po4",
+      "serum phosphorus",
+      "inorganic phosphate",
+      "phosphate level",
+      "phos level",
+      "s. phosphorus",
+      "ph0sphorus"
+    ],
+    "loinc": "2777-1",
+    "expected_units": [
+      "mg/dL",
+      "mmol/L"
+    ],
+    "min_value": 0.5,
+    "max_value": 15,
+    "category": "Electrolytes"
+  },
+  "magnesium": {
+    "canonical_name": "Magnesium",
+    "aliases": [
+      "magnesium",
+      "mg",
+      "mg2+",
+      "serum magnesium",
+      "s. magnesium",
+      "magnesium level",
+      "total magnesium",
+      "mg level",
+      "electrolyte magnesium",
+      "blood magnesium"
+    ],
+    "loinc": "2601-3",
+    "expected_units": [
+      "mg/dL",
+      "mmol/L",
+      "mEq/L"
+    ],
+    "min_value": 0.5,
+    "max_value": 10,
+    "category": "Electrolytes"
+  },
+  "urine_color": {
+    "canonical_name": "Urine Color",
+    "aliases": [
+      "urine color",
+      "colour",
+      "urine colour",
+      "urine col",
+      "color of urine",
+      "ur color",
+      "ur colour",
+      "urine appearance color",
+      "col",
+      "urine c"
+    ],
+    "loinc": "5778-6",
+    "expected_units": [],
+    "min_value": 0,
+    "max_value": 0,
+    "category": "Urine Routine"
+  },
+  "urine_ph": {
+    "canonical_name": "Urine pH",
+    "aliases": [
+      "urine ph",
+      "ur ph",
+      "urinary ph",
+      "ph urine",
+      "ph of urine",
+      "u.ph",
+      "urine acid",
+      "urine alkaline",
+      "reaction ph",
+      "urine reaction"
+    ],
+    "loinc": "5764-6",
+    "expected_units": [
+      "pH",
+      ""
+    ],
+    "min_value": 3,
+    "max_value": 10,
+    "category": "Urine Routine"
+  },
+  "urine_specific_gravity": {
+    "canonical_name": "Urine Specific Gravity",
+    "aliases": [
+      "specific gravity",
+      "sg",
+      "urine sg",
+      "urine specific gravity",
+      "sp gravity",
+      "sp. gravity",
+      "urine sp gr",
+      "s.g.",
+      "specific gr",
+      "spgr"
+    ],
+    "loinc": "2965-2",
+    "expected_units": [],
+    "min_value": 1.001,
+    "max_value": 1.04,
+    "category": "Urine Routine"
+  },
+  "urine_protein": {
+    "canonical_name": "Urine Protein",
+    "aliases": [
+      "urine protein",
+      "ur protein",
+      "proteinuria",
+      "protein urine",
+      "protein in urine",
+      "urinary protein",
+      "u. protein",
+      "protein ur",
+      "prot urine",
+      "albumin urine"
+    ],
+    "loinc": "2888-6",
+    "expected_units": [
+      "mg/dL",
+      "mg/L",
+      "+",
+      "g/L"
+    ],
+    "min_value": 0,
+    "max_value": 5000,
+    "category": "Urine Routine"
+  },
+  "urine_glucose": {
+    "canonical_name": "Urine Glucose",
+    "aliases": [
+      "urine glucose",
+      "ur glucose",
+      "glucosuria",
+      "glucose urine",
+      "glucose in urine",
+      "urinary glucose",
+      "u. glucose",
+      "glucose ur",
+      "sugar urine",
+      "urine sugar"
+    ],
+    "loinc": "25428-4",
+    "expected_units": [
+      "mg/dL",
+      "+",
+      ""
+    ],
+    "min_value": 0,
+    "max_value": 2000,
+    "category": "Urine Routine"
+  },
+  "urine_ketones": {
+    "canonical_name": "Urine Ketones",
+    "aliases": [
+      "urine ketones",
+      "ur ketones",
+      "ketonuria",
+      "ketones urine",
+      "ketone bodies",
+      "urinary ketones",
+      "u. ketones",
+      "ketones ur",
+      "acetone urine",
+      "urine acetone"
+    ],
+    "loinc": "2514-8",
+    "expected_units": [
+      "+",
+      "mg/dL",
+      ""
+    ],
+    "min_value": 0,
+    "max_value": 300,
+    "category": "Urine Routine"
+  },
+  "urine_rbcs": {
+    "canonical_name": "Urine RBCs",
+    "aliases": [
+      "urine rbc",
+      "ur rbc",
+      "rbc urine",
+      "red cells urine",
+      "urine red cells",
+      "erythrocytes urine",
+      "urinary rbc",
+      "hematuria rbc",
+      "rbc ur",
+      "red blood cells urine"
+    ],
+    "loinc": "13945-1",
+    "expected_units": [
+      "/hpf",
+      "/HPF",
+      "/uL"
+    ],
+    "min_value": 0,
+    "max_value": 5000,
+    "category": "Urine Routine"
+  },
+  "urine_wbcs": {
+    "canonical_name": "Urine WBCs",
+    "aliases": [
+      "urine wbc",
+      "ur wbc",
+      "wbc urine",
+      "pus cells",
+      "pus cells urine",
+      "leukocytes urine",
+      "urinary wbc",
+      "pyuria wbc",
+      "wbc ur",
+      "white cells urine"
+    ],
+    "loinc": "5821-4",
+    "expected_units": [
+      "/hpf",
+      "/HPF",
+      "/uL"
+    ],
+    "min_value": 0,
+    "max_value": 5000,
+    "category": "Urine Routine"
+  },
+  "troponin_i": {
+    "canonical_name": "Troponin I",
+    "aliases": [
+      "troponin i",
+      "trop i",
+      "ctni",
+      "cardiac troponin i",
+      "troponin-i",
+      "hs troponin i",
+      "high sensitivity troponin i",
+      "tropi",
+      "c troponin i",
+      "troponin1"
+    ],
+    "loinc": "10839-9",
+    "expected_units": [
+      "ng/mL",
+      "ug/L",
+      "ng/L",
+      "pg/mL"
+    ],
+    "min_value": 0,
+    "max_value": 100,
+    "category": "Cardiac Markers"
+  },
+  "troponin_t": {
+    "canonical_name": "Troponin T",
+    "aliases": [
+      "troponin t",
+      "trop t",
+      "ctnt",
+      "cardiac troponin t",
+      "troponin-t",
+      "hs troponin t",
+      "high sensitivity troponin t",
+      "tropt",
+      "c troponin t",
+      "troponin2"
+    ],
+    "loinc": "6598-7",
+    "expected_units": [
+      "ng/mL",
+      "ug/L",
+      "ng/L",
+      "pg/mL"
+    ],
+    "min_value": 0,
+    "max_value": 100,
+    "category": "Cardiac Markers"
+  },
+  "cpk": {
+    "canonical_name": "CPK",
+    "aliases": [
+      "cpk",
+      "creatine phosphokinase",
+      "creatine kinase",
+      "ck",
+      "c.p.k",
+      "serum cpk",
+      "cpk total",
+      "ck total",
+      "creatinine kinase",
+      "ck-total"
+    ],
+    "loinc": "2157-6",
+    "expected_units": [
+      "IU/L",
+      "U/L",
+      "iu/l"
+    ],
+    "min_value": 5,
+    "max_value": 20000,
+    "category": "Cardiac Markers"
+  },
+  "cpk_mb": {
+    "canonical_name": "CPK-MB",
+    "aliases": [
+      "cpk mb",
+      "cpk-mb",
+      "ck mb",
+      "ck-mb",
+      "creatine kinase mb",
+      "cpk mb fraction",
+      "ck mb fraction",
+      "ckmb",
+      "cpkmb",
+      "mb fraction"
+    ],
+    "loinc": "13969-1",
+    "expected_units": [
+      "IU/L",
+      "U/L",
+      "ng/mL",
+      "%"
+    ],
+    "min_value": 0,
+    "max_value": 500,
+    "category": "Cardiac Markers"
+  },
+  "bnp": {
+    "canonical_name": "BNP",
+    "aliases": [
+      "bnp",
+      "b-type natriuretic peptide",
+      "brain natriuretic peptide",
+      "nt-probnp",
+      "proBNP",
+      "ntprobnp",
+      "nt probnp",
+      "b.n.p",
+      "bnp level",
+      "brain nat peptide"
+    ],
+    "loinc": "42637-9",
+    "expected_units": [
+      "pg/mL",
+      "ng/L"
+    ],
+    "min_value": 0,
+    "max_value": 35000,
+    "category": "Cardiac Markers"
+  },
+  "serum_iron": {
+    "canonical_name": "Serum Iron",
+    "aliases": [
+      "serum iron",
+      "iron",
+      "iron level",
+      "fe",
+      "s. iron",
+      "blood iron",
+      "iron serum",
+      "fe level",
+      "serum fe",
+      "iron test"
+    ],
+    "loinc": "2498-4",
+    "expected_units": [
+      "ug/dL",
+      "umol/L",
+      "mcg/dL"
+    ],
+    "min_value": 5,
+    "max_value": 500,
+    "category": "Iron Studies"
+  },
+  "tibc": {
+    "canonical_name": "TIBC",
+    "aliases": [
+      "tibc",
+      "total iron binding capacity",
+      "iron binding capacity",
+      "t.i.b.c",
+      "total ibc",
+      "serum tibc",
+      "iron binding",
+      "ibc total",
+      "ti binding cap",
+      "total fe binding"
+    ],
+    "loinc": "2501-5",
+    "expected_units": [
+      "ug/dL",
+      "umol/L",
+      "mcg/dL"
+    ],
+    "min_value": 100,
+    "max_value": 800,
+    "category": "Iron Studies"
+  },
+  "ferritin": {
+    "canonical_name": "Ferritin",
+    "aliases": [
+      "ferritin",
+      "serum ferritin",
+      "ferritin level",
+      "fe storage",
+      "iron stores",
+      "s. ferritin",
+      "ferrit",
+      "ferritin serum",
+      "blood ferritin",
+      "f erritin"
+    ],
+    "loinc": "2276-4",
+    "expected_units": [
+      "ng/mL",
+      "ug/L",
+      "pmol/L"
+    ],
+    "min_value": 0.5,
+    "max_value": 10000,
+    "category": "Iron Studies"
+  },
+  "transferrin": {
+    "canonical_name": "Transferrin",
+    "aliases": [
+      "transferrin",
+      "serum transferrin",
+      "transferrin level",
+      "fe transport",
+      "iron transport protein",
+      "s. transferrin",
+      "transf",
+      "transferrin serum",
+      "blood transferrin",
+      "t ransferrin"
+    ],
+    "loinc": "2500-7",
+    "expected_units": [
+      "mg/dL",
+      "g/L"
+    ],
+    "min_value": 50,
+    "max_value": 500,
+    "category": "Iron Studies"
+  },
+  "vitamin_d": {
+    "canonical_name": "Vitamin D",
+    "aliases": [
+      "vitamin d",
+      "vit d",
+      "25-ohd",
+      "25 hydroxyvitamin d",
+      "25(oh)d",
+      "cholecalciferol",
+      "vit d3",
+      "vitamin d3",
+      "25 oh vit d",
+      "d3 level"
+    ],
+    "loinc": "1989-3",
+    "expected_units": [
+      "ng/mL",
+      "nmol/L"
+    ],
+    "min_value": 1,
+    "max_value": 200,
+    "category": "Vitamins"
+  },
+  "vitamin_b12": {
+    "canonical_name": "Vitamin B12",
+    "aliases": [
+      "vitamin b12",
+      "vit b12",
+      "cobalamin",
+      "cyanocobalamin",
+      "b12",
+      "vit b-12",
+      "b-12",
+      "serum b12",
+      "b12 level",
+      "vitamin b 12"
+    ],
+    "loinc": "2132-9",
+    "expected_units": [
+      "pg/mL",
+      "pmol/L"
+    ],
+    "min_value": 50,
+    "max_value": 2000,
+    "category": "Vitamins"
+  },
+  "folate": {
+    "canonical_name": "Folate",
+    "aliases": [
+      "folate",
+      "folic acid",
+      "vit b9",
+      "serum folate",
+      "folic acid level",
+      "folate level",
+      "f olate",
+      "b9",
+      "vit b-9",
+      "serum folic acid"
+    ],
+    "loinc": "2284-8",
+    "expected_units": [
+      "ng/mL",
+      "nmol/L"
+    ],
+    "min_value": 0.5,
+    "max_value": 60,
+    "category": "Vitamins"
+  },
+  "lh": {
+    "canonical_name": "LH",
+    "aliases": [
+      "lh",
+      "luteinizing hormone",
+      "lutenizing hormone",
+      "l.h",
+      "serum lh",
+      "lh level",
+      "lh hormone",
+      "lutropin",
+      "icsh",
+      "lh miu"
+    ],
+    "loinc": "10501-5",
+    "expected_units": [
+      "mIU/mL",
+      "IU/L"
+    ],
+    "min_value": 0.1,
+    "max_value": 200,
+    "category": "Hormones"
+  },
+  "fsh": {
+    "canonical_name": "FSH",
+    "aliases": [
+      "fsh",
+      "follicle stimulating hormone",
+      "follicle-stimulating hormone",
+      "f.s.h",
+      "serum fsh",
+      "fsh level",
+      "fsh hormone",
+      "follitropin",
+      "fsh miu",
+      "fsh iu"
+    ],
+    "loinc": "15067-2",
+    "expected_units": [
+      "mIU/mL",
+      "IU/L"
+    ],
+    "min_value": 0.1,
+    "max_value": 200,
+    "category": "Hormones"
+  },
+  "prolactin": {
+    "canonical_name": "Prolactin",
+    "aliases": [
+      "prolactin",
+      "prl",
+      "serum prolactin",
+      "prl level",
+      "prolactin level",
+      "p.r.l",
+      "blood prolactin",
+      "prolactin hormone",
+      "prl hormone",
+      "pr0lactin"
+    ],
+    "loinc": "2842-3",
+    "expected_units": [
+      "ng/mL",
+      "mIU/L",
+      "ug/L"
+    ],
+    "min_value": 0.5,
+    "max_value": 500,
+    "category": "Hormones"
+  },
+  "testosterone": {
+    "canonical_name": "Testosterone",
+    "aliases": [
+      "testosterone",
+      "total testosterone",
+      "serum testosterone",
+      "testo",
+      "t level",
+      "testosterone level",
+      "testosterone total",
+      "serum testo",
+      "blood testosterone",
+      "test0sterone"
+    ],
+    "loinc": "2986-8",
+    "expected_units": [
+      "ng/dL",
+      "nmol/L"
+    ],
+    "min_value": 1,
+    "max_value": 2000,
+    "category": "Hormones"
+  },
+  "estradiol": {
+    "canonical_name": "Estradiol",
+    "aliases": [
+      "estradiol",
+      "e2",
+      "oestradiol",
+      "serum estradiol",
+      "e2 level",
+      "estradiol level",
+      "e 2",
+      "estradiol e2",
+      "blood estradiol",
+      "e2 hormone"
+    ],
+    "loinc": "2243-4",
+    "expected_units": [
+      "pg/mL",
+      "pmol/L"
+    ],
+    "min_value": 0.5,
+    "max_value": 2000,
+    "category": "Hormones"
+  },
+  "progesterone": {
+    "canonical_name": "Progesterone",
+    "aliases": [
+      "progesterone",
+      "prog",
+      "serum progesterone",
+      "progesterone level",
+      "p4",
+      "p 4",
+      "blood progesterone",
+      "progest",
+      "progesterone p4",
+      "pr0gesterone"
+    ],
+    "loinc": "2839-9",
+    "expected_units": [
+      "ng/mL",
+      "nmol/L"
+    ],
+    "min_value": 0.1,
+    "max_value": 300,
+    "category": "Hormones"
+  },
+  "crp": {
+    "canonical_name": "CRP",
+    "aliases": [
+      "crp",
+      "c-reactive protein",
+      "c reactive protein",
+      "c.r.p",
+      "serum crp",
+      "crp level",
+      "hs-crp",
+      "high sensitivity crp",
+      "hsCRP",
+      "hscrp"
+    ],
+    "loinc": "1988-5",
+    "expected_units": [
+      "mg/L",
+      "mg/dL",
+      "nmol/L"
+    ],
+    "min_value": 0,
+    "max_value": 500,
+    "category": "Inflammatory Markers"
+  },
+  "procalcitonin": {
+    "canonical_name": "Procalcitonin",
+    "aliases": [
+      "procalcitonin",
+      "pct",
+      "serum pct",
+      "pct level",
+      "procalcitonin level",
+      "p.c.t",
+      "blood pct",
+      "pct test",
+      "pr0calcitonin",
+      "sepsis marker"
+    ],
+    "loinc": "75241-0",
+    "expected_units": [
+      "ng/mL",
+      "ug/L"
+    ],
+    "min_value": 0,
+    "max_value": 1000,
+    "category": "Inflammatory Markers"
+  },
+  "il6": {
+    "canonical_name": "IL-6",
+    "aliases": [
+      "il-6",
+      "il6",
+      "interleukin 6",
+      "interleukin-6",
+      "il 6",
+      "i.l.6",
+      "serum il6",
+      "il6 level",
+      "interleukin6",
+      "il-6 level"
+    ],
+    "loinc": "26881-3",
+    "expected_units": [
+      "pg/mL",
+      "ng/L"
+    ],
+    "min_value": 0,
+    "max_value": 10000,
+    "category": "Inflammatory Markers"
+  },
+  "pt": {
+    "canonical_name": "Prothrombin Time",
+    "aliases": [
+      "pt",
+      "prothrombin time",
+      "p.t",
+      "pro time",
+      "prothrombin",
+      "pt test",
+      "pt sec",
+      "pt time",
+      "serum pt",
+      "blood pt"
+    ],
+    "loinc": "5902-2",
+    "expected_units": [
+      "seconds",
+      "sec",
+      "s"
+    ],
+    "min_value": 5,
+    "max_value": 120,
+    "category": "Coagulation"
+  },
+  "inr": {
+    "canonical_name": "INR",
+    "aliases": [
+      "inr",
+      "international normalized ratio",
+      "i.n.r",
+      "pt inr",
+      "prothrombin inr",
+      "inr ratio",
+      "normalized ratio",
+      "pt-inr",
+      "inr level",
+      "clotting inr"
+    ],
+    "loinc": "6301-6",
+    "expected_units": [
+      "ratio",
+      ""
+    ],
+    "min_value": 0.5,
+    "max_value": 15,
+    "category": "Coagulation"
+  },
+  "aptt": {
+    "canonical_name": "APTT",
+    "aliases": [
+      "aptt",
+      "activated partial thromboplastin time",
+      "ptt",
+      "partial thromboplastin time",
+      "a.p.t.t",
+      "aptt test",
+      "ptt test",
+      "aptt sec",
+      "blood aptt",
+      "clotting time aptt"
+    ],
+    "loinc": "3173-2",
+    "expected_units": [
+      "seconds",
+      "sec",
+      "s"
+    ],
+    "min_value": 10,
+    "max_value": 200,
+    "category": "Coagulation"
+  },
+  "fibrinogen": {
+    "canonical_name": "Fibrinogen",
+    "aliases": [
+      "fibrinogen",
+      "fibrinogen level",
+      "plasma fibrinogen",
+      "clotting factor 1",
+      "factor i",
+      "fibrinogen activity",
+      "serum fibrinogen",
+      "fibr",
+      "f1brinogen",
+      "fib level"
+    ],
+    "loinc": "3255-7",
+    "expected_units": [
+      "mg/dL",
+      "g/L"
+    ],
+    "min_value": 50,
+    "max_value": 1200,
+    "category": "Coagulation"
+  },
+  "d_dimer": {
+    "canonical_name": "D-Dimer",
+    "aliases": [
+      "d-dimer",
+      "d dimer",
+      "ddimer",
+      "fibrin degradation product",
+      "fdp",
+      "d-dimer level",
+      "dimer",
+      "fibrin d-dimer",
+      "coagulation d-dimer",
+      "d2 dimer"
+    ],
+    "loinc": "48065-7",
+    "expected_units": [
+      "ng/mL",
+      "ug/L",
+      "mg/L FEU"
+    ],
+    "min_value": 0,
+    "max_value": 20000,
+    "category": "Coagulation"
+  },
+  "amylase": {
+    "canonical_name": "Amylase",
+    "aliases": [
+      "amylase",
+      "serum amylase",
+      "amylase level",
+      "s. amylase",
+      "blood amylase",
+      "am ylase",
+      "amylase serum",
+      "salivary amylase",
+      "pancreatic amylase",
+      "amy"
+    ],
+    "loinc": "1798-8",
+    "expected_units": [
+      "IU/L",
+      "U/L",
+      "iu/l"
+    ],
+    "min_value": 5,
+    "max_value": 3000,
+    "category": "Pancreatic Tests"
+  },
+  "lipase": {
+    "canonical_name": "Lipase",
+    "aliases": [
+      "lipase",
+      "serum lipase",
+      "lipase level",
+      "s. lipase",
+      "blood lipase",
+      "li pase",
+      "lipase serum",
+      "pancreatic lipase",
+      "lip level",
+      "lps"
+    ],
+    "loinc": "3040-3",
+    "expected_units": [
+      "IU/L",
+      "U/L",
+      "iu/l"
+    ],
+    "min_value": 5,
+    "max_value": 5000,
+    "category": "Pancreatic Tests"
+  },
+  "ca_19_9": {
+    "canonical_name": "CA 19-9",
+    "aliases": [
+      "ca 19-9",
+      "ca19-9",
+      "ca 199",
+      "carbohydrate antigen 19-9",
+      "cancer antigen 19-9",
+      "ca-19-9",
+      "ca199",
+      "ca 19 9",
+      "sialyl lewis",
+      "pancreatic marker ca199"
+    ],
+    "loinc": "24108-3",
+    "expected_units": [
+      "U/mL",
+      "kU/L"
+    ],
+    "min_value": 0,
+    "max_value": 10000,
+    "category": "Pancreatic Tests"
+  },
+  "reticulocyte_count": {
+    "canonical_name": "Reticulocyte Count",
+    "aliases": [
+      "reticulocytes",
+      "retic",
+      "retic count",
+      "reticulocyte%",
+      "rbc retic",
+      "reticulo",
+      "reticulocyte index",
+      "absolute reticulocytes",
+      "retic%",
+      "r eticulocytes"
+    ],
+    "loinc": "17849-1",
+    "expected_units": [
+      "%",
+      "/uL",
+      "10^9/L"
+    ],
+    "min_value": 0,
+    "max_value": 20,
+    "category": "CBC"
+  },
+  "uibc": {
+    "canonical_name": "UIBC",
+    "aliases": [
+      "uibc",
+      "unsaturated iron binding capacity",
+      "unbound iron binding capacity",
+      "u.i.b.c",
+      "free iron binding",
+      "latent ibc",
+      "unsaturated ibc",
+      "residual ibc",
+      "uibc level",
+      "iron binding unsaturated"
+    ],
+    "loinc": "2503-1",
+    "expected_units": [
+      "ug/dL",
+      "umol/L"
+    ],
+    "min_value": 50,
+    "max_value": 600,
+    "category": "Iron Studies"
+  },
+  "transferrin_saturation": {
+    "canonical_name": "Transferrin Saturation",
+    "aliases": [
+      "transferrin saturation",
+      "tsat",
+      "iron saturation",
+      "fe saturation",
+      "transferrin sat",
+      "t.sat",
+      "percent saturation",
+      "iron sat%",
+      "trf sat",
+      "trans sat"
+    ],
+    "loinc": "2502-3",
+    "expected_units": [
+      "%"
+    ],
+    "min_value": 0,
+    "max_value": 100,
+    "category": "Iron Studies"
+  },
+  "vitamin_c": {
+    "canonical_name": "Vitamin C",
+    "aliases": [
+      "vitamin c",
+      "vit c",
+      "ascorbic acid",
+      "ascorbate",
+      "vit-c",
+      "ascorbic acid level",
+      "plasma ascorbate",
+      "serum vit c",
+      "vit c level",
+      "ascorbic"
+    ],
+    "loinc": "1988-5",
+    "expected_units": [
+      "mg/dL",
+      "umol/L"
+    ],
+    "min_value": 0,
+    "max_value": 20,
+    "category": "Vitamins"
+  },
+  "anti_tpo": {
+    "canonical_name": "Anti-TPO",
+    "aliases": [
+      "anti-tpo",
+      "anti tpo",
+      "tpo antibody",
+      "thyroid peroxidase antibody",
+      "anti-thyroid peroxidase",
+      "tpoab",
+      "tpo ab",
+      "anti tpo ab",
+      "thyroid ab tpo",
+      "anti-tpo antibody"
+    ],
+    "loinc": "8099-9",
+    "expected_units": [
+      "IU/mL",
+      "kIU/L"
+    ],
+    "min_value": 0,
+    "max_value": 10000,
+    "category": "Thyroid"
+  },
+  "anti_tg": {
+    "canonical_name": "Anti-Thyroglobulin",
+    "aliases": [
+      "anti-tg",
+      "anti tg",
+      "thyroglobulin antibody",
+      "tg antibody",
+      "anti-thyroglobulin",
+      "tgab",
+      "tg ab",
+      "anti tg ab",
+      "thyroid ab tg",
+      "anti-tg antibody"
+    ],
+    "loinc": "8098-1",
+    "expected_units": [
+      "IU/mL",
+      "kIU/L"
+    ],
+    "min_value": 0,
+    "max_value": 5000,
+    "category": "Thyroid"
+  },
+  "psa": {
+    "canonical_name": "PSA",
+    "aliases": [
+      "psa",
+      "prostate specific antigen",
+      "total psa",
+      "serum psa",
+      "p.s.a",
+      "psa total",
+      "psa level",
+      "prostate antigen",
+      "psa test",
+      "prostatic antigen"
+    ],
+    "loinc": "2857-1",
+    "expected_units": [
+      "ng/mL",
+      "ug/L"
+    ],
+    "min_value": 0,
+    "max_value": 10000,
+    "category": "Hormones"
+  },
+  "hcg": {
+    "canonical_name": "Beta-HCG",
+    "aliases": [
+      "hcg",
+      "beta hcg",
+      "b-hcg",
+      "human chorionic gonadotropin",
+      "beta-hcg",
+      "serum hcg",
+      "pregnancy hormone",
+      "b hcg",
+      "hcg level",
+      "chorionic gonadotropin"
+    ],
+    "loinc": "19080-1",
+    "expected_units": [
+      "mIU/mL",
+      "IU/L"
+    ],
+    "min_value": 0,
+    "max_value": 500000,
+    "category": "Hormones"
+  },
+  "ld": {
+    "canonical_name": "LDH",
+    "aliases": [
+      "ldh",
+      "lactic dehydrogenase",
+      "lactate dehydrogenase",
+      "l.d.h",
+      "serum ldh",
+      "ldh level",
+      "ld",
+      "lactic acid dehydrogenase",
+      "ldh enzyme",
+      "ldh total"
+    ],
+    "loinc": "2532-0",
+    "expected_units": [
+      "IU/L",
+      "U/L"
+    ],
+    "min_value": 50,
+    "max_value": 5000,
+    "category": "Cardiac Markers"
+  },
+  "myoglobin": {
+    "canonical_name": "Myoglobin",
+    "aliases": [
+      "myoglobin",
+      "myoglobin level",
+      "serum myoglobin",
+      "myo",
+      "myoglob",
+      "muscle protein",
+      "myo level",
+      "blood myoglobin",
+      "myoglobin serum",
+      "myoglbn"
+    ],
+    "loinc": "2154-3",
+    "expected_units": [
+      "ng/mL",
+      "ug/L"
+    ],
+    "min_value": 0,
+    "max_value": 3000,
+    "category": "Cardiac Markers"
+  },
+  "urine_bilirubin": {
+    "canonical_name": "Urine Bilirubin",
+    "aliases": [
+      "urine bilirubin",
+      "ur bilirubin",
+      "bilirubin urine",
+      "bilirubinuria",
+      "urine bil",
+      "urinary bilirubin",
+      "urine bili",
+      "ur bili",
+      "bilirubin ur",
+      "u. bilirubin"
+    ],
+    "loinc": "5770-3",
+    "expected_units": [
+      "+",
+      "mg/dL"
+    ],
+    "min_value": 0,
+    "max_value": 10,
+    "category": "Urine Routine"
+  }
+}
