@@ -663,6 +663,65 @@ def clean_alias(alias: str) -> str:
     return alias
 
 
+def _looks_like_narrative_alias(alias_key: str) -> bool:
+    """
+    Prevent prose/sentences from being extracted as test names.
+
+    Example false positive:
+    'ldl cholesterol mild dyslipidemia pattern with elevated ldl and triglycerides'
+    """
+
+    if not alias_key:
+        return True
+
+    words = alias_key.split()
+
+    # Real test aliases are usually short.
+    # Examples:
+    # hemoglobin
+    # rbc count
+    # ldl cholesterol
+    # fasting blood glucose
+    if len(words) > 5:
+        return True
+
+    narrative_words = {
+        "pattern",
+        "with",
+        "without",
+        "suggests",
+        "suggesting",
+        "indicates",
+        "indicating",
+        "shows",
+        "showing",
+        "detected",
+        "mild",
+        "moderate",
+        "severe",
+        "risk",
+        "because",
+        "therefore",
+        "recommend",
+        "recommendation",
+        "summary",
+        "impression",
+        "elevated",
+        "reduced",
+        "increased",
+        "decreased",
+    }
+
+    if any(word in narrative_words for word in words):
+        return True
+
+    # Reject long sentence-like aliases.
+    if "." in alias_key or "," in alias_key or ";" in alias_key:
+        return True
+
+    return False
+
+
 def resolve_test(raw_alias: str) -> Tuple[Optional[str], Optional[Dict[str, Any]]]:
 
     alias = clean_alias(raw_alias)
