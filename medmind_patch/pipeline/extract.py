@@ -665,7 +665,7 @@ def clean_alias(alias: str) -> str:
 
 def _looks_like_narrative_alias(alias_key: str) -> bool:
     """
-    Prevent prose/sentences from being extracted as test names.
+    Reject sentence-like text that accidentally contains a known test name.
 
     Example false positive:
     'ldl cholesterol mild dyslipidemia pattern with elevated ldl and triglycerides'
@@ -674,14 +674,11 @@ def _looks_like_narrative_alias(alias_key: str) -> bool:
     if not alias_key:
         return True
 
+    alias_key = alias_key.strip().lower()
     words = alias_key.split()
 
-    # Real test aliases are usually short.
-    # Examples:
-    # hemoglobin
-    # rbc count
-    # ldl cholesterol
-    # fasting blood glucose
+    # Real test names are short.
+    # Examples: hemoglobin, rbc count, ldl cholesterol, fasting blood glucose.
     if len(words) > 5:
         return True
 
@@ -710,12 +707,18 @@ def _looks_like_narrative_alias(alias_key: str) -> bool:
         "reduced",
         "increased",
         "decreased",
+        "dyslipidemia",
+        "deficiency",
+        "insufficiency",
+        "consistent",
+        "compatible",
+        "possible",
+        "likely",
     }
 
     if any(word in narrative_words for word in words):
         return True
 
-    # Reject long sentence-like aliases.
     if "." in alias_key or "," in alias_key or ";" in alias_key:
         return True
 
@@ -723,27 +726,25 @@ def _looks_like_narrative_alias(alias_key: str) -> bool:
 
 
 def resolve_test(raw_alias: str) -> Tuple[Optional[str], Optional[Dict[str, Any]]]:
+    """
+    Strict alias resolver.
+
+    Important:
+    We reject narrative aliases BEFORE ontology/fuzzy lookup.
+    This prevents sentences from becoming fake lab rows.
+    """
 
     alias = clean_alias(raw_alias)
-    key = alias.lower()
+    key = alias.lower().strip()
 
     if not key:
         return None, None
 
-    # Reject obvious sentence fragments before alias matching.
+    # Critical false-positive protection.
     if _looks_like_narrative_alias(key):
         return None, None
 
-    # 1. Ontology exact/fuzzy resolver first.
-    try:
-        meta = get_test_by_alias(alias)
-        if meta:
-            canonical = meta.get("canonical_name", alias)
-            return canonical, meta
-    except Exception:
-        pass
-
-    # 2. Local exact alias.
+    # Exact local alias first.
     if key in LOCAL_ALIAS_TO_CANONICAL:
         canonical = LOCAL_ALIAS_TO_CANONICAL[key]
         return canonical, {
@@ -756,7 +757,7 @@ def resolve_test(raw_alias: str) -> Tuple[Optional[str], Optional[Dict[str, Any]
             "max_value": FALLBACK_RANGES.get(canonical, {}).get("critical_high", 999999),
         }
 
-    # 3. Parenthetical-cleaned exact alias.
+    # Exact alias after removing parentheses.
     cleaned_no_paren = re.sub(r"\s*\([^)]*\)\s*", " ", alias)
     cleaned_no_paren = re.sub(r"\s+", " ", cleaned_no_paren).strip().lower()
 
@@ -772,8 +773,17 @@ def resolve_test(raw_alias: str) -> Tuple[Optional[str], Optional[Dict[str, Any]
             "max_value": FALLBACK_RANGES.get(canonical, {}).get("critical_high", 999999),
         }
 
-    return None, None
+    # Ontology resolver last.
+    # This avoids fuzzy-matching long prose into a fake test.
+    try:
+        meta = get_test_by_alias(alias)
+        if meta:
+            canonical = meta.get("canonical_name", alias)
+            return canonical, meta
+    except Exception:
+        pass
 
+    return None, None
 
 def guess_category(canonical: str) -> str:
     if canonical in {
@@ -1172,6 +1182,8 @@ def build_result(
 
     raw_alias_clean = clean_alias(raw_alias)
 
+    # Final global safety gate.
+    # Even if a parser accidentally sends a sentence here, reject it.
     if _looks_like_narrative_alias(raw_alias_clean.lower()):
         return None
 
@@ -1185,9 +1197,9 @@ def build_result(
 
     fallback = FALLBACK_RANGES.get(canonical)
 
-    # If report has no range, use built-in fallback range.
     range_source = "report"
 
+    # If report has no range, use built-in fallback range.
     if ref_low is None and ref_high is None and fallback:
         ref_low = fallback.get("low")
         ref_high = fallback.get("high")
@@ -1201,7 +1213,8 @@ def build_result(
     else:
         extracted_flag = classify_value(canonical, value, ref_low, ref_high)
 
-    # Even if PDF says normal, numeric value should override when range exists.
+    # Numeric classification overrides textual flag.
+    # Example: if PDF says Normal but LDL is 162, numeric result wins.
     numeric_flag = classify_value(canonical, value, ref_low, ref_high)
 
     if numeric_flag != "normal":
@@ -1211,7 +1224,7 @@ def build_result(
 
     try:
         conf = calculate_confidence(
-            raw_alias=raw_alias,
+            raw_alias=raw_alias_clean,
             extracted_value=value,
             extracted_unit=unit or None,
             fuzzy_score=None,
@@ -1219,12 +1232,16 @@ def build_result(
             test_meta=meta,
         )
     except Exception:
-        conf = {"confidence": 0.85, "reasons": ["fallback extraction"]}
+        conf = {
+            "confidence": 0.85,
+            "reasons": ["fallback extraction"]
+        }
 
     confidence = conf.get("confidence", 0.85)
     reasons = conf.get("reasons", [])
 
     reference_range = None
+
     if ref_low is not None and ref_high is not None:
         reference_range = f"{ref_low:g} - {ref_high:g} {unit}".strip()
     elif ref_low is not None:
@@ -1236,7 +1253,7 @@ def build_result(
         "canonical_name": canonical,
         "loinc": meta.get("loinc", "") if meta else "",
         "category": meta.get("category", guess_category(canonical)) if meta else guess_category(canonical),
-        "raw_alias": raw_alias.strip(),
+        "raw_alias": raw_alias_clean,
         "value": value,
         "unit": unit,
         "flag": final_flag,
