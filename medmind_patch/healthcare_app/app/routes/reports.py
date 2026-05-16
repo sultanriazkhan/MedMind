@@ -13,9 +13,13 @@ def upload_report():
 
 @reports_bp.route("/analyze", methods=["POST"])
 def analyze_report():
+    """
+    Bridge route:
+    Flask UI -> FastAPI backend -> lab processing pipeline
+    """
     try:
-        text_input = request.form.get("text_input")
         uploaded_file = request.files.get("file")
+        text_input = request.form.get("text_input")
 
         if uploaded_file and uploaded_file.filename:
             response = requests.post(
@@ -27,24 +31,24 @@ def analyze_report():
                         uploaded_file.content_type,
                     )
                 },
-                timeout=120,
+                timeout=180,
             )
 
         elif text_input and text_input.strip():
             response = requests.post(
                 FASTAPI_PROCESS_URL,
-                data={"text_input": text_input},
-                timeout=120,
+                data={"text_input": text_input.strip()},
+                timeout=180,
             )
 
         else:
             return jsonify({
                 "success": False,
-                "error": "Please upload a report file or enter report text."
+                "error": "Please upload a report file or paste report text."
             }), 400
 
         try:
-            return jsonify(response.json()), response.status_code
+            payload = response.json()
         except Exception:
             return jsonify({
                 "success": False,
@@ -52,16 +56,18 @@ def analyze_report():
                 "raw_response": response.text,
             }), 500
 
+        return jsonify(payload), response.status_code
+
     except requests.exceptions.ConnectionError:
         return jsonify({
             "success": False,
-            "error": "FastAPI backend is not running. Start it using: python run.py"
+            "error": "FastAPI backend is not running. Start it from the project root using: python run.py"
         }), 503
 
     except requests.exceptions.Timeout:
         return jsonify({
             "success": False,
-            "error": "Processing timed out. Try a smaller file or text input."
+            "error": "Report processing timed out. Try a smaller PDF/DOCX/TXT file."
         }), 504
 
     except Exception as e:

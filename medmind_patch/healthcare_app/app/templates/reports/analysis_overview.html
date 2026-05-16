@@ -1,414 +1,484 @@
-<!-- templates/reports/analysis_overview.html -->
 {% extends "layouts/base.html" %}
 
-{% block title %}Report Analysis{% endblock %}
-
-{% block extra_css %}
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-<style>
-    .metric-card {
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-    .metric-card:hover {
-        transform: translateY(-4px);
-        box-shadow: 0 20px 40px rgba(0,0,0,0.15);
-    }
-    .trend-up { color: #10b981; }
-    .trend-down { color: #ef4444; }
-    .status-badge {
-        transition: all 0.2s ease;
-    }
-    .status-badge:hover {
-        transform: scale(1.05);
-    }
-    .insight-card {
-        background: linear-gradient(135deg, rgba(59,130,246,0.1) 0%, rgba(139,92,246,0.1) 100%);
-        border-left: 3px solid #3b82f6;
-    }
-    .critical-insight {
-        border-left-color: #ef4444;
-        background: linear-gradient(135deg, rgba(239,68,68,0.05) 0%, rgba(139,92,246,0.05) 100%);
-    }
-    .warning-insight {
-        border-left-color: #f59e0b;
-    }
-    .good-insight {
-        border-left-color: #10b981;
-    }
-    table tbody tr {
-        transition: all 0.2s ease;
-    }
-    table tbody tr:hover {
-        background: rgba(59, 130, 246, 0.05);
-        transform: scale(1.01);
-    }
-</style>
-{% endblock %}
+{% block title %}Report Analysis Overview{% endblock %}
 
 {% block content %}
-<div class="bg-gray-50 dark:bg-gray-900 min-h-screen py-8">
-    <div class="container mx-auto px-4">
-        <!-- Header -->
-        <div class="mb-8">
-            <div class="flex items-center justify-between flex-wrap gap-4">
-                <div>
-                    <h1 class="text-3xl font-bold text-gray-900 dark:text-white">Report Analysis Overview</h1>
-                    <p class="text-gray-600 dark:text-gray-400 mt-2">Annual Health Checkup • March 15, 2026</p>
+<div class="min-h-screen px-4 py-10 sm:px-6 lg:px-8 bg-slate-50 dark:bg-slate-950">
+    <div class="max-w-7xl mx-auto">
+
+        <!-- Empty State -->
+        <div id="emptyState" class="hidden min-h-[70vh] flex items-center justify-center">
+            <div class="max-w-xl text-center rounded-[2rem] bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xl p-10">
+                <div class="w-20 h-20 mx-auto rounded-3xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center mb-6">
+                    <i class="bi bi-file-earmark-medical text-4xl text-slate-500"></i>
                 </div>
-                <div class="flex space-x-3">
-                    <button class="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
-                        <i class="bi bi-download mr-2"></i>Download Report
-                    </button>
-                    <button class="px-4 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl hover:shadow-lg transition-all">
-                        <i class="bi bi-share mr-2"></i>Share with Doctor
-                    </button>
-                </div>
+                <h1 class="text-3xl font-black text-slate-900 dark:text-white">No report analysis found</h1>
+                <p class="mt-3 text-slate-600 dark:text-slate-400">
+                    Upload a lab report first to see real extracted test results here.
+                </p>
+                <a href="/reports/upload" class="inline-flex mt-6 px-6 py-3 rounded-2xl bg-blue-600 text-white font-bold hover:bg-blue-700 transition">
+                    <i class="bi bi-upload mr-2"></i>
+                    Upload Report
+                </a>
             </div>
         </div>
 
-        <!-- Top Metrics Grid -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
-            <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-5 metric-card">
-                <div class="flex items-center justify-between mb-2">
-                    <p class="text-gray-500 dark:text-gray-400 text-sm">Health Score</p>
-                    <i class="bi bi-heart-fill text-red-500"></i>
-                </div>
-                <p class="text-3xl font-bold text-gray-900 dark:text-white">78<span class="text-lg">/100</span></p>
-                <div class="mt-2 w-full bg-gray-200 dark:bg-gray-700 rounded-full h-1.5">
-                    <div class="bg-gradient-to-r from-blue-500 to-purple-600 h-1.5 rounded-full" style="width: 78%"></div>
-                </div>
-            </div>
-            
-            <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-5 metric-card">
-                <div class="flex items-center justify-between mb-2">
-                    <p class="text-gray-500 dark:text-gray-400 text-sm">Normal Markers</p>
-                    <i class="bi bi-check-circle-fill text-green-500"></i>
-                </div>
-                <p class="text-3xl font-bold text-green-600">24</p>
-                <p class="text-xs text-gray-500 mt-2">Out of 28 tests</p>
-            </div>
-            
-            <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-5 metric-card">
-                <div class="flex items-center justify-between mb-2">
-                    <p class="text-gray-500 dark:text-gray-400 text-sm">Abnormal Markers</p>
-                    <i class="bi bi-exclamation-triangle-fill text-orange-500"></i>
-                </div>
-                <p class="text-3xl font-bold text-orange-500">4</p>
-                <p class="text-xs text-gray-500 mt-2">Requires attention</p>
-            </div>
-            
-            <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-5 metric-card">
-                <div class="flex items-center justify-between mb-2">
-                    <p class="text-gray-500 dark:text-gray-400 text-sm">Critical Markers</p>
-                    <i class="bi bi-exclamation-octagon-fill text-red-500"></i>
-                </div>
-                <p class="text-3xl font-bold text-red-500">0</p>
-                <p class="text-xs text-gray-500 mt-2">No urgent issues</p>
-            </div>
-            
-            <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-5 metric-card">
-                <div class="flex items-center justify-between mb-2">
-                    <p class="text-gray-500 dark:text-gray-400 text-sm">AI Confidence</p>
-                    <i class="bi bi-robot text-purple-500"></i>
-                </div>
-                <p class="text-3xl font-bold text-purple-600">96%</p>
-                <p class="text-xs text-gray-500 mt-2">High accuracy</p>
-            </div>
-        </div>
+        <!-- Main Content -->
+        <div id="analysisContent" class="hidden">
 
-        <!-- Charts Row -->
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-            <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6">
-                <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Biomarker Distribution</h3>
-                <canvas id="distributionChart" height="250"></canvas>
-            </div>
-            <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6">
-                <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Health Categories</h3>
-                <canvas id="categoriesChart" height="250"></canvas>
-            </div>
-        </div>
+            <!-- Header -->
+            <div class="mb-8">
+                <div class="flex flex-col xl:flex-row xl:items-end xl:justify-between gap-6">
+                    <div>
+                        <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 text-sm font-semibold mb-4">
+                            <i class="bi bi-check-circle-fill"></i>
+                            Real Backend Analysis Loaded
+                        </div>
+                        <h1 class="text-4xl md:text-5xl font-black text-slate-900 dark:text-white tracking-tight">
+                            Report Analysis Overview
+                        </h1>
+                        <p id="reportMetaText" class="mt-4 text-slate-600 dark:text-slate-400 text-lg"></p>
+                    </div>
 
-        <!-- Test Results Table -->
-        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg overflow-hidden mb-8">
-            <div class="p-6 border-b border-gray-200 dark:border-gray-700">
-                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Complete Blood Count & Metabolic Panel</h3>
+                    <div class="flex flex-wrap gap-3">
+                        <a href="/reports/upload" class="px-5 py-3 rounded-2xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold hover:bg-slate-200 dark:hover:bg-slate-700 transition">
+                            <i class="bi bi-arrow-repeat mr-1"></i>
+                            Analyze Another
+                        </a>
+                        <a href="/reports/test-explanation" class="px-5 py-3 rounded-2xl bg-blue-600 text-white font-bold hover:bg-blue-700 transition shadow-lg shadow-blue-500/20">
+                            <i class="bi bi-journal-medical mr-1"></i>
+                            Detailed Explanation
+                        </a>
+                    </div>
+                </div>
             </div>
-            <div class="overflow-x-auto">
-                <table class="w-full">
-                    <thead class="bg-gray-50 dark:bg-gray-900/50">
-                        <tr>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Test Name</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Result</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Unit</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Normal Range</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Status</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Trend</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
-                        <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-all">
-                            <td class="px-6 py-4 text-sm font-medium text-gray-900 dark:text-white">Hemoglobin</td>
-                            <td class="px-6 py-4 text-sm text-gray-900 dark:text-white">13.8</td>
-                            <td class="px-6 py-4 text-sm text-gray-600 dark:text-gray-400">g/dL</td>
-                            <td class="px-6 py-4 text-sm text-gray-600 dark:text-gray-400">12.0 - 15.5</td>
-                            <td class="px-6 py-4"><span class="status-badge px-2 py-1 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 text-xs rounded-full">Normal</span></td>
-                            <td class="px-6 py-4"><i class="bi bi-arrow-up-short trend-up"></i> +0.2</td>
-                        </tr>
-                        <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-all">
-                            <td class="px-6 py-4 text-sm font-medium text-gray-900 dark:text-white">WBC</td>
-                            <td class="px-6 py-4 text-sm text-gray-900 dark:text-white">6.2</td>
-                            <td class="px-6 py-4 text-sm text-gray-600 dark:text-gray-400">x10³/µL</td>
-                            <td class="px-6 py-4 text-sm text-gray-600 dark:text-gray-400">4.0 - 11.0</td>
-                            <td class="px-6 py-4"><span class="status-badge px-2 py-1 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 text-xs rounded-full">Normal</span></td>
-                            <td class="px-6 py-4"><i class="bi bi-dash-lg trend-neutral"></i> Stable</td>
-                        </tr>
-                        <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-all">
-                            <td class="px-6 py-4 text-sm font-medium text-gray-900 dark:text-white">RBC</td>
-                            <td class="px-6 py-4 text-sm text-gray-900 dark:text-white">4.8</td>
-                            <td class="px-6 py-4 text-sm text-gray-600 dark:text-gray-400">x10⁶/µL</td>
-                            <td class="px-6 py-4 text-sm text-gray-600 dark:text-gray-400">4.2 - 5.4</td>
-                            <td class="px-6 py-4"><span class="status-badge px-2 py-1 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 text-xs rounded-full">Normal</span></td>
-                            <td class="px-6 py-4"><i class="bi bi-arrow-up-short trend-up"></i> +0.1</td>
-                        </tr>
-                        <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-all">
-                            <td class="px-6 py-4 text-sm font-medium text-gray-900 dark:text-white">Platelets</td>
-                            <td class="px-6 py-4 text-sm text-gray-900 dark:text-white">245</td>
-                            <td class="px-6 py-4 text-sm text-gray-600 dark:text-gray-400">x10³/µL</td>
-                            <td class="px-6 py-4 text-sm text-gray-600 dark:text-gray-400">150 - 450</td>
-                            <td class="px-6 py-4"><span class="status-badge px-2 py-1 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 text-xs rounded-full">Normal</span></td>
-                            <td class="px-6 py-4"><i class="bi bi-arrow-down-short trend-down"></i> -15</td>
-                        </tr>
-                        <tr class="bg-yellow-50 dark:bg-yellow-900/10 hover:bg-yellow-100 dark:hover:bg-yellow-900/20 transition-all">
-                            <td class="px-6 py-4 text-sm font-medium text-gray-900 dark:text-white">HbA1c</td>
-                            <td class="px-6 py-4 text-sm text-orange-600 font-semibold">6.2</td>
-                            <td class="px-6 py-4 text-sm text-gray-600 dark:text-gray-400">%</td>
-                            <td class="px-6 py-4 text-sm text-gray-600 dark:text-gray-400">&lt; 5.7</td>
-                            <td class="px-6 py-4"><span class="status-badge px-2 py-1 bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-400 text-xs rounded-full">Elevated</span></td>
-                            <td class="px-6 py-4"><i class="bi bi-arrow-up-short trend-up"></i> +0.4</td>
-                        </tr>
-                        <tr class="bg-yellow-50 dark:bg-yellow-900/10 hover:bg-yellow-100 dark:hover:bg-yellow-900/20 transition-all">
-                            <td class="px-6 py-4 text-sm font-medium text-gray-900 dark:text-white">LDL Cholesterol</td>
-                            <td class="px-6 py-4 text-sm text-orange-600 font-semibold">145</td>
-                            <td class="px-6 py-4 text-sm text-gray-600 dark:text-gray-400">mg/dL</td>
-                            <td class="px-6 py-4 text-sm text-gray-600 dark:text-gray-400">&lt; 100</td>
-                            <td class="px-6 py-4"><span class="status-badge px-2 py-1 bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-400 text-xs rounded-full">High</span></td>
-                            <td class="px-6 py-4"><i class="bi bi-arrow-up-short trend-up"></i> +8</td>
-                        </tr>
-                        <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-all">
-                            <td class="px-6 py-4 text-sm font-medium text-gray-900 dark:text-white">HDL Cholesterol</td>
-                            <td class="px-6 py-4 text-sm text-gray-900 dark:text-white">52</td>
-                            <td class="px-6 py-4 text-sm text-gray-600 dark:text-gray-400">mg/dL</td>
-                            <td class="px-6 py-4 text-sm text-gray-600 dark:text-gray-400">&gt; 40</td>
-                            <td class="px-6 py-4"><span class="status-badge px-2 py-1 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 text-xs rounded-full">Good</span></td>
-                            <td class="px-6 py-4"><i class="bi bi-arrow-up-short trend-up"></i> +3</td>
-                        </tr>
-                        <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-all">
-                            <td class="px-6 py-4 text-sm font-medium text-gray-900 dark:text-white">Triglycerides</td>
-                            <td class="px-6 py-4 text-sm text-gray-900 dark:text-white">128</td>
-                            <td class="px-6 py-4 text-sm text-gray-600 dark:text-gray-400">mg/dL</td>
-                            <td class="px-6 py-4 text-sm text-gray-600 dark:text-gray-400">&lt; 150</td>
-                            <td class="px-6 py-4"><span class="status-badge px-2 py-1 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 text-xs rounded-full">Normal</span></td>
-                            <td class="px-6 py-4"><i class="bi bi-arrow-down-short trend-down"></i> -5</td>
-                        </tr>
-                        <tr class="bg-yellow-50 dark:bg-yellow-900/10 hover:bg-yellow-100 dark:hover:bg-yellow-900/20 transition-all">
-                            <td class="px-6 py-4 text-sm font-medium text-gray-900 dark:text-white">Vitamin D</td>
-                            <td class="px-6 py-4 text-sm text-orange-600 font-semibold">28</td>
-                            <td class="px-6 py-4 text-sm text-gray-600 dark:text-gray-400">ng/mL</td>
-                            <td class="px-6 py-4 text-sm text-gray-600 dark:text-gray-400">30 - 100</td>
-                            <td class="px-6 py-4"><span class="status-badge px-2 py-1 bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-400 text-xs rounded-full">Low</span></td>
-                            <td class="px-6 py-4"><i class="bi bi-arrow-down-short trend-down"></i> -4</td>
-                        </tr>
-                        <tr class="bg-yellow-50 dark:bg-yellow-900/10 hover:bg-yellow-100 dark:hover:bg-yellow-900/20 transition-all">
-                            <td class="px-6 py-4 text-sm font-medium text-gray-900 dark:text-white">Ferritin</td>
-                            <td class="px-6 py-4 text-sm text-orange-600 font-semibold">32</td>
-                            <td class="px-6 py-4 text-sm text-gray-600 dark:text-gray-400">ng/mL</td>
-                            <td class="px-6 py-4 text-sm text-gray-600 dark:text-gray-400">50 - 200</td>
-                            <td class="px-6 py-4"><span class="status-badge px-2 py-1 bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-400 text-xs rounded-full">Low</span></td>
-                            <td class="px-6 py-4"><i class="bi bi-arrow-down-short trend-down"></i> -6</td>
-                        </tr>
-                        <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-all">
-                            <td class="px-6 py-4 text-sm font-medium text-gray-900 dark:text-white">Blood Glucose</td>
-                            <td class="px-6 py-4 text-sm text-gray-900 dark:text-white">98</td>
-                            <td class="px-6 py-4 text-sm text-gray-600 dark:text-gray-400">mg/dL</td>
-                            <td class="px-6 py-4 text-sm text-gray-600 dark:text-gray-400">70 - 100</td>
-                            <td class="px-6 py-4"><span class="status-badge px-2 py-1 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 text-xs rounded-full">Normal</span></td>
-                            <td class="px-6 py-4"><i class="bi bi-arrow-up-short trend-up"></i> +2</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
 
-        <!-- Health Insights & Recommendations -->
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <!-- Insights Section -->
-            <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6">
-                <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
-                    <i class="bi bi-lightbulb-fill text-yellow-500 mr-2"></i>
-                    AI Health Insights
-                </h3>
-                <div class="space-y-4">
-                    <div class="insight-card critical-insight p-4 rounded-xl">
-                        <div class="flex items-start space-x-3">
-                            <i class="bi bi-exclamation-triangle-fill text-red-500 text-lg mt-1"></i>
-                            <div>
-                                <p class="font-semibold text-gray-900 dark:text-white">Elevated LDL Cholesterol</p>
-                                <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">Your LDL level of 145 mg/dL indicates increased cardiovascular risk. Consider dietary changes and increased physical activity.</p>
-                            </div>
+            <!-- Summary Cards -->
+            <div class="grid sm:grid-cols-2 xl:grid-cols-5 gap-5 mb-8">
+                <div class="rounded-[1.75rem] bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 shadow-lg">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-bold text-slate-500">Total Tests</p>
+                            <h3 id="totalTests" class="text-4xl font-black text-slate-900 dark:text-white mt-2">0</h3>
+                        </div>
+                        <div class="w-14 h-14 rounded-2xl bg-blue-100 dark:bg-blue-950 text-blue-600 dark:text-blue-300 flex items-center justify-center">
+                            <i class="bi bi-clipboard2-pulse-fill text-2xl"></i>
                         </div>
                     </div>
-                    <div class="insight-card warning-insight p-4 rounded-xl">
-                        <div class="flex items-start space-x-3">
-                            <i class="bi bi-droplet text-orange-500 text-lg mt-1"></i>
-                            <div>
-                                <p class="font-semibold text-gray-900 dark:text-white">Vitamin D Deficiency</p>
-                                <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">Level of 28 ng/mL is suboptimal. Supplementation with 2000 IU vitamin D3 daily recommended, plus morning sunlight exposure.</p>
-                            </div>
+                </div>
+
+                <div class="rounded-[1.75rem] bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 shadow-lg">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-bold text-slate-500">Normal</p>
+                            <h3 id="normalTests" class="text-4xl font-black text-emerald-600 mt-2">0</h3>
+                        </div>
+                        <div class="w-14 h-14 rounded-2xl bg-emerald-100 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-300 flex items-center justify-center">
+                            <i class="bi bi-check-circle-fill text-2xl"></i>
                         </div>
                     </div>
-                    <div class="insight-card warning-insight p-4 rounded-xl">
-                        <div class="flex items-start space-x-3">
-                            <i class="bi bi-activity text-orange-500 text-lg mt-1"></i>
-                            <div>
-                                <p class="font-semibold text-gray-900 dark:text-white">Borderline HbA1c</p>
-                                <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">6.2% suggests insulin resistance. Focus on low-glycemic index foods and regular exercise to prevent progression to diabetes.</p>
-                            </div>
+                </div>
+
+                <div class="rounded-[1.75rem] bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 shadow-lg">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-bold text-slate-500">Attention</p>
+                            <h3 id="attentionTests" class="text-4xl font-black text-amber-600 mt-2">0</h3>
+                        </div>
+                        <div class="w-14 h-14 rounded-2xl bg-amber-100 dark:bg-amber-950 text-amber-600 dark:text-amber-300 flex items-center justify-center">
+                            <i class="bi bi-exclamation-circle-fill text-2xl"></i>
                         </div>
                     </div>
-                    <div class="insight-card good-insight p-4 rounded-xl">
-                        <div class="flex items-start space-x-3">
-                            <i class="bi bi-check-circle-fill text-green-500 text-lg mt-1"></i>
-                            <div>
-                                <p class="font-semibold text-gray-900 dark:text-white">Optimal Hydration Markers</p>
-                                <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">Your kidney function and hydration markers are within optimal range. Continue maintaining good fluid intake.</p>
-                            </div>
+                </div>
+
+                <div class="rounded-[1.75rem] bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 shadow-lg">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-bold text-slate-500">Urgent</p>
+                            <h3 id="urgentTests" class="text-4xl font-black text-red-600 mt-2">0</h3>
+                        </div>
+                        <div class="w-14 h-14 rounded-2xl bg-red-100 dark:bg-red-950 text-red-600 dark:text-red-300 flex items-center justify-center">
+                            <i class="bi bi-heartbreak-fill text-2xl"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="rounded-[1.75rem] bg-gradient-to-br from-blue-600 to-purple-600 text-white p-6 shadow-xl shadow-blue-500/20">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-bold text-blue-100">AI Confidence</p>
+                            <h3 id="aiConfidence" class="text-4xl font-black mt-2">0%</h3>
+                        </div>
+                        <div class="w-14 h-14 rounded-2xl bg-white/20 flex items-center justify-center">
+                            <i class="bi bi-cpu-fill text-2xl"></i>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Recommendations Section -->
-            <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6">
-                <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
-                    <i class="bi bi-clipboard-heart-fill text-purple-500 mr-2"></i>
-                    Personalized Recommendations
-                </h3>
-                <div class="space-y-4">
-                    <div class="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-xl">
-                        <div class="flex items-start space-x-3">
-                            <i class="bi bi-apple text-green-500 text-lg"></i>
-                            <div>
-                                <p class="font-semibold text-gray-900 dark:text-white">Nutrition</p>
-                                <ul class="text-sm text-gray-600 dark:text-gray-400 mt-2 space-y-1">
-                                    <li>• Increase omega-3 rich foods (salmon, walnuts, flaxseeds)</li>
-                                    <li>• Add vitamin D fortified foods and fatty fish</li>
-                                    <li>• Reduce processed sugar and refined carbohydrates</li>
-                                    <li>• Increase soluble fiber (oats, beans, apples)</li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="p-4 bg-green-50 dark:bg-green-900/20 rounded-xl">
-                        <div class="flex items-start space-x-3">
-                            <i class="bi bi-bicycle text-green-500 text-lg"></i>
-                            <div>
-                                <p class="font-semibold text-gray-900 dark:text-white">Exercise</p>
-                                <ul class="text-sm text-gray-600 dark:text-gray-400 mt-2 space-y-1">
-                                    <li>• 150 minutes moderate cardio weekly (brisk walking, jogging)</li>
-                                    <li>• Strength training 2-3x/week to improve metabolism</li>
-                                    <li>• Morning walks for vitamin D exposure (15-20 min)</li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="p-4 bg-purple-50 dark:bg-purple-900/20 rounded-xl">
-                        <div class="flex items-start space-x-3">
-                            <i class="bi bi-capsule text-purple-500 text-lg"></i>
-                            <div>
-                                <p class="font-semibold text-gray-900 dark:text-white">Supplements</p>
-                                <ul class="text-sm text-gray-600 dark:text-gray-400 mt-2 space-y-1">
-                                    <li>• Vitamin D3: 2000 IU daily</li>
-                                    <li>• Omega-3: 1000 mg daily</li>
-                                    <li>• Magnesium glycinate: 200 mg before bed</li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="p-4 bg-yellow-50 dark:bg-yellow-900/20 rounded-xl">
-                        <div class="flex items-start space-x-3">
-                            <i class="bi bi-moon-stars text-yellow-500 text-lg"></i>
-                            <div>
-                                <p class="font-semibold text-gray-900 dark:text-white">Lifestyle</p>
-                                <ul class="text-sm text-gray-600 dark:text-gray-400 mt-2 space-y-1">
-                                    <li>• Aim for 7-8 hours quality sleep</li>
-                                    <li>• Stress management through meditation or yoga</li>
-                                    <li>• Regular health monitoring every 3 months</li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
+            <!-- Impression + Chart -->
+            <div class="grid lg:grid-cols-12 gap-8 mb-8">
+                <div class="lg:col-span-8 rounded-[2rem] bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xl p-6">
+                    <h2 class="text-2xl font-black text-slate-900 dark:text-white mb-4">
+                        Overall Health Impression
+                    </h2>
+                    <p id="overallMessage" class="text-slate-700 dark:text-slate-300 leading-relaxed text-lg"></p>
+
+                    <div id="insightList" class="mt-6 grid md:grid-cols-2 gap-4"></div>
+                </div>
+
+                <div class="lg:col-span-4 rounded-[2rem] bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xl p-6">
+                    <h2 class="text-xl font-black text-slate-900 dark:text-white mb-4">
+                        Biomarker Distribution
+                    </h2>
+                    <canvas id="statusChart" height="250"></canvas>
                 </div>
             </div>
-        </div>
 
-        <!-- Follow-up Recommendations -->
-        <div class="mt-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl shadow-xl p-8 text-white">
-            <div class="flex items-center justify-between flex-wrap gap-4">
-                <div>
-                    <h3 class="text-2xl font-bold mb-2">Follow-up Recommended</h3>
-                    <p class="text-blue-100">Schedule a consultation to discuss these results with a healthcare provider</p>
+            <!-- Results Table -->
+            <div class="rounded-[2rem] bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xl overflow-hidden mb-8">
+                <div class="p-6 border-b border-slate-200 dark:border-slate-800 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                    <div>
+                        <h2 class="text-2xl font-black text-slate-900 dark:text-white">Extracted Test Results</h2>
+                        <p class="text-sm text-slate-500 mt-1">
+                            This table is generated from your uploaded report, not dummy frontend data.
+                        </p>
+                    </div>
+
+                    <div class="relative">
+                        <i class="bi bi-search absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                        <input id="tableSearch" type="text" placeholder="Search tests..."
+                               class="pl-11 pr-4 py-3 rounded-2xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white outline-none focus:ring-4 focus:ring-blue-500/20">
+                    </div>
                 </div>
-                <button class="px-6 py-3 bg-white text-purple-600 rounded-xl font-semibold hover:shadow-lg transition-all transform hover:scale-105">
-                    <i class="bi bi-calendar-plus mr-2"></i>Book Appointment
-                </button>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead class="bg-slate-50 dark:bg-slate-950 text-left">
+                            <tr>
+                                <th class="px-6 py-4 text-xs font-black uppercase tracking-wider text-slate-500">Test Name</th>
+                                <th class="px-6 py-4 text-xs font-black uppercase tracking-wider text-slate-500">Result</th>
+                                <th class="px-6 py-4 text-xs font-black uppercase tracking-wider text-slate-500">Unit</th>
+                                <th class="px-6 py-4 text-xs font-black uppercase tracking-wider text-slate-500">Reference Range</th>
+                                <th class="px-6 py-4 text-xs font-black uppercase tracking-wider text-slate-500">Status</th>
+                                <th class="px-6 py-4 text-xs font-black uppercase tracking-wider text-slate-500">Confidence</th>
+                            </tr>
+                        </thead>
+                        <tbody id="resultsTableBody" class="divide-y divide-slate-200 dark:divide-slate-800"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Recommendations -->
+            <div class="grid lg:grid-cols-3 gap-6">
+                <div class="rounded-[2rem] bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-900 p-6">
+                    <div class="w-12 h-12 rounded-2xl bg-emerald-600 text-white flex items-center justify-center mb-4">
+                        <i class="bi bi-egg-fried text-xl"></i>
+                    </div>
+                    <h3 class="text-xl font-black text-emerald-900 dark:text-emerald-100">Nutrition Focus</h3>
+                    <p class="mt-3 text-emerald-800 dark:text-emerald-200 text-sm leading-relaxed">
+                        Follow dietary guidance based on abnormal markers. If cholesterol or glucose markers are high, prioritize fiber-rich, low-glycemic foods.
+                    </p>
+                </div>
+
+                <div class="rounded-[2rem] bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-900 p-6">
+                    <div class="w-12 h-12 rounded-2xl bg-blue-600 text-white flex items-center justify-center mb-4">
+                        <i class="bi bi-activity text-xl"></i>
+                    </div>
+                    <h3 class="text-xl font-black text-blue-900 dark:text-blue-100">Lifestyle Action</h3>
+                    <p class="mt-3 text-blue-800 dark:text-blue-200 text-sm leading-relaxed">
+                        Moderate exercise, better sleep, hydration, and repeat testing can help track changes over time.
+                    </p>
+                </div>
+
+                <div class="rounded-[2rem] bg-purple-50 dark:bg-purple-950/30 border border-purple-200 dark:border-purple-900 p-6">
+                    <div class="w-12 h-12 rounded-2xl bg-purple-600 text-white flex items-center justify-center mb-4">
+                        <i class="bi bi-person-heart text-xl"></i>
+                    </div>
+                    <h3 class="text-xl font-black text-purple-900 dark:text-purple-100">Clinical Review</h3>
+                    <p class="mt-3 text-purple-800 dark:text-purple-200 text-sm leading-relaxed">
+                        This system is educational only. Abnormal or urgent values should be reviewed by a qualified healthcare professional.
+                    </p>
+                </div>
             </div>
         </div>
     </div>
 </div>
 
 <script>
-    // Distribution Chart
-    const ctx1 = document.getElementById('distributionChart').getContext('2d');
-    new Chart(ctx1, {
-        type: 'bar',
-        data: {
-            labels: ['Hemoglobin', 'WBC', 'LDL', 'HDL', 'Vitamin D', 'Ferritin', 'HbA1c', 'Glucose'],
-            datasets: [{
-                label: 'Current Level',
-                data: [13.8, 6.2, 145, 52, 28, 32, 6.2, 98],
-                backgroundColor: 'rgba(59, 130, 246, 0.6)',
-                borderColor: 'rgb(59, 130, 246)',
-                borderWidth: 1
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: true,
-            plugins: {
-                legend: { display: false }
-            }
+(function () {
+    const emptyState = document.getElementById("emptyState");
+    const analysisContent = document.getElementById("analysisContent");
+    const raw = sessionStorage.getItem("latestReportAnalysis");
+    const metaRaw = sessionStorage.getItem("latestReportMeta");
+
+    if (!raw) {
+        emptyState.classList.remove("hidden");
+        return;
+    }
+
+    let data;
+    let meta = {};
+
+    try {
+        data = JSON.parse(raw);
+        meta = metaRaw ? JSON.parse(metaRaw) : {};
+    } catch (error) {
+        emptyState.classList.remove("hidden");
+        return;
+    }
+
+    analysisContent.classList.remove("hidden");
+
+    const tests = Array.isArray(data.tests) ? data.tests : [];
+    const patientSummary = data.patient_summary || data.summary?.patient_summary || {};
+
+    function getName(test) {
+        return test.patient_explanation?.display_name ||
+               test.canonical_name ||
+               test.test_name ||
+               test.name ||
+               test.raw_alias ||
+               "Unknown Test";
+    }
+
+    function getValue(test) {
+        return test.patient_explanation?.value_text ||
+               test.value_text ||
+               test.value ||
+               test.result ||
+               "N/A";
+    }
+
+    function getUnit(test) {
+        return test.unit || test.extracted_unit || "";
+    }
+
+    function getRange(test) {
+        return test.reference_range ||
+               test.patient_explanation?.reference_range ||
+               test.range ||
+               "N/A";
+    }
+
+    function getStatus(test) {
+        const rawStatus =
+            test.patient_explanation?.status ||
+            test.status ||
+            test.classification ||
+            "Unknown";
+
+        return String(rawStatus);
+    }
+
+    function normalizeStatus(status) {
+        const s = String(status || "").toLowerCase();
+
+        if (s.includes("critical") || s.includes("urgent")) return "urgent";
+        if (s.includes("high") || s.includes("low") || s.includes("elevated") || s.includes("abnormal") || s.includes("attention")) return "attention";
+        if (s.includes("review") || s.includes("unknown")) return "review";
+        if (s.includes("normal") || s.includes("good")) return "normal";
+
+        return "review";
+    }
+
+    function getConfidence(test) {
+        const c = test.confidence;
+        if (typeof c === "number") return Math.round(c * 100);
+        return null;
+    }
+
+    const counts = {
+        total: patientSummary.total_tests ?? tests.length,
+        normal: patientSummary.normal_count ?? 0,
+        attention: patientSummary.attention_count ?? 0,
+        review: patientSummary.review_count ?? 0,
+        urgent: patientSummary.urgent_count ?? 0
+    };
+
+    if (!patientSummary.total_tests) {
+        counts.normal = 0;
+        counts.attention = 0;
+        counts.review = 0;
+        counts.urgent = 0;
+
+        tests.forEach(test => {
+            const ns = normalizeStatus(getStatus(test));
+            counts[ns] += 1;
+        });
+    }
+
+    const avgConfidence = tests.length
+        ? Math.round(tests.reduce((sum, test) => sum + (typeof test.confidence === "number" ? test.confidence : 0.75), 0) / tests.length * 100)
+        : 0;
+
+    document.getElementById("totalTests").textContent = counts.total;
+    document.getElementById("normalTests").textContent = counts.normal;
+    document.getElementById("attentionTests").textContent = counts.attention + counts.review;
+    document.getElementById("urgentTests").textContent = counts.urgent;
+    document.getElementById("aiConfidence").textContent = `${avgConfidence}%`;
+
+    const analyzedDate = meta.analyzedAt ? new Date(meta.analyzedAt).toLocaleString() : "Recently";
+    document.getElementById("reportMetaText").textContent =
+        `${meta.fileName || "Uploaded Report"} · Analyzed ${analyzedDate} · ${tests.length} biomarkers extracted`;
+
+    document.getElementById("overallMessage").textContent =
+        patientSummary.overall_message ||
+        "Your report was processed successfully. Review the extracted biomarkers below and consult a qualified clinician for medical interpretation.";
+
+    function badgeClass(status) {
+        const ns = normalizeStatus(status);
+        if (ns === "normal") return "bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300";
+        if (ns === "attention") return "bg-amber-100 text-amber-700 dark:bg-amber-950 dark:text-amber-300";
+        if (ns === "urgent") return "bg-red-100 text-red-700 dark:bg-red-950 dark:text-red-300";
+        return "bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300";
+    }
+
+    const tbody = document.getElementById("resultsTableBody");
+
+    function renderRows(filter = "") {
+        const keyword = filter.toLowerCase().trim();
+
+        const filtered = tests.filter(test => {
+            const text = `${getName(test)} ${getStatus(test)} ${getValue(test)} ${getUnit(test)}`.toLowerCase();
+            return text.includes(keyword);
+        });
+
+        tbody.innerHTML = filtered.map(test => {
+            const status = getStatus(test);
+            const confidence = getConfidence(test);
+
+            return `
+                <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/60 transition">
+                    <td class="px-6 py-5">
+                        <div class="font-black text-slate-900 dark:text-white">${getName(test)}</div>
+                        <div class="text-xs text-slate-500 mt-1">${test.raw_alias || test.alias || ""}</div>
+                    </td>
+                    <td class="px-6 py-5 font-bold text-slate-900 dark:text-white">${getValue(test)}</td>
+                    <td class="px-6 py-5 text-slate-600 dark:text-slate-300">${getUnit(test)}</td>
+                    <td class="px-6 py-5 text-slate-600 dark:text-slate-300">${getRange(test)}</td>
+                    <td class="px-6 py-5">
+                        <span class="inline-flex px-3 py-1 rounded-full text-xs font-black ${badgeClass(status)}">
+                            ${status}
+                        </span>
+                    </td>
+                    <td class="px-6 py-5">
+                        ${
+                            confidence !== null
+                            ? `<div class="flex items-center gap-2">
+                                   <div class="w-20 h-2 rounded-full bg-slate-200 dark:bg-slate-700 overflow-hidden">
+                                       <div class="h-full bg-blue-600 rounded-full" style="width:${confidence}%"></div>
+                                   </div>
+                                   <span class="text-sm font-bold text-slate-600 dark:text-slate-300">${confidence}%</span>
+                               </div>`
+                            : `<span class="text-slate-400">N/A</span>`
+                        }
+                    </td>
+                </tr>
+            `;
+        }).join("");
+
+        if (!filtered.length) {
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="6" class="px-6 py-12 text-center text-slate-500">
+                        No matching tests found.
+                    </td>
+                </tr>
+            `;
         }
+    }
+
+    renderRows();
+
+    document.getElementById("tableSearch").addEventListener("input", (event) => {
+        renderRows(event.target.value);
     });
 
-    // Categories Chart
-    const ctx2 = document.getElementById('categoriesChart').getContext('2d');
-    new Chart(ctx2, {
-        type: 'doughnut',
-        data: {
-            labels: ['Normal Markers', 'Abnormal Markers'],
-            datasets: [{
-                data: [24, 4],
-                backgroundColor: ['#10b981', '#f59e0b'],
-                borderWidth: 0
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: true,
-            plugins: {
-                legend: { position: 'bottom' }
-            }
-        }
+    const insightList = document.getElementById("insightList");
+    const insights = [];
+
+    const attentionTests = tests.filter(test => normalizeStatus(getStatus(test)) === "attention");
+    const urgentTests = tests.filter(test => normalizeStatus(getStatus(test)) === "urgent");
+
+    if (urgentTests.length) {
+        insights.push({
+            icon: "bi-exclamation-triangle-fill",
+            title: "Urgent markers detected",
+            text: `${urgentTests.length} result(s) may need immediate clinical review.`
+        });
+    }
+
+    if (attentionTests.length) {
+        insights.push({
+            icon: "bi-activity",
+            title: "Abnormal markers found",
+            text: `${attentionTests.length} result(s) are outside expected ranges and should be monitored.`
+        });
+    }
+
+    if (counts.normal > 0) {
+        insights.push({
+            icon: "bi-check-circle-fill",
+            title: "Stable markers",
+            text: `${counts.normal} biomarker(s) appear within expected reference ranges.`
+        });
+    }
+
+    insights.push({
+        icon: "bi-shield-check",
+        title: "Educational interpretation",
+        text: "These explanations support understanding but do not replace professional medical advice."
     });
+
+    insightList.innerHTML = insights.map(item => `
+        <div class="rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 p-4">
+            <div class="flex gap-3">
+                <div class="w-10 h-10 rounded-xl bg-blue-100 dark:bg-blue-950 text-blue-600 dark:text-blue-300 flex items-center justify-center shrink-0">
+                    <i class="bi ${item.icon}"></i>
+                </div>
+                <div>
+                    <h4 class="font-black text-slate-900 dark:text-white">${item.title}</h4>
+                    <p class="text-sm text-slate-600 dark:text-slate-400 mt-1">${item.text}</p>
+                </div>
+            </div>
+        </div>
+    `).join("");
+
+    function loadChartJs(callback) {
+        if (window.Chart) {
+            callback();
+            return;
+        }
+
+        const script = document.createElement("script");
+        script.src = "https://cdn.jsdelivr.net/npm/chart.js";
+        script.onload = callback;
+        document.head.appendChild(script);
+    }
+
+    loadChartJs(() => {
+        const ctx = document.getElementById("statusChart");
+        new Chart(ctx, {
+            type: "doughnut",
+            data: {
+                labels: ["Normal", "Attention", "Review", "Urgent"],
+                datasets: [{
+                    data: [counts.normal, counts.attention, counts.review, counts.urgent],
+                    backgroundColor: ["#10b981", "#f59e0b", "#64748b", "#ef4444"],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                plugins: {
+                    legend: {
+                        position: "bottom"
+                    }
+                },
+                cutout: "68%"
+            }
+        });
+    });
+})();
 </script>
 {% endblock %}
